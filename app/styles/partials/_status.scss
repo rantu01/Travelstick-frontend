@@ -1,0 +1,21 @@
+// status class for the status bar
+.status-warning{
+   @apply inline-flex items-center gap-1.5 py-1.5 px-3 rounded md:text-sm text-xs font-medium bg-warning text-warning bg-opacity-10  capitalize
+}
+
+.status-success{
+   @apply inline-flex items-center gap-1.5 py-1.5 px-3 rounded md:text-sm text-xs font-medium bg-success text-success bg-opacity-10 capitalize
+}
+
+.status-danger{
+   @apply inline-flex items-center gap-1.5 py-1.5 px-3 rounded md:text-sm text-xs font-medium bg-error text-error bg-opacity-10  capitalize
+}
+
+.status-info{
+   @apply inline-flex items-center gap-1.5 py-1.5 px-3 rounded md:text-sm text-xs font-medium bg-info text-info bg-opacity-10  capitalize
+}
+
+.status-secondary{
+   @apply inline-flex items-center gap-1.5 py-1.5 px-3 rounded md:text-sm text-xs font-medium bg-form_border text-main_text capitalize
+}
+// status class

@@ -1,0 +1,266 @@
+.sidebar {
+  @apply w-0 overflow-y-auto lg:w-[20rem] h-full z-30 top-[100px]  transition-all duration-300;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  @apply ltr:left-0 rtl:right-0;
+
+
+  .menu {
+    li {
+      margin-bottom: 6px;
+    }
+    @apply py-8;
+
+    .nav-menu {
+      @apply uppercase pl-6 pr-2 py-2 text-xs text-[#05073C];
+    }
+
+    .nav-link {
+      @apply flex items-center gap-4 pl-6 pr-2 py-2.5 text-sm text-[#05073C] hover:text-[#fff] hover:bg-primary/80 hover:border-primary hover:border-l-[16px] hover:border-r-[16px] hover:rounded-md hover:transition-all hover:duration-300 hover:ease-in-out relative;
+
+      &.active {
+        @apply text-[#fff] bg-primary/80 border-primary border-l-[16px] border-r-[16px] rounded-md;
+      }
+
+      &.has-arrow::after {
+        content: "";
+        @apply border-r border-b border-primary w-1.5 h-1.5 absolute transform -rotate-45 transition-all duration-300 ease-in-out;
+
+        @apply ltr:right-5 rtl:left-5 top-5;
+      }
+
+      &.active.has-arrow::after {
+        @apply rotate-45;
+      }
+    }
+  .navTab{
+    .ant-select-single .ant-select-selector {
+       color: #05073C; 
+  }
+  }
+
+    .nav-link-sub {
+      @apply flex items-center gap-4 pl-6 pr-2 py-2.5 text-sm  text-[#05073C] hover:text-[#fff] hover:bg-primary/80 hover:border-primary hover:border-l-[16px] hover:border-r-[16px] hover:rounded-md hover:transition-all hover:duration-300 hover:ease-in-out relative;
+
+      &.active {
+        @apply rounded-s-md;
+      }
+
+      &.has-arrow::after {
+        content: "";
+        @apply border-r border-b border-primary w-1.5 h-1.5 absolute transform -rotate-45 transition-all duration-300 ease-in-out;
+
+        @apply ltr:right-5 rtl:left-5 top-5;
+      }
+
+      &.active.has-arrow::after {
+        @apply rotate-45;
+      }
+    }
+
+    .submenu {
+      @apply max-h-0 overflow-hidden transition-all duration-300 ease-in-out;
+
+      .nav-link {
+        @apply py-2.5 text-sm;
+        padding-left: 54px;
+      }
+      &.active {
+        @apply max-h-[500px];
+      }
+
+      li:first-child {
+        .nav-link {
+          @apply py-2.5 mt-1;
+        }
+      }
+
+      li:last-child {
+        .nav-link {
+          @apply py-2.5;
+        }
+      }
+    }
+  }
+
+  &.open {
+    @media screen and (max-width: 1024px) {
+      @apply w-[16rem];
+      position: absolute;
+      z-index: 50;
+      left: 0;
+      top: 100;
+      bottom: 0;
+      background: #FFFAF7
+
+;
+    }
+  }
+}
+
+.sidebar-overlay {
+  @media screen and (max-width: 1024px) {
+    @apply fixed hidden left-0 top-0 w-full h-full;
+
+    &.open {
+      @apply block;
+      z-index: 8;
+    }
+  }
+}
+
+.sidebar .menu .nav-link-sub.has-arrow::after {
+  border-color: #05073C !important;
+}
+
+.sidebar .menu .nav-link-sub.has-arrow:hover::after,
+.sidebar .menu .nav-link-sub.has-arrow.active::after {
+  border-color: #fff !important;
+}
+.headerNav {
+  border: 1px solid #fff;
+
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(217, 217, 217, 0.1) 100%
+  );
+
+  box-shadow: 0px 4px 25px -1px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(25px);
+}
+
+.header {
+  @apply top-0 z-10 h-[70px] shadow transition-all duration-300;
+
+  /* Full width header in RTL */
+  @apply md:ltr:pl-[5rem] rtl:pr-[16rem] w-full;
+}
+
+.content {
+  @apply pt-[75px] transition-all duration-300;
+
+  /* Adjust padding based on direction */
+  @apply md:ltr:pl-[16rem] rtl:pr-[16rem];
+}
+
+.dashboardModal {
+  .ant-modal-content {
+    border: 1px solid #fff !important;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(217, 217, 217, 0.1) 100%
+    ) !important;
+    box-shadow: 0px 4px 25px -1px rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(25px) !important;
+  }
+  .ant-modal-header {
+    background: transparent !important;
+  }
+}
+
+.profile-container {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid white;
+  background-color: white;
+}
+
+/* Information Section */
+.info-container {
+  margin-top: 60px;
+  padding: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.border-b {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dashboardInput{
+
+.ant-switch {
+  background: #F4AE7D !important;
+}
+
+.ant-switch:hover {
+  background: #F4AE7D !important;
+}
+
+.ant-switch.ant-switch-checked {
+  background: #EF8248 !important;
+}
+
+.ant-switch.ant-switch-checked:hover {
+  background: #EF8248 !important;
+}
+
+}
+.ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
+  border: none;
+  background: transparent!important;
+}
+.ant-select-single .ant-select-selector {
+  color: #fff;
+}
+
+.ant-select-outlined.ant-select-status-error:not(.ant-select-customize-input) .ant-select-selector {
+  border: none;
+  background: transparent;
+}
+.ant-select-single.ant-select-show-arrow .ant-select-selection-placeholder {
+  padding-inline-end: 18px;
+  color: #C7D1DA;
+}
+.ant-select .ant-select-selection-placeholder {
+  color: #C7D1DA;
+}
+
+.ant-picker {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.ant-picker:hover {
+  background-color: transparent !important;
+  border-color: white !important;
+}
+.ant-picker-focused {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.emailTab {
+  .ant-tabs {
+    .ant-tabs-tab {
+      &.ant-tabs-tab-active .ant-tabs-tab-btn {
+        color: #EF8248;
+        text-shadow: 0 0 0.25px #EF8248;
+      }
+
+      &:hover .ant-tabs-tab-btn,
+      &:focus .ant-tabs-tab-btn {
+        color: #EF8248;
+        text-shadow: 0 0 0.25px #EF8248;
+      }
+    }
+  }
+}
