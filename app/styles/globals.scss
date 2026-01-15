@@ -57,15 +57,15 @@
 }
 
 .view-button {
-  @apply bg-[#EF8248] capitalize text-white whitespace-pre xl:px-5 lg:px-4 px-3 xl:py-3 py-2 rounded-full hover:bg-[#EB662B] transition duration-300 font-lato leading-3 font-medium lg:text-sm text-xs;
+  @apply bg-[#28B6EA] capitalize text-white whitespace-pre xl:px-5 lg:px-4 px-3 xl:py-3 py-2 rounded-full hover:bg-[#2A3479] transition duration-300 font-lato leading-3 font-medium lg:text-sm text-xs;
 }
 
 .details-button {
-  @apply bg-[#EF8248] capitalize text-white whitespace-pre xl:px-5 lg:px-4 px-3 xl:py-3 py-2 rounded-full hover:bg-[#EB662B] transition duration-300 font-lato font-normal text-xs;
+  @apply bg-[#28B6EA] capitalize text-white whitespace-pre xl:px-5 lg:px-4 px-3 xl:py-3 py-2 rounded-full hover:bg-[#2A3479] transition duration-300 font-lato font-normal text-xs;
 }
 
 .common-btn {
-  @apply bg-[#EF8248] capitalize text-white whitespace-pre xl:px-8 lg:px-6 px-5 xl:py-4 lg:py-3 py-2 rounded-full hover:bg-[#EB662B] transition duration-300 font-lato leading-6 font-medium xl:text-lg lg:text-sm text-xs;
+  @apply bg-[#28B6EA] capitalize text-white whitespace-pre xl:px-8 lg:px-6 px-5 xl:py-4 lg:py-3 py-2 rounded-full hover:bg-[#2A3479] transition duration-300 font-lato leading-6 font-medium xl:text-lg lg:text-sm text-xs;
 }
 
 .expert {
@@ -74,11 +74,11 @@
   }
 
   .swiper-pagination-bullet {
-    @apply rounded-full w-[12px] h-[12px] bg-[#EB662B] cursor-pointer opacity-15;
+    @apply rounded-full w-[12px] h-[12px] bg-[#2A3479] cursor-pointer opacity-15;
   }
 
   .swiper-pagination-bullet-active {
-    @apply rounded-full w-[24px] h-[12px] bg-[#EB662B] cursor-pointer opacity-100;
+    @apply rounded-full w-[24px] h-[12px] bg-[#2A3479] cursor-pointer opacity-100;
   }
 }
 .heroPagination {
@@ -125,25 +125,25 @@
   }
 
   .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #ef8248;
-    border-color: #ef8248;
+    background-color: #28B6EA;
+    border-color: #28B6EA;
   }
 
   .ant-checkbox-wrapper:hover .ant-checkbox-inner,
   .ant-checkbox:hover .ant-checkbox-inner {
-    border-color: #ef8248;
+    border-color: #28B6EA;
   }
 
   .ant-checkbox-wrapper:hover .ant-checkbox-checked .ant-checkbox-inner,
   .ant-checkbox:hover .ant-checkbox-checked .ant-checkbox-inner {
-    background-color: #ef8248 !important;
-    border-color: #ef8248 !important;
+    background-color: #28B6EA !important;
+    border-color: #28B6EA !important;
   }
 }
 
 .package-slider {
   .ant-slider .ant-slider-track {
-    background-color: #ef8248 !important;
+    background-color: #28B6EA !important;
     border-radius: 2px;
   }
 
@@ -155,7 +155,7 @@
     inline-size: 10px;
     block-size: 10px;
     background-color: #ffffff;
-    box-shadow: 0 0 0 2px #ef8248;
+    box-shadow: 0 0 0 2px #28B6EA;
     outline: 0px solid transparent;
     border-radius: 50%;
     cursor: pointer;
@@ -176,11 +176,11 @@
   }
 
   .swiper-pagination-bullet {
-    @apply rounded-full w-[12px] h-[12px] bg-[#F9CFAF] cursor-pointer relative;
+    @apply rounded-full w-[12px] h-[12px] bg-[#2A3479] cursor-pointer relative;
   }
 
   .swiper-pagination-bullet-active {
-    @apply rounded-full w-[24px] h-[12px] bg-[#EB662B] cursor-pointer opacity-100;
+    @apply rounded-full w-[24px] h-[12px] bg-[#2A3479] cursor-pointer opacity-100;
   }
 }
 
@@ -246,7 +246,7 @@ select:focus {
 }
 
 .select-item option:hover {
-  color: #ff5c2c;
+  color: #2A3479;
   /* Your hover color */
   background-color: #f0f0f0;
 }
@@ -360,17 +360,17 @@ select:focus {
 }
 
 .ant-radio-wrapper:hover .ant-radio-inner {
-  border-color: #eb662b;
+  border-color: #2A3479;
 }
 
 .ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
-  border-color: #eb662b;
-  background-color: #eb662b;
+  border-color: #2A3479;
+  background-color: #2A3479;
 }
 
 .dashboardSelect {
   .ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector {
-    border: 1px solid #ef8248 !important;
+    border: 1px solid #28B6EA !important;
     background: #fef5ee !important;
     color: #05073c !important;
   }
@@ -390,7 +390,7 @@ select:focus {
 }
 
 .auth-modal .ant-modal-close {
-  background-color: #eb662b;
+  background-color: #2A3479;
   border-radius: 50%;
   inline-size: 32px;
   block-size: 32px;
@@ -414,7 +414,7 @@ select:focus {
 }
 
 .ant-tabs-ink-bar {
-  background-color: #e67529 !important;
+  background-color: #2A3479 !important;
 }
 
 .otp {

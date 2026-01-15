@@ -33,6 +33,9 @@ const Footer = () => {
     { name: "Tour Packages", link: "/package" },
     { name: "Visa Services", link: "/visa" },
     { name: "Contact Us", link: "/contact" },
+    { name: "Privacy Policy", link: "/privacyPolicy" },
+    { name: "Terms and Conditions", link: "/termsCondition" },
+    { name: "Refund Policy", link: "/refundPolicy" },
   ]
 
   const navIcons = [
@@ -68,13 +71,16 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-center xl:gap-[142px] lg:gap-[100px] md:gap-12 gap-8">
           <div className="w-full lg:w-[50%] flex xl:gap-[142px] justify-between xl:justify-start">
             <div>
-              <Image
-                className=""
-                src={setting?.site_logo || "/logo.svg"}
-                alt="logo"
-                width={168}
-                height={44}
-              />
+              {setting?.site_logo && (
+                <Image
+                  className=""
+                  src={setting.site_logo}
+                  alt="logo"
+                  width={168}
+                  height={44}
+                  priority
+                />
+              )}
               <p className="description-1 !font-normal lg:mt-4 md:mt-3 mt-2 text-[#FFFFFF] max-w-[160px] md:max-w-[296px]">{setting?.site_description}</p>
               <div className="xl:mt-10 lg:mt-8 md:mt-5 mt-4">
                 <h5 className="description-3 !font-montserrat !font-bold text-[#FFFFFF]">{i18n.t("Follow Us On")}</h5>
@@ -162,7 +168,7 @@ const Footer = () => {
         <div className="xl:mt-14 lg:mt-12 md:mt-10 mt-5 bg-[#E8EAE8] w-full h-[1px]"></div>
         <div className="xl:my-7 lg:my-6 md:my-5 my-4 flex flex-col sm:flex-row items-center justify-between">
           <p className="text-[#FFFFFF] description-1 mt-3 sm:mt-0 ">
-            Copyright © {currentYear || new Date().getFullYear()} All rights reserved by 
+            Copyright © {currentYear || new Date().getFullYear()} All rights reserved by
             <Link className="text-primary text-lg ml-1" href="/"> <span className="description-2"> {` ${setting?.site_name}`} </span> </Link>
           </p>
           <div className="flex items-center gap-2 sm:gap-4 lg:mt-5 md:mt-4 mt-3">

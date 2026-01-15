@@ -85,7 +85,8 @@ export default function Hero2({ heroData }) {
                 size="large"
                 max={{
                   count: 4,
-                  style: { color: "#f56a00", backgroundColor: "#fde3cf" },
+                  // Orange tone replaced with soft blue/primary compatible tone
+                  style: { color: "#28B6EA", backgroundColor: "#E6F7FF" },
                 }}
               >
                 {testimonial?.docs?.map((item) => (
@@ -107,11 +108,13 @@ export default function Hero2({ heroData }) {
             
             <Link href="/package" className="hidden lg:block">
               <div className="flex gap-4 items-center rounded-full group cursor-pointer">
-                <p className="text-base hidden xl:block whitespace-pre font-medium text-white bg-[#EF8248] hover:bg-[#EB662B] transition-colors px-6 py-[14px] rounded-full">
+                {/* Updated background to primary (#28B6EA) and hover to #2A3479 */}
+                <p className="text-base hidden xl:block whitespace-pre font-medium text-white bg-primary hover:bg-[#2A3479] transition-colors px-6 py-[14px] rounded-full">
                   {i18n?.t("Book Now")}
                 </p>
 
-                <div className="border border-[#E8EAE8] p-3 rounded-full group-hover:border-[#EF8248] transition-colors">
+                {/* Updated border hover color to primary */}
+                <div className="border border-[#E8EAE8] p-3 rounded-full group-hover:border-primary transition-colors">
                   <MdArrowOutward className="text-2xl text-white" />
                 </div>
               </div>
@@ -146,11 +149,10 @@ export default function Hero2({ heroData }) {
                     <SwiperSlide
                       key={item._id || index}
                       style={{ 
-                        width: isActive ? '220px' : '220px' 
+                        width: '220px' 
                       }}
                     >
                       <div className="flex flex-col w-full mt-10">
-                        {/* ✅ Fix: Proper height handling */}
                         <div 
                           className={`relative rounded-[20px] w-full transition-all duration-500 ${
                             isActive ? "absolute -top-10 h-[280px]" : "h-[380px]"

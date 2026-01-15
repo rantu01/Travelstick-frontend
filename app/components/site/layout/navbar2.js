@@ -64,15 +64,15 @@ const Navbar2 = ({ textColor = "text-white" }) => {
   const userMenuItems = [
     user?.role === "admin" || user?.role === "employee"
       ? {
-          key: "dashboard",
-          label: i18n.t("Dashboard"),
-          onClick: () => router.push("/admin"),
-        }
+        key: "dashboard",
+        label: i18n.t("Dashboard"),
+        onClick: () => router.push("/admin"),
+      }
       : {
-          key: "userDashboard",
-          label: i18n.t("Dashboard"),
-          onClick: () => router.push("/user"),
-        },
+        key: "userDashboard",
+        label: i18n.t("Dashboard"),
+        onClick: () => router.push("/user"),
+      },
     {
       key: "logout",
       label: i18n.t("Logout"),
@@ -88,15 +88,19 @@ const Navbar2 = ({ textColor = "text-white" }) => {
     <div className="w-full font-lato overflow-hidden relative z-50">
       <div className="travel-container flex flex-row justify-between items-center lg:py-8 py-4 lg:px-0">
         {/* Logo */}
+        {/* Logo */}
         <Link href="/">
-          <div className="sm:w-[133px] sm:h-[40px] w-[153px] h-[46px] flex justify-start items-center  -ml-2 lg:ml-0 mt-1">
-            <Image
-              src={setting?.site_logo || "/logo.png"}
-              width={153}
-              height={46}
-              className="sm:w-[153px] sm:h-[46px] w-[153px] h-[46px] object-fill"
-              alt="logo"
-            />
+          <div className="sm:w-[133px] sm:h-[40px] w-[153px] h-[46px] flex justify-start items-center -ml-2 lg:ml-0 mt-1">
+            {setting?.site_logo && (
+              <Image
+                src={setting.site_logo}
+                width={153}
+                height={46}
+                className="sm:w-[153px] sm:h-[46px] w-[153px] h-[46px] object-fill"
+                alt="logo"
+                priority // লোগো দ্রুত লোড হওয়ার জন্য priority ব্যবহার করা ভালো
+              />
+            )}
           </div>
         </Link>
         {/* Desktop Menu */}
@@ -161,11 +165,10 @@ const Navbar2 = ({ textColor = "text-white" }) => {
               </button>
             ))}
           <div
-            className={`flex items-center navbar ${
-              textColor == "text-[#05073C]"
+            className={`flex items-center navbar ${textColor == "text-[#05073C]"
                 ? "language_select"
                 : "language_select1"
-            }`}
+              }`}
           >
             {defaultLang === undefined ? (
               <p className={`text-sm sm:text-lg hidden  ${textColor}`}>EN</p>
@@ -176,39 +179,39 @@ const Navbar2 = ({ textColor = "text-white" }) => {
                   value={
                     langFromLocalStorage
                       ? {
-                          value: i18n?.languages?.find(
-                            (lang) => lang?._id === langFromLocalStorage
-                          )?._id,
-                          label: (
-                            <Image
-                              width={100}
-                              height={100}
-                              src={
-                                i18n?.languages?.find(
-                                  (lang) => lang?._id === langFromLocalStorage
-                                )?.flag || "/eng.png"
-                              }
-                              alt="flag"
-                              className="w-5 h-5 object-cover rounded-full"
-                            />
-                          ),
-                        }
+                        value: i18n?.languages?.find(
+                          (lang) => lang?._id === langFromLocalStorage
+                        )?._id,
+                        label: (
+                          <Image
+                            width={100}
+                            height={100}
+                            src={
+                              i18n?.languages?.find(
+                                (lang) => lang?._id === langFromLocalStorage
+                              )?.flag || "/eng.png"
+                            }
+                            alt="flag"
+                            className="w-5 h-5 object-cover rounded-full"
+                          />
+                        ),
+                      }
                       : {
-                          value: defaultLang,
-                          label: (
-                            <Image
-                              width={100}
-                              height={100}
-                              src={
-                                i18n?.languages?.find(
-                                  (lang) => lang?.code === defaultLang
-                                )?.flag || "/eng.png"
-                              }
-                              alt="flag"
-                              className="w-5 h-5 object-cover rounded-full"
-                            />
-                          ),
-                        }
+                        value: defaultLang,
+                        label: (
+                          <Image
+                            width={100}
+                            height={100}
+                            src={
+                              i18n?.languages?.find(
+                                (lang) => lang?.code === defaultLang
+                              )?.flag || "/eng.png"
+                            }
+                            alt="flag"
+                            className="w-5 h-5 object-cover rounded-full"
+                          />
+                        ),
+                      }
                   }
                   style={{ inlineSize: 100 }}
                   variant="borderless"
@@ -231,11 +234,10 @@ const Navbar2 = ({ textColor = "text-white" }) => {
                       </div>
                     ),
                   }))}
-                  className={`inline-flex items-center text-sm sm:text-lg justify-center uppercase ${
-                    textColor === "text-textMain"
+                  className={`inline-flex items-center text-sm sm:text-lg justify-center uppercase ${textColor === "text-textMain"
                       ? "language_select"
                       : "language_select1"
-                  }`}
+                    }`}
                 />
               </div>
             )}
@@ -381,13 +383,12 @@ export default Navbar2;
 
 const NavItem = ({ path, label, pathname, textColor }) => (
   <li
-    className={`text-lg font-medium px-6 py-3 rounded-full hover:text-white hover:bg-[#EB662B] ${
-      pathname === path
+    className={`text-lg font-medium px-6 py-3 rounded-full hover:text-white hover:bg-[#EB662B] ${pathname === path
         ? "px-6 py-3 rounded-full text-white bg-[#EB662B]"
         : textColor === "text-[#05073C]"
-        ? "text-[#05073C]"
-        : "text-white"
-    }`}
+          ? "text-[#05073C]"
+          : "text-white"
+      }`}
   >
     <Link href={path}>{label}</Link>
   </li>
@@ -428,9 +429,8 @@ const MobileDropdown = ({ title, items }) => {
       >
         {title}
         <IoChevronDownOutline
-          className={`transition-transform duration-300 ${
-            open ? "rotate-180" : ""
-          }`}
+          className={`transition-transform duration-300 ${open ? "rotate-180" : ""
+            }`}
         />
       </button>
 
@@ -441,11 +441,10 @@ const MobileDropdown = ({ title, items }) => {
               key={item.path}
               href={item.path}
               onClick={() => location.assign(item.path)}
-              className={`py-2 text-sm ${
-                pathname === item.path
+              className={`py-2 text-sm ${pathname === item.path
                   ? "text-primary font-semibold"
                   : "text-textMain"
-              } hover:text-primary`}
+                } hover:text-primary`}
             >
               {item.label.toUpperCase()}
             </Link>

@@ -101,7 +101,7 @@ const Newsletter = ({theme}) => {
                         />
                         <button
                           type="submit"
-                          className="absolute top-0 right-0 h-full w-[30%] bg-primary text-white rounded-r-full description-1 hover:bg-[#EB662B] transition duration-300"
+                          className="absolute top-0 right-0 h-full w-[30%] bg-primary text-white rounded-r-full description-1 hover:bg-[#2A3479] transition duration-300"
                         >
                           {i18n.t("Subscribe")}
                         </button>

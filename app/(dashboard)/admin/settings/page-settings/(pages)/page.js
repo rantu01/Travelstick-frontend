@@ -15,6 +15,7 @@ import { useI18n } from "@/app/contexts/i18n";
 import { IoDocumentTextSharp } from "react-icons/io5";
 import { motion } from "framer-motion";
 import BackButton from "@/app/(dashboard)/components/common/backButton";
+import RefundPolicy from "./refundPolicy/page";
 const PageSettings = () => {
   const [tab, setTab] = useState(0);
   const i18n = useI18n();
@@ -43,6 +44,11 @@ const PageSettings = () => {
       label: "Terms & Conditions",
       icon: <IoDocumentTextSharp />,
       form: <TermsCondition slug={"terms-condition"} />,
+    },
+    {
+      label: "Refund & Policy",
+      icon: <IoDocumentTextSharp />,
+      form: <RefundPolicy slug={"refund-policy"} />,
     },
   ];
 

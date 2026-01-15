@@ -23,9 +23,12 @@ module.exports = {
         "custom-light": "0px 4px 25px -1px rgba(0, 0, 0, 0.20)",
       },
       colors: {
-        primary: "#EF8248",
+        primary: "#28B6EA",
         textMain: "#02050A",
         textBody: "#888AA0",
+
+        //primary: "#28B6EA",   // Light Blue (was orange)
+        //textMain: "#2A3479",
       },
       backgroundImage: {
         "gray-gradient":

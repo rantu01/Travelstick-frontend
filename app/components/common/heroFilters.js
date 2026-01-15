@@ -173,7 +173,7 @@ const HeroFilters = () => {
                   minDate={startDate} 
                 />
                 <div className="col-span-1">
-                  <button onClick={() => handleFilters("tour")} className="flex gap-2 w-full justify-center items-center font-lato font-medium sm:text-base text-sm px-[32px] py-[18px] bg-primary hover:bg-[#EB662B] transition-all duration-300 text-white rounded-full">
+                  <button onClick={() => handleFilters("tour")} className="flex gap-2 w-full justify-center items-center font-lato font-medium sm:text-base text-sm px-[32px] py-[18px] bg-primary hover:bg-[#2A3479] transition-all duration-300 text-white rounded-full">
                     <FaSearch />
                     {i18n.t("Search")}
                   </button>
@@ -243,7 +243,7 @@ const HeroFilters = () => {
                   }}
                 />
                 <div className="col-span-1">
-                  <button onClick={() => handleFilters("hotel")} className="hover:bg-[#EB662B] transition-all duration-300 flex gap-2 w-full justify-center items-center font-lato font-medium sm:text-base text-sm px-[32px] py-[18px] bg-primary text-white rounded-full">
+                  <button onClick={() => handleFilters("hotel")} className="hover:bg-[#2A3479] transition-all duration-300 flex gap-2 w-full justify-center items-center font-lato font-medium sm:text-base text-sm px-[32px] py-[18px] bg-primary text-white rounded-full">
                     <FaSearch />
                     {i18n.t("Search")}
                   </button>
@@ -312,7 +312,7 @@ const HeroFilters = () => {
                   }}
                 />
                 <div className="col-span-1">
-                  <button onClick={() => handleFilters("visa")} className="hover:bg-[#EB662B] transition-all duration-300 flex gap-2 w-full justify-center items-center font-lato font-medium sm:text-base text-sm px-[32px] py-[18px] bg-primary text-white rounded-full">
+                  <button onClick={() => handleFilters("visa")} className="hover:bg-[#2A3479] transition-all duration-300 flex gap-2 w-full justify-center items-center font-lato font-medium sm:text-base text-sm px-[32px] py-[18px] bg-primary text-white rounded-full">
                     <FaSearch />
                     {i18n.t("Search")}
                   </button>
