@@ -13,6 +13,7 @@ const Choose = ({ position = "lg:flex-row" }) => {
   const chooseData = data?.[0];
   const { langCode } = useI18n();
   const isLoading = chooseData?.content?.data;
+
   return (
     <>
       {isLoading ? (
@@ -31,68 +32,36 @@ const Choose = ({ position = "lg:flex-row" }) => {
               <div
                 className={`travel-container relative z-10 w-full h-full flex flex-col ${position} xl:gap-10 lg:gap-8 md:gap-6 gap-4 xl:my-[60px] lg:my-12 md:my-10 `}
               >
-                <div className="w-full lg:w-[45%]  flex flex-col   justify-center  items-center !mx-auto">
+                <div className="w-full lg:w-[45%] flex flex-col justify-center items-center !mx-auto">
                   <AnimatedContent
                     distance={100}
                     direction="horizontal"
                     reverse={true}
                   >
-                    <div className="relative xl:w-[443px] sm:w-[380px] sm:h-[500px] w-[350px] xl:h-[583px]  mx-auto">
-                      <Image
-                        src="/theme1/choose/choseBg.png"
-                        alt="Background"
-                        width={443}
-                        height={583}
-                        className="object-cover xl:w-[443px] sm:w-[380px] sm:h-[500px] w-[350px] xl:h-[583px] rounded-md"
-                      />
-
-                      <div className="absolute inset-0 flex items-center justify-center xl:w-[443px] sm:w-[380px] w-[350px]  sm:h-[500px] xl:h-[583px] !z-5">
-                        {chooseData?.content?.image && (
-                          <AnimatedContent
-                            distance={50}
-                            direction="horizontal"
-                            reverse={false}
-                          >
-                            <Image
-                              src={
-                                chooseData?.content?.image ||
-                                "/theme1/choose/card.png"
-                              }
-                              alt="Main Image"
-                              width={443}
-                              height={583}
-                              className="rounded-t-[250px]  xl:w-[443px] sm:w-[380px] w-[350px] sm:h-[500px] xl:h-[583px] !ml-5 "
-                            />
-                          </AnimatedContent>
-                        )}
-                      </div>
-
-                      <div className="absolute -top-3 right-0 !z-20 -mr-16 hidden xl:block">
+                    {/* Image Container simplified to a rectangle */}
+                    <div className="relative xl:w-[443px] sm:w-[380px] w-[350px] xl:h-[583px] sm:h-[500px] h-auto mx-auto overflow-hidden rounded-lg shadow-lg">
+                      {chooseData?.content?.image && (
                         <AnimatedContent
                           distance={50}
-                          direction="vertical"
+                          direction="horizontal"
                           reverse={false}
                         >
                           <Image
-                            src="/theme1/choose/rightD.png"
-                            alt="Top Right"
-                            width={280}
-                            height={222}
+                            src={
+                              chooseData?.content?.image ||
+                              "/theme1/choose/card.png"
+                            }
+                            alt="Main Image"
+                            width={443}
+                            height={583}
+                            className="object-cover w-full h-full"
                           />
                         </AnimatedContent>
-                      </div>
-                      <div className="absolute -bottom-2 xl:w-[463px] sm:w-[400px] w-[350px] h-[75px] -mb-3 !z-50 hidden sm:block">
-                        <Image
-                          src="/theme1/choose/bottom.png"
-                          alt="Bottom Effect"
-                          width={463}
-                          height={75}
-                          className="xl:w-[463px] sm:w-[400px] w-[350px] h-[75px] relative !z-50"
-                        />
-                      </div>
+                      )}
                     </div>
                   </AnimatedContent>
                 </div>
+
                 <div className="w-full lg:w-[55%] xl:w-[65%] flex">
                   <div className="w-full md:mt-10 mt-10">
                     <SectionHeaderPage
@@ -121,7 +90,7 @@ const Choose = ({ position = "lg:flex-row" }) => {
                               : index === 2
                               ? "bg-[#FFF2EA] animate-bounceLeftRight"
                               : "bg-[#BAE7FD] animate-bounceUpDown"
-                          } flex items-center border  lg:gap-3 gap-2 xl:p-6 lg:p-5 md:p-4 sm:p-3 p-2 rounded-[20px] shadow-[0px_0px_70px_rgba(0,0,0,0.001)]`}
+                          } flex items-center border lg:gap-3 gap-2 xl:p-6 lg:p-5 md:p-4 sm:p-3 p-2 rounded-[20px] shadow-[0px_0px_70px_rgba(0,0,0,0.001)]`}
                         >
                           <div>
                             <div

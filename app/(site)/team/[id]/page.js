@@ -73,11 +73,11 @@ const TeamDetails = () => {
                   <p className="description-1 xl:mt-6 lg:mt-5 md:mt-4 mt-3 text-[#717171]">{data?.about?.[langCode]}</p>
                 </div>
                 <div className="xl:mt-6 lg:mt-5 md:mt-4 mt-3">
-                  <h3 className="heading-3 text-[#05073C]">{i18n.t("Specialties")}:</h3>
+                  <h3 className="heading-3 text-[#05073C]">{i18n.t("Designation")}:</h3>
                   <div className="lg:mt-4 mt-3">
-                    {data?.specialists?.length > 0 && (
+                    {data?.designation?.length > 0 && (
                       <ul className="list-disc pl-5">
-                        {data.specialists.map((item, index) => (
+                        {data.designation.map((item, index) => (
                           <li key={index} className="description-1 text-[#05073C]">
                             {item}
                           </li>
@@ -87,11 +87,11 @@ const TeamDetails = () => {
                   </div>
                 </div>
                 <div className="xl:mt-6 lg:mt-5 md:mt-4 mt-3">
-                  <h3 className="heading-3 text-[#05073C]">{i18n.t("Qualifications")}:</h3>
+                  <h3 className="heading-3 text-[#05073C]">{i18n.t("Roles Overview")}:</h3>
                   <div className="lg:mt-4 mt-3">
-                    {data?.qualifications?.length > 0 && (
+                    {data?.roles_overview?.length > 0 && (
                       <ul className="list-disc pl-5">
-                        {data.qualifications.map((item, index) => (
+                        {data.roles_overview.map((item, index) => (
                           <li key={index} className="description-1 text-[#05073C]">
                             {item}
                           </li>

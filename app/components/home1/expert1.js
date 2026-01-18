@@ -36,14 +36,14 @@ const Expert1 = ({ theme }) => {
             theme === 'one' ?
               <SectionHeaderPage
                 maxWidth="max-w-[580px]"
-                align="right"
+                align="center"
                 title={expert?.heading?.[langCode]}
                 heading={expert?.title?.[langCode]}
                 description={expert?.offer_description?.[langCode]}
               /> :
               <SectionHeaderPage2
                 maxWidth="max-w-[580px]"
-                align="right"
+                align="center"
                 title={expert?.heading?.[langCode]}
                 heading={expert?.title?.[langCode]}
                 description={expert?.offer_description?.[langCode]}

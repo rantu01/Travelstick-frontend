@@ -1,57 +1,43 @@
 'use client';
 import { useI18n } from "@/app/contexts/i18n";
-import AnimatedContent from "@/app/components/ui/animatedContent";
 import TextWithTooltip from "@/app/helper/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const OfferCard = ({ title, heading, discount, discount_type, image, path = "one", data }) => {
+const OfferCard = ({ title, heading, discount, discount_type, image, data }) => {
   const router = useRouter();
   const i18n = useI18n();
-  return (
-    <div className={`${path === "one" ? "bg-[#FEF5EE]" : "bg-[#FCE9D8]"
-      } rounded-xl shadow-md px-4 max-w-[424px] mx-auto offerPath !h-[260px]`}>
-      <div className="flex justify-between h-full overflow-hidden">
-        <AnimatedContent direction="horizontal" reverse={true} distancce={50} >
-        <div className="py-6 flex flex-col">
-          <p className="text-[#EB662B] description-1 !font-dancingScript mb-4">
-            {title}
-          </p>
-          <h3 className="max-w-[130px] heading-3 whitespace-pre lg:text-3xl font-bold xl:text-[32px] text-[#05073C] !font-dancingScript mb-2 leading-tight">
-            {
-              discount_type === "percent" ?
-              (<TextWithTooltip limit={10} text={`${discount} % OFF`}  />) :
 
-              (<TextWithTooltip limit={10} text={`$ ${discount} Save`} />)
-            }
-            
-            
-          </h3>
-          <p className="text-[#717171] description-1 mt-2 max-w-[130px]">
-           <TextWithTooltip limit={30} text={heading} />
-          </p>
-          <div className="flex-grow" />
-            <button
-              className="details-button mt-4"
-              onClick={() => {
-                router.push(`/package?discount=${data?.discount}&discount_type=${data?.discount_type}`);
-              }}
-            >
-              {i18n.t("View Offer")}
-            </button>
-         
+  return (
+    <div className="flex flex-col rounded-sm overflow-hidden shadow-lg max-w-[400px] mx-auto group h-full">
+      {/* ইমেজ সেকশন */}
+      <div className="relative w-full h-[220px] overflow-hidden">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+      </div>
+
+      {/* কন্টেন্ট সেকশন (ব্লু ব্যাকগ্রাউন্ড) */}
+      <div className="bg-[#1D2B7A] p-6 flex flex-col items-center text-center flex-grow">
+        <h3 className="text-white text-4xl font-bold mb-4">
+          {discount_type === "percent" ? `${discount}%` : `$${discount}`}
+        </h3>
+        
+        <div className="text-gray-200 text-sm mb-6 leading-relaxed flex-grow">
+          <TextWithTooltip limit={120} text={heading} />
         </div>
-        </AnimatedContent>
-        <AnimatedContent direction="horizontal" reverse={false} distancce={50}>
-        <div className={`${path === "one" ? "image2Path w-[150px] xs:w-[248px] h-[183px] mt-8" : "image1Path w-[140px] xs:w-[192px] h-[228px] mt-3"} relative`}>
-          <Image
-            src={image}
-            alt="Image"
-            layout="fill"
-            objectFit="cover"
-          />
-        </div>
-        </AnimatedContent>
+
+        <button
+          onClick={() => {
+            router.push(`/package?discount=${data?.discount}&discount_type=${data?.discount_type}`);
+          }}
+          className="w-full py-3 bg-[#00BFFF] hover:bg-[#009ED9] text-white font-bold rounded-md transition-colors duration-300 uppercase tracking-wider"
+        >
+          {i18n.t("Get Offer")}
+        </button>
       </div>
     </div>
   );

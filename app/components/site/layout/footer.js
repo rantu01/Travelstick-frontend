@@ -22,21 +22,30 @@ const Footer = () => {
       setCurrentYear(new Date().getFullYear());
     }
   }, []);
+
   const handleSubmit = async (values) => {
     await useAction(postNewsletterList, values, null, true);
     form.resetFields();
   };
 
+  // Navbar এর logic অনুযায়ী Product module check করা হয়েছে
+  const isProduct = setting?.is_product_module;
+
+  // Navbar এর pagesItems এবং অন্যান্য প্রয়োজনীয় লিংকগুলো এখানে সাজানো হয়েছে
   const navLinks1 = [
     { name: "About Us", link: "/about" },
     { name: "Destination", link: "/destination" },
     { name: "Tour Packages", link: "/package" },
+    ...(isProduct ? [{ name: "Product", link: "/product" }] : []),
+    { name: "Blog", link: "/blog" },
+    { name: "Tour Guiders", link: "/team" },
+    { name: "FAQ", link: "/faq" },
     { name: "Visa Services", link: "/visa" },
-    { name: "Contact Us", link: "/contact" },
     { name: "Privacy Policy", link: "/privacyPolicy" },
     { name: "Terms and Conditions", link: "/termsCondition" },
     { name: "Refund Policy", link: "/refundPolicy" },
-  ]
+    { name: "Contact Us", link: "/contact" },
+  ];
 
   const navIcons = [
     {
@@ -56,6 +65,7 @@ const Footer = () => {
       link: `${setting?.social_media_link?.[1]?.link || "/"}`,
     },
   ];
+
   return (
     <div className="xl:mt-[140px] lg:mt-24 md:mt-20 sm:mt-16 mt-12 w-full xl:pt-10 lg:pt-9 md:pt-7 pt-5 pb-1 relative overflow-hidden bg-[#D3D3D3]">
       <div
@@ -121,6 +131,7 @@ const Footer = () => {
               </ul>
             </div>
           </div>
+          {/* বাকি অংশ আগের মতোই থাকবে */}
           <div className="w-full lg:w-[50%] flex justify-between lg:gap-8 md:gap-4 gap-8">
             <div>
               <h5 className="description-3 !font-montserrat !font-bold text-[#FFFFFF]">{i18n.t("Our Image Gallery")}</h5>
@@ -195,4 +206,3 @@ const Footer = () => {
   );
 };
 export default Footer;
-

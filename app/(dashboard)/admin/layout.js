@@ -52,7 +52,7 @@ import { PiMapPinAreaFill } from "react-icons/pi";
 import Image from "next/image";
 import { useFetch } from "@/app/helper/hooks";
 import { useUser } from "@/app/contexts/user";
-import { permission } from "process";
+import Link from "next/link"; // লোগোতে ক্লিকের জন্য লিঙ্ক ইমপোর্ট করা হলো
 
 const Layout = ({ children }) => {
   const router = useRouter();
@@ -71,7 +71,6 @@ const Layout = ({ children }) => {
         router.push("/");
         setLoading(false);
       }
-      setLoading(false);
     });
   }, [user?._id]);
 
@@ -87,23 +86,25 @@ const Layout = ({ children }) => {
             <div className="flex">
               <div className="lg:w-[320px] bg-white">
                 <div className="w-full hidden lg:flex items-center justify-center !mt-6">
-                  {siteSetting?.logo ? (
-                    <Image
-                      src={siteSetting?.site_logo}
-                      alt="Logo"
-                      width={1000}
-                      height={1000}
-                      className="w-[168px] h-[50px] object-cover"
-                    />
-                  ) : (
-                    <Image
-                      width={1000}
-                      height={1000}
-                      className="w-[168px] h-[50px] object-cover"
-                      src="/logo.svg"
-                      alt="Logo"
-                    />
-                  )}
+                  {/* লোগো সেকশনটি ডাইনামিক করা হলো */}
+                  <Link href="/">
+                    <div className="w-[168px] h-[50px] flex items-center justify-center">
+                      {siteSetting?.fav_icon ? (
+                        <Image
+                          src={siteSetting.fav_icon}
+                          alt="Logo"
+                          width={168}
+                          height={50}
+                          className="w-full h-full object-fill"
+                          priority
+                        />
+                      ) : (
+                        // লোগো ডাটা না আসা পর্যন্ত একটি ছোট প্লেসহোল্ডার বা এম্পটি স্পেস দেখাবে 
+                        // যাতে হার্ডকোডেড কিছু না দেখায়
+                        <div className="w-full h-full bg-slate-50 animate-pulse rounded" />
+                      )}
+                    </div>
+                  </Link>
                 </div>
                 <Sidebar menu={menu} />
               </div>

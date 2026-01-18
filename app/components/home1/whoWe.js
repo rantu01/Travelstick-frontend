@@ -24,10 +24,7 @@ const WhoWeAre = ({ path, theme }) => {
       {isLoading ? (
         <SkeletonLoading cols={2} />
       ) : (
-        <section
-          className="py-16 bg-no-repeat bg-cover bg-center"
-          style={{ backgroundImage: 'url("/theme1/whyWe/bg.png")' }}
-        >
+        <section className="py-16 bg-no-repeat bg-cover bg-center">
           <div className="travel-container mx-auto px-4 flex flex-col 2xl:flex-row items-center justify-between gap-6">
             <div className="w-full 2xl:w-1/2 sm:flex justify-center 2xl:-ml-40 mt-24 mb-40 2xl:mb-0 2xl:mt-0  hidden">
               <ImageSlider data={about} />

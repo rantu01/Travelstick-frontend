@@ -20,7 +20,7 @@ const AboutPage = () => {
    return (
       <div className=''>
          {
-            theme === 'one' ?
+            theme === 'two' ?
                <Banner title='About' /> :
                <Banner2 title='About' />
          }

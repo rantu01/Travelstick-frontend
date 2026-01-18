@@ -33,20 +33,12 @@ const Navbar = ({ textColor = "text-white" }) => {
   const { cart } = useCart();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isProduct = setting?.is_product_module;
+
   const tourItems = [
     { path: "/visa", label: i18n.t("Visa") },
     { path: "/hotel", label: i18n.t("Hotel") },
   ];
 
-  const pagesItems = [
-    ...(isProduct ? [{ path: "/product", label: i18n.t("Product") }] : []),
-    { path: "/blog", label: i18n.t("Blog") },
-    { path: "/team", label: i18n.t("Tour Guiders") },
-    { path: "/faq", label: i18n.t("FAQ") },
-    { path: "/contact", label: i18n.t("Contact") },
-    { path: "/privacyPolicy", label: i18n.t("Privacy Policy") },
-    { path: "/termsCondition", label: i18n.t("Terms & Conditions") },
-  ];
   const defaultLang = i18n?.languages?.find((lang) => lang?.default)?.code;
   const langFromLocalStorage =
     typeof localStorage !== "undefined" ? localStorage.getItem("lang") : null;
@@ -55,6 +47,7 @@ const Navbar = ({ textColor = "text-white" }) => {
   useEffect(() => {
     getCurrentUser();
   }, []);
+
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const userMenuItems = [
     user?.role === "admin" || user?.role === "employee"
@@ -79,10 +72,10 @@ const Navbar = ({ textColor = "text-white" }) => {
       },
     },
   ];
+
   return (
     <div className="w-full font-lato overflow-hidden relative z-50">
       <div className="travel-container flex flex-row justify-between items-center lg:py-8 py-4 lg:px-0">
-        {/* Logo */}
         {/* Logo */}
         <Link href="/">
           <div className="sm:w-[133px] sm:h-[40px] w-[153px] h-[46px] flex justify-start items-center -ml-2 lg:ml-0 mt-1">
@@ -93,11 +86,12 @@ const Navbar = ({ textColor = "text-white" }) => {
                 height={46}
                 className="sm:w-[153px] sm:h-[46px] w-[153px] h-[46px] object-fill"
                 alt="logo"
-                priority // লোগো দ্রুত লোড হওয়ার জন্য priority ব্যবহার করা ভালো
+                priority
               />
             )}
           </div>
         </Link>
+
         {/* Desktop Menu */}
         <ul className="list-none xl:gap-10 gap-4 items-center hidden lg:flex">
           <NavItem
@@ -129,11 +123,7 @@ const Navbar = ({ textColor = "text-white" }) => {
             pathname={pathname}
             textColor={textColor}
           />
-          <DropdownMenuTrigger
-            label={i18n.t("Pages")}
-            items={pagesItems}
-            textColor={textColor}
-          />
+          {/* Pages dropdown সরালে যদি সরাসরি কোনো লিংক রাখতে চান তবে এখানে NavItem যোগ করতে পারেন */}
         </ul>
 
         <div className="flex gap-0 sm:gap-2 items-center">
@@ -160,11 +150,10 @@ const Navbar = ({ textColor = "text-white" }) => {
               </button>
             ))}
 
-
           <div
             className={`flex items-center  ml-2 -mr-12 navbar ${textColor == "text-[#05073C]"
-                ? "language_select"
-                : "language_select1"
+              ? "language_select"
+              : "language_select1"
               }`}
           >
             {defaultLang === undefined ? (
@@ -232,8 +221,8 @@ const Navbar = ({ textColor = "text-white" }) => {
                     ),
                   }))}
                   className={`inline-flex items-center text-sm sm:text-lg justify-center uppercase ${textColor === "text-textMain"
-                      ? "language_select"
-                      : "language_select1"
+                    ? "language_select"
+                    : "language_select1"
                     }`}
                 />
               </div>
@@ -345,7 +334,7 @@ const Navbar = ({ textColor = "text-white" }) => {
           >
             {i18n?.t("Destination")}
           </Link>
-          <MobileDropdown title="Pages" items={pagesItems} />
+          {/* Mobile Menu থেকে Pages সরানো হয়েছে */}
           <Link
             href="/contact"
             className="text-lg"
@@ -371,13 +360,14 @@ const Navbar = ({ textColor = "text-white" }) => {
 
 export default Navbar;
 
+// NavItem, DropdownMenuTrigger, MobileDropdown helper components remain same...
 const NavItem = ({ path, label, pathname, textColor }) => (
   <li
     className={`text-lg font-medium hover:text-primary ${pathname === path
-        ? "text-primary"
-        : textColor === "text-[#05073C]"
-          ? "text-[#05073C]"
-          : "text-white"
+      ? "text-primary"
+      : textColor === "text-[#05073C]"
+        ? "text-[#05073C]"
+        : "text-white"
       }`}
   >
     <Link href={path}>{label}</Link>
@@ -432,8 +422,8 @@ const MobileDropdown = ({ title, items }) => {
               href={item.path}
               onClick={() => location.assign(item.path)}
               className={`py-2 text-sm ${pathname === item.path
-                  ? "text-primary font-semibold"
-                  : "text-textMain"
+                ? "text-primary font-semibold"
+                : "text-textMain"
                 } hover:text-primary`}
             >
               {item.label.toUpperCase()}

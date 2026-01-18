@@ -24,7 +24,7 @@ const VisaService = () => {
         <div className="travel-container w-full">
           <SectionHeaderPage
             maxWidth="max-w-[583px]"
-            align="right"
+            align="center"
             title={visaData?.heading?.[langCode]}
             heading={visaData?.title?.[langCode]}
             description={visaData?.offer_description?.[langCode]}

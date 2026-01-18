@@ -64,20 +64,20 @@ const Hero = () => {
                 delay={200}
               />
             </div>
-            
-            {/* Background primary (#28B6EA) ebong hover navy blue (#2A3479) */}
-            <Link
-              href="/package"
-              className="leading-[26px] relative z-50 animate-bounceLeftRight lg:mt-[59px] mt-[30px] font-lato font-medium sm:text-[18px] text-sm sm:px-[55px] px-6 sm:py-[18px] py-2 bg-primary hover:bg-[#2A3479] transition-all duration-300 text-white rounded-full"
-            >
-              {i18n.t("View Packages")}
-            </Link>
           </BackgroundLines>
           <div>
             <AnimatedContent direction="horizontal" distance={100}>
               <HeroFilters />
             </AnimatedContent>
           </div>
+          
+          {/* Background primary (#28B6EA) ebong hover navy blue (#2A3479) */}
+          <Link
+            href="/package"
+            className="leading-[26px] relative z-50 animate-bounceLeftRight lg:mt-[59px] mt-[30px] font-lato font-medium sm:text-[18px] text-sm sm:px-[55px] px-6 sm:py-[18px] py-2 bg-primary hover:bg-[#2A3479] transition-all duration-300 text-white rounded-full"
+          >
+            {i18n.t("View Packages")}
+          </Link>
         </div>
       </div>
     </div>
