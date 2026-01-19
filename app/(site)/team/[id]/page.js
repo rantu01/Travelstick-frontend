@@ -75,9 +75,9 @@ const TeamDetails = () => {
                 <div className="xl:mt-6 lg:mt-5 md:mt-4 mt-3">
                   <h3 className="heading-3 text-[#05073C]">{i18n.t("Designation")}:</h3>
                   <div className="lg:mt-4 mt-3">
-                    {data?.designation?.length > 0 && (
+                    {data?.specialists?.length > 0 && (
                       <ul className="list-disc pl-5">
-                        {data.designation.map((item, index) => (
+                        {data.specialists.map((item, index) => (
                           <li key={index} className="description-1 text-[#05073C]">
                             {item}
                           </li>
@@ -89,9 +89,9 @@ const TeamDetails = () => {
                 <div className="xl:mt-6 lg:mt-5 md:mt-4 mt-3">
                   <h3 className="heading-3 text-[#05073C]">{i18n.t("Roles Overview")}:</h3>
                   <div className="lg:mt-4 mt-3">
-                    {data?.roles_overview?.length > 0 && (
+                    {data?.qualifications?.length > 0 && (
                       <ul className="list-disc pl-5">
-                        {data.roles_overview.map((item, index) => (
+                        {data.qualifications.map((item, index) => (
                           <li key={index} className="description-1 text-[#05073C]">
                             {item}
                           </li>
