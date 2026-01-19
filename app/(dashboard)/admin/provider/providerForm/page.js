@@ -217,7 +217,7 @@ const ProviderForm = ({ isEdit = false, data }) => {
                       type="text"
                       required
                       className="!w-full rounded bg-transparent p-3 dashinput"
-                      label={`Specialists ${index + 1}`}
+                      label={`Designation ${index + 1}`}
                     />
                     <div className="text-right mt-3">
                       {fields.length > 1 && (
@@ -238,7 +238,7 @@ const ProviderForm = ({ isEdit = false, data }) => {
                 onClick={() => add('')}
                 className="mt-4 bg-primary text-white px-4 py-2 rounded-md"
               >
-                {i18n.t("Add Specialist")}
+                {i18n.t("Add Designation")}
               </button>
             </div>
           )}
@@ -257,7 +257,7 @@ const ProviderForm = ({ isEdit = false, data }) => {
                       type="text"
                       required
                       className="!w-full rounded bg-transparent p-3 dashinput"
-                      label={`Qualifications ${index + 1}`}
+                      label={`Roles Overview ${index + 1}`}
                     />
                     <div className="text-right mt-3">
                       {fields.length > 1 && (
@@ -278,7 +278,7 @@ const ProviderForm = ({ isEdit = false, data }) => {
                 onClick={() => add('')}
                 className="mt-4 bg-primary text-white px-4 py-2 rounded-md"
               >
-                {i18n.t("Add Qualification")}
+                {i18n.t("Add Roles Overview")}
               </button>
             </div>
           )}
