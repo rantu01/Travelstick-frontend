@@ -65,7 +65,7 @@ const PackagePage = ({ discount, discount_type, destination, startDate, endDate,
           <div className="w-full md:w-[70%] xl:w-[75%]">
             {
               data?.docs?.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 xl:gap-6 lg:gap-5 md:gap-4 gap-3">
+                <div className="grid grid-cols-1 gap-4 lg:gap-6">
                   {
                     data?.docs?.map((item, index) => (
                       theme === 'one' ?
