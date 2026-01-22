@@ -49,7 +49,7 @@ const Package = ({ theme }) => {
                 description={packageData?.offer_description?.[langCode]}
               />
           }
-          <div className="mt-6 sm:mt-7 lg:mt-9 xl:mt-[44px] w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-6 lg:gap-5 md:gap-4 gap-3">
+          <div className="mt-6 sm:mt-7 lg:mt-9 xl:mt-[44px] w-full grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 xl:gap-6 lg:gap-5 md:gap-4 gap-3">
             {data?.docs?.map((item, index) => (
               theme === 'one' ?
                 <PackageCard key={index} data={item} index={index} /> :

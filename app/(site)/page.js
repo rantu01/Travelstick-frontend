@@ -72,20 +72,20 @@ export default function Home() {
   }
 
   const ThemeOne = (
-    <main className="flex flex-col 2xl:gap-[150px] xl:gap-[120px] md:gap-20 gap-10">
+    <main className="flex flex-col 2xl:gap-[50px] xl:gap-[20px] md:gap-20 gap-10">
       <Hero data={data} />
-      <div className="flex flex-col xl:gap-[120px] md:gap-20 gap-10 overflow-hidden">
+      <div className="flex flex-col xl:gap-[80px] md:gap-20 gap-10 overflow-hidden">
         <OffersSection theme={theme} />
         <Partner />
         <PopularDestination />
-        <WhoWeAre theme={theme} />
-        <Package theme={theme} />
+        {/* <WhoWeAre theme={theme} /> */}
+        <Package theme={"two"} />
         <VisaService />
-        <Choose />
-        <Testimonials theme={theme} />
-        <Expert1 theme={theme} />
-        <ProductSection visible={hasProduct} theme={theme} />
-        <Blog1 theme={theme} />
+        {/* <Choose /> */}
+        {/* <Testimonials theme={theme} /> */}
+        {/* <Expert1 theme={theme} /> */}
+        {/* <ProductSection visible={hasProduct} theme={theme} /> */}
+        {/* <Blog1 theme={theme} /> */}
         <Newsletter theme={theme} />
       </div>
     </main>

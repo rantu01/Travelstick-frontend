@@ -1,25 +1,17 @@
 "use client";
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useFetch } from "@/app/helper/hooks";
 import { fetchPageContentTheme1 } from "@/app/helper/backend";
 import { useI18n } from "@/app/contexts/i18n";
 import HeroFilters from "../common/heroFilters";
-import { BackgroundLines } from "../ui/backgroundlines";
-import SplitText from "../ui/splitText";
-import BlurText from "../ui/blurText";
-import AnimatedContent from "../ui/animatedContent";
-import SkeletonLoading from "../common/skeletonLoading";
 
 const Hero = () => {
   const i18n = useI18n();
-  const [data, getData, { loading }] = useFetch(
-    fetchPageContentTheme1,
-    {},
-    false
-  );
-  const hero = data?.content?.hero;
   const { langCode } = useI18n();
+  const [data, getData] = useFetch(fetchPageContentTheme1, {}, false);
+  
+  const hero = data?.content?.hero;
   const bgImage = hero?.image || "/theme1/hero/hero-banner.png";
 
   useEffect(() => {
@@ -27,60 +19,49 @@ const Hero = () => {
   }, []);
 
   return (
-    <div
-      style={{
-        backgroundImage: "url(" + bgImage + ")",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-      className="h-[1250px] xs:h-[1170px] sm:h-[1000px] md:h-[1050px] lg:h-[900px] xl:h-[1024px] -mt-[144px] overflow-hidden"
-    >
-      <div className="w-full h-full bg-black bg-opacity-[50%]">
-        <div className="travel-container flex flex-col justify-center items-center pt-[172px]">
-          <BackgroundLines className="flex items-center justify-center w-full flex-col px-4">
-            <button
-              style={{
-                backgroundImage: 'url("/theme1/hero/btn-bg.png")',
-                backgroundPosition: "center",
-                backgroundRepeat: "no-repeat",
-              }}
-              className=" !font-dancingScript text-[#05073C] w-[273px] h-[68px] flex flex-col justify-center section-heading animate-bounceUpDown"
-            >
-              {hero?.heading?.[langCode] || "Banglaco Ltd."}
-            </button>
-            <div className="hero-header mt-[16px] xl:w-[1095px] lg:w-[1000px] sm:w-[580px] w-full text-white">
-              <SplitText
-                text={hero?.title?.[langCode]}
-                className="text-center"
-                delay={20}
-                heighlightsword={[2, 4, 7]}
-                heighlightclass={"text-primary"} // Tailwind config theke #28B6EA nibe
-              />
-            </div>
-            <div className=" description-2 !text-center lg:w-[871px] md:w-[668px] sm:w-[580px] md:px-0 px-2 w-full text-white mt-[24px]">
-              <BlurText
-                text={hero?.short_description?.[langCode]}
-                className="!text-center flex justify-center"
-                delay={200}
-              />
-            </div>
-          </BackgroundLines>
-          <div>
-            <AnimatedContent direction="horizontal" distance={100}>
-              <HeroFilters />
-            </AnimatedContent>
-          </div>
+    <>
+      <div
+        style={{
+          backgroundImage: `url(${bgImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        // Mobile e height kom hobe (h-[450px]), Large screen e h-[600px]
+        className="relative h-[450px] sm:h-[500px] md:h-[400px] flex flex-col items-center justify-center overflow-visible"
+      >
+        {/* Darker overlay for better text visibility */}
+        <div className="absolute inset-0 bg-black/40"></div>
+
+        {/* <div className="travel-container relative z-10 w-full flex flex-col items-center px-4 text-center">
           
-          {/* Background primary (#28B6EA) ebong hover navy blue (#2A3479) */}
+          <div className="mb-6 animate-fadeInUp">
+            <h1 className="text-white text-3xl sm:text-4xl md:text-6xl font-bold drop-shadow-2xl leading-tight">
+              {hero?.title?.[langCode] || "Explore the World"}
+            </h1>
+            <p className="text-white mt-4 text-sm sm:text-base md:text-xl max-w-2xl mx-auto opacity-90 px-2">
+              {hero?.short_description?.[langCode]}
+            </p>
+          </div>
+
           <Link
             href="/package"
-            className="leading-[26px] relative z-50 animate-bounceLeftRight lg:mt-[59px] mt-[30px] font-lato font-medium sm:text-[18px] text-sm sm:px-[55px] px-6 sm:py-[18px] py-2 bg-primary hover:bg-[#2A3479] transition-all duration-300 text-white rounded-full"
+            className="mt-4 bg-primary hover:bg-[#2A3479] text-white px-6 py-2 sm:px-8 sm:py-3 rounded-full font-medium transition-all shadow-lg active:scale-95"
           >
             {i18n.t("View Packages")}
           </Link>
+        </div> */}
+
+        {/* HeroFilters Section - Absolute position with High Z-Index */}
+        <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 z-[999] w-full px-4">
+          <div className="max-w-[1200px] mx-auto">
+            <HeroFilters />
+          </div>
         </div>
       </div>
-    </div>
+      
+      {/* Spacer for Responsiveness: Mobile e Search box boro hoy tai space beshi dorkar */}
+      <div className="h-[380px] xs:h-[350px] sm:h-[250px] md:h-[180px] lg:h-[120px]"></div>
+    </>
   );
 };
 
