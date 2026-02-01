@@ -13,6 +13,7 @@ import Navbar from "../components/site/layout/navbar";
 import { SkeletonTheme } from "react-loading-skeleton";
 import Navbar2 from "../components/site/layout/navbar2";
 import WhatsappChat from "../(dashboard)/components/common/whatsapp";
+import MaintenancePage from "../components/MaintenancePage";
 const Layout = ({ children }) => {
   const [setting, getSetting] = useFetch(fetchPublicSettings);
   const [data] = useFetch(fetchPageContentTheme1, { status: true });
@@ -90,6 +91,7 @@ const Layout = ({ children }) => {
       <I18nProvider>
         <SkeletonTheme color="#0F172A" highlightColor="#444">
           <Providers>
+            <MaintenancePage></MaintenancePage>
             {theme === "one" ? (
               <Navbar
                 textColor={isTextMain ? "text-[#05073C]" : "text-white"}
