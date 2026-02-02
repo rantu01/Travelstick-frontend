@@ -5,9 +5,9 @@ const WhatsappChat = () => {
   const [open, setOpen] = useState(false);
   const [visible, setVisible] = useState(true);
 
-  const phoneNumber = "8801404049797";
+  const phoneNumber = "+8801913751185";
   const message = encodeURIComponent(
-    "Hello Appstick Team! 👋 I’m interested in discussing a web development project or collaboration with you."
+    "Hello Banglaco Team! 👋"
   );
 
   const handleChatClick = () => {
