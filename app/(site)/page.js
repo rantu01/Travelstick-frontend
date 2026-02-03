@@ -72,7 +72,7 @@ export default function Home() {
   }
 
   const ThemeOne = (
-    <main className="flex flex-col 2xl:gap-[50px] xl:gap-[20px] md:gap-20 gap-10">
+    <main className="flex flex-col 2xl:gap-[50px] xl:gap-[20px] md:gap-20 gap-10 ">
       <Hero data={data} />
       <div className="flex flex-col xl:gap-[80px] md:gap-20 gap-10 overflow-hidden">
         <OffersSection theme={theme} />
@@ -92,7 +92,7 @@ export default function Home() {
   );
 
   const ThemeTwo = (
-    <main className="flex flex-col 2xl:gap-[150px] xl:gap-[120px] md:gap-20 gap-10">
+    <main className="flex flex-col 2xl:gap-[150px] xl:gap-[120px] md:gap-20 gap-10 ">
       <Hero2 heroData={data} />
       <div className="flex flex-col xl:gap-[120px] md:gap-20 gap-10 overflow-hidden">
         <OffersSection theme={theme} />

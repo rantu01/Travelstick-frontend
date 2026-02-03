@@ -12,7 +12,7 @@ const Hero = () => {
   const [data, getData] = useFetch(fetchPageContentTheme1, {}, false);
   
   const hero = data?.content?.hero;
-  const bgImage = hero?.image || "/theme1/hero/hero-banner.png";
+  const bgImage = "/homeBg.jpg";
 
   useEffect(() => {
     getData();

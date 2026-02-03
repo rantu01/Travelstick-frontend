@@ -34,7 +34,7 @@ const OffersSection = ({ theme }) => {
           {theme === 'one' ? (
             <SectionHeaderPage
               maxWidth="max-w-[800px]"
-              align="center"
+              align="start"
               title={offer?.heading?.[langCode]}
               heading={offer?.title?.[langCode]}
               description={offer?.offer_description?.[langCode]}
@@ -42,7 +42,7 @@ const OffersSection = ({ theme }) => {
           ) : (
             <SectionHeaderPage2
               maxWidth="max-w-[800px]"
-              align="center"
+              align="start"
               title={offer?.heading?.[langCode]}
               heading={offer?.title?.[langCode]}
               description={offer?.offer_description?.[langCode]}

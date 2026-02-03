@@ -49,12 +49,48 @@ const Package = ({ theme }) => {
                 description={packageData?.offer_description?.[langCode]}
               />
           }
-          <div className="mt-6 sm:mt-7 lg:mt-9 xl:mt-[44px] w-full grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 xl:gap-6 lg:gap-5 md:gap-4 gap-3">
-            {data?.docs?.map((item, index) => (
-              theme === 'one' ?
-                <PackageCard key={index} data={item} index={index} /> :
-                <PackageCard2 key={index} data={item} index={index} />
-            ))}
+          <div className="mt-6 sm:mt-7 lg:mt-9 xl:mt-[44px] w-full overflow-hidden">
+            {/* স্লাইডিং কন্টেইনার */}
+            <div className="flex w-max animate-marquee space-x-4 md:space-x-6 hover:[animation-play-state:paused]">
+              {/* ডাটা ডুপ্লিকেট করা হয়েছে যাতে লুপটি নিরবচ্ছিন্ন বা স্মুথ হয় */}
+              {[...(data?.docs || []), ...(data?.docs || [])].map((item, index) => (
+                <div
+                  key={index}
+                  className="w-[280px] sm:w-[320px] md:w-[380px] flex-shrink-0 transition-all duration-500 ease-in-out"
+                >
+                  {theme === 'one' ? (
+                    <PackageCard data={item} index={index} />
+                  ) : (
+                    <PackageCard2 data={item} index={index} />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* CSS অ্যানিমেশন (আপনি এটি আপনার গ্লোবাল CSS ফাইলে অথবা নিচের মতো ইনলাইন রাখতে পারেন) */}
+            <style jsx>{`
+    .animate-marquee {
+      display: flex;
+      width: max-content;
+      animation: marquee 30s linear infinite;
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-50%);
+      }
+    }
+
+    /* মোবাইল ডিভাইসে অ্যানিমেশন কিছুটা দ্রুত করতে চাইলে */
+    @media (max-width: 640px) {
+      .animate-marquee {
+        animation: marquee 20s linear infinite;
+      }
+    }
+  `}</style>
           </div>
           {data?.docs?.length > 0 && (
             <div className="flex justify-center xl:mt-14 lg:mt-10 md:mt-8 sm:mt-5 mt-5">

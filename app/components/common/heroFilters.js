@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { MdFlight, MdHotel, MdDescription, MdOutlineWbSunny } from "react-icons/md";
 import { HiOutlineSwitchHorizontal } from "react-icons/hi";
-import { DatePicker, message } from "antd";
+import { DatePicker } from "antd";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/app/contexts/i18n";
 import { useFetch } from "@/app/helper/hooks";
@@ -12,9 +12,8 @@ const HeroFilters = () => {
   const i18n = useI18n();
   const { langCode } = useI18n();
   const router = useRouter();
-  const [tab, setTab] = useState("tour"); // Maps to "Flight" in visual logic
-  
-  // States
+
+  const [tab, setTab] = useState("flight");
   const [destination, setDestination] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -25,140 +24,124 @@ const HeroFilters = () => {
     const query = new URLSearchParams();
     if (destination) query.append("destination", destination);
     if (startDate) query.append("startDate", startDate);
-    
-    // Redirect based on active tab
-    router.push(`/${tab === "tour" ? "package" : tab}?${query.toString()}`);
+
+    let targetRoute = tab;
+    if (tab === "holiday") targetRoute = "package";
+
+    router.push(`/${targetRoute}?${query.toString()}`);
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
-      {/* Tab Navigation (The floating small bar) */}
-      <div className="flex justify-center relative z-20">
-        <div className="bg-white rounded-xl shadow-xl flex p-1 border border-gray-100">
-          <TabButton 
-            active={tab === "tour"} 
-            onClick={() => setTab("tour")} 
-            icon={<MdFlight size={20} />} 
-            label="Flight" // Backend uses "tour"
-          />
-          <TabButton 
-            active={tab === "hotel"} 
-            onClick={() => setTab("hotel")} 
-            icon={<MdHotel size={20} />} 
-            label="Hotel" 
-          />
-          <TabButton 
-            active={tab === "visa"} 
-            onClick={() => setTab("visa")} 
-            icon={<MdDescription size={20} />} 
-            label="Visa" 
-          />
-          <TabButton 
-            active={tab === "holiday"} 
-            onClick={() => setTab("holiday")} 
-            icon={<MdOutlineWbSunny size={20} />} 
-            label="Holiday" 
-          />
+    <div className="w-full max-w-6xl mx-auto px-4">
+      {/* Tab Navigation */}
+      <div className="flex justify-center relative z-20 -mb-4">
+        <div className="bg-white rounded-t-xl shadow-sm flex border-x border-t border-gray-100 overflow-hidden">
+          <TabButton active={tab === "flight"} onClick={() => setTab("flight")} icon={<MdFlight size={20} className="rotate-45" />} label="Flight" />
+          <TabButton active={tab === "hotel"} onClick={() => setTab("hotel")} icon={<MdHotel size={20} />} label="Hotel" />
+          <TabButton active={tab === "holiday"} onClick={() => setTab("holiday")} icon={<MdOutlineWbSunny size={20} />} label="Holiday" />
+          <TabButton active={tab === "visa"} onClick={() => setTab("visa")} icon={<MdDescription size={20} />} label="Visa" />
         </div>
       </div>
 
-      {/* Search Content Card */}
-      <div className="bg-white rounded-[24px] shadow-2xl p-8 pt-12 w-full">
-        {/* Mini Radio Selectors (Trip Type) */}
-        <div className="flex gap-4 mb-6">
-          <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-600">
-            <input type="radio" name="trip" defaultChecked className="accent-primary" /> Round Trip
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer text-sm font-medium text-gray-600">
-            <input type="radio" name="trip" className="accent-primary" /> One Way
-          </label>
-        </div>
+      {/* Main Search Box */}
+      <div className="bg-white rounded-xl shadow-2xl p-6 md:p-10 w-full relative z-10 border border-gray-50">
 
-        {/* Input Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
-          
-          {/* FROM / TO Logic (Mapped to Destination in backend) */}
-          <div className="lg:col-span-5 grid grid-cols-2 gap-2 relative">
-            <div className="border rounded-lg p-3 hover:border-primary transition-colors">
-              <p className="text-[10px] uppercase text-gray-400 font-bold">From</p>
-              <h3 className="font-bold text-lg">DAC</h3>
-              <p className="text-[11px] text-gray-500 truncate">Dhaka, Bangladesh</p>
-            </div>
-            
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white border rounded-md p-1 shadow-md z-10">
-              <HiOutlineSwitchHorizontal className="text-primary" />
-            </div>
+        {tab === "flight" && (
+          <div className="flex gap-4 mb-6">
+            <TripType label="One Way" name="flight_trip" defaultChecked />
+            <TripType label="Round Trip" name="flight_trip" />
+            <TripType label="Multi City" name="flight_trip" />
+          </div>
+        )}
 
-            <div className="border rounded-lg p-3 hover:border-primary transition-colors">
-              <p className="text-[10px] uppercase text-gray-400 font-bold">To</p>
-              <select 
-                className="w-full font-bold text-lg bg-transparent outline-none appearance-none"
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch">
+
+          {/* Destination Section */}
+          <div className={`${tab === "hotel" ? "lg:col-span-4" : tab === "holiday" ? "lg:col-span-6" : "lg:col-span-5"} border rounded-xl overflow-hidden`}>
+            <div className="p-3 hover:bg-gray-50 transition-all">
+              <p className="text-[11px] text-gray-400 font-semibold uppercase">
+                {tab === "hotel" || tab === "holiday" ? "Destination" : tab === "visa" ? "Travelling to" : "To"}
+              </p>
+              <select
+                className="w-full font-bold text-base text-[#1A237E] bg-transparent outline-none appearance-none cursor-pointer"
                 onChange={(e) => setDestination(e.target.value)}
               >
-                <option value="">Select</option>
+                <option value="">Dhaka, Bangladesh</option>
                 {filterData?.find(i => i.key === "package_destination")?.values?.map(v => (
                   <option key={v._id} value={v._id}>{v.name}</option>
                 ))}
               </select>
-              <p className="text-[11px] text-gray-500">Destination</p>
+              <p className="text-[11px] text-gray-500">Select city or area</p>
             </div>
           </div>
 
-          {/* DATES */}
-          <div className="lg:col-span-4 grid grid-cols-2 gap-2">
-            <div className="border rounded-lg p-3">
-              <p className="text-[10px] uppercase text-gray-400 font-bold">Departure</p>
-              <DatePicker 
-                variant="borderless" 
-                className="p-0 font-bold" 
+          {/* Date & Guests Section */}
+          <div className={`${tab === "hotel" ? "lg:col-span-6" : "lg:col-span-5"} grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 border rounded-xl overflow-hidden`}>
+            {/* Check In */}
+            <div className="p-3 border-r hover:bg-gray-50 transition-all">
+              <p className="text-[11px] text-gray-400 font-semibold uppercase">Check In</p>
+              <DatePicker
+                variant="borderless"
+                className="p-0 font-bold text-[#1A237E] w-full"
+                placeholder="05 Feb, 2026"
                 onChange={(d, s) => setStartDate(s)}
               />
             </div>
-            <div className="border rounded-lg p-3">
-              <p className="text-[10px] uppercase text-gray-400 font-bold">Return</p>
-              <DatePicker 
-                variant="borderless" 
-                className="p-0 font-bold"
+
+            {/* Check Out */}
+            <div className="p-3 border-r hover:bg-gray-50 transition-all">
+              <p className="text-[11px] text-gray-400 font-semibold uppercase">Check Out</p>
+              <DatePicker
+                variant="borderless"
+                className="p-0 font-bold text-[#1A237E] w-full"
+                placeholder="05 Feb, 2026"
                 onChange={(d, s) => setEndDate(s)}
               />
             </div>
+
+            {/* Room & Guests - Only show when Hotel is active */}
+            <div className="p-3 hover:bg-gray-50 transition-all md:col-span-2 lg:col-span-1 border-t md:border-t-0">
+              <p className="text-[11px] text-gray-400 font-semibold uppercase">Room & Guests</p>
+              <h3 className="font-bold text-base text-[#1A237E]">1 Room, @ Adults, 1 Child</h3>
+            </div>
           </div>
 
-          {/* SEARCH BUTTON */}
-          <div className="lg:col-span-3">
-            <button 
+          {/* Search Button */}
+          <div className="lg:col-span-2">
+            <button
               onClick={handleSearch}
-              className="w-full bg-[#1A237E] hover:bg-black text-white h-[60px] rounded-lg font-bold text-lg transition-all"
+              className="w-full bg-[#1A237E] hover:bg-blue-900 text-white h-full min-h-[60px] rounded-xl flex items-center justify-center transition-all shadow-lg"
             >
-              Search {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </button>
           </div>
-
-        </div>
-
-        {/* Bottom Options (Student/Regular Fee) */}
-        <div className="flex gap-6 mt-6">
-           <label className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer">
-              <input type="radio" name="fee" className="accent-primary" /> Regular Fee
-           </label>
-           <label className="flex items-center gap-2 text-sm text-gray-500 cursor-pointer">
-              <input type="radio" name="fee" defaultChecked className="accent-primary" /> Student Fee
-           </label>
         </div>
       </div>
     </div>
   );
 };
 
-// Helper Sub-component for Tabs
+const TripType = ({ label, name, defaultChecked }) => (
+  <label className="flex items-center gap-2 cursor-pointer group">
+    <div className="relative flex items-center justify-center">
+      <input type="radio" name={name} defaultChecked={defaultChecked} className="peer appearance-none w-4 h-4 border-2 border-gray-300 rounded-full checked:border-blue-500 transition-all" />
+      <div className="absolute w-2 h-2 bg-blue-500 rounded-full scale-0 peer-checked:scale-100 transition-transform"></div>
+    </div>
+    <span className="text-xs font-bold text-gray-600 group-hover:text-blue-500">{label}</span>
+  </label>
+);
+
 const TabButton = ({ active, onClick, icon, label }) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-all font-medium ${
-      active ? "bg-[#E3F2FD] text-primary" : "text-gray-500 hover:bg-gray-50"
-    }`}
+    className={`flex items-center gap-2 px-6 py-4 transition-all border-b-2 font-bold text-sm ${active
+        ? "bg-[#E3F2FD] text-blue-600 border-blue-500"
+        : "bg-white text-gray-500 border-transparent hover:bg-gray-50"
+      }`}
   >
-    {icon}
+    <span className={active ? "text-blue-600" : "text-gray-400"}>{icon}</span>
     <span>{label}</span>
   </button>
 );

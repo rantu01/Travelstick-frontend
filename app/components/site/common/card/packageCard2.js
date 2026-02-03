@@ -2,102 +2,49 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { FaStar } from "react-icons/fa6";
 import { useCurrency } from "@/app/contexts/site";
 import { useI18n } from "@/app/contexts/i18n";
-import TextWithTooltip from "@/app/helper/utils";
-import AnimatedContent from "@/app/components/ui/animatedContent";
-import { MdOutlineLocationOn } from "react-icons/md";
-import { LuAlarmClockCheck } from "react-icons/lu";
-const PackageCard2 = ({ data, index }) => {
+
+const PackageCard2 = ({ data }) => {
   const { currency_symbol } = useCurrency();
   const { langCode } = useI18n();
-  const i18n = useI18n();
+
   return (
-    <AnimatedContent direction="horizontal" reverse={false}>
-      <div className="group w-full rounded-[10px] lg:rounded-[20px] border border-[#E8EAE8]">
-        <div className="relative w-full overflow-hidden group">
+    <Link href={`/package/${data?._id}`}>
+      <div className="group relative w-full h-[250px] md:h-[300px] rounded-2xl overflow-hidden cursor-pointer shadow-lg transition-all duration-500">
+        
+        {/* ১. মেইন ব্যাকগ্রাউন্ড ইমেজ */}
+        <div className="absolute inset-0 w-full h-full">
           {data?.card_image && (
             <Image
-              className="w-full md:w-[424px] h-[220px] lg:h-[245px] object-fill rounded-t-[10px] lg:rounded-t-[20px]"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               src={data?.card_image}
-              width={424}
-              height={380}
-              alt="images"
+              fill
+              alt={data?.name?.[langCode] || "package image"}
             />
           )}
-          <p
-            className={`${index === 0
-              ? "bg-[#F38035]"
-              : index === 1
-                ? "bg-[#F0691F]"
-                : index === 2
-                  ? "bg-[#EF4444]"
-                  : "bg-[#F0691F]"
-              } capitalize description-4 absolute top-4 right-4 rounded-full px-3 py-1 text-white`}
-          >
-            {data?.section?.[0]}
+          {/* ডার্ক গ্র্যাডিয়েন্ট ওভারলে */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+        </div>
+
+        {/* ২. ওপরের বাম পাশের প্যাকেজ কাউন্ট ব্যাজ */}
+        <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/30 text-white text-[10px] font-medium uppercase">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+          {data?.feathers?.length || 0} Packages
+        </div>
+
+        {/* ৩. নিচের টেক্সট কন্টেন্ট */}
+        <div className="absolute bottom-6 left-6 text-white">
+          <h3 className="text-xl md:text-2xl font-bold mb-1 tracking-tight">
+            {data?.name?.[langCode]}
+          </h3>
+          <p className="text-sm font-light text-gray-200">
+            Starts From <span className="font-bold text-white ml-1">{currency_symbol}{data?.current_price?.toLocaleString()}</span>
           </p>
         </div>
-        <div className="xl:p-4 lg:p-3 p-2 rounded-[12px] -mt-4 z-50 relative bg-white">
-          <div className="absolute -top-3 right-4 border rounded-full px-4 py-2 flex items-center gap-3 bg-white ">
-            <FaStar size={12} className="text-[#FBAD17]" />
-            <p className="#05073C font-semibold font-sm">
-              {data?.average_review?.toFixed(1)}
-              <span className="text-[#717171] text-sm font-semibold ml-1">
-                ({data?.reviews_count} reviews)
-              </span>
-            </p>
-          </div>
-          <h3 className="description-3 xl:mt-5 lg:mt-4 mt-3 text-[#1A1A1A]">
-            <TextWithTooltip limit={25} text={data?.name?.[langCode]} />
-          </h3>
-          <div className="grid grid-cols-2 justify-between items-center xl:mt-4 lg:mt-3 mt-2 ">
-            {data?.feathers?.map((item, index) => (
-              <div key={index} className="lg:mt-3 mt-2 flex items-center gap-2">
-                <Image src={item?.logo} width={20} height={20} alt="images" />
-                <p className="description-4 text-[#717171]">
-                  <TextWithTooltip limit={12} text={item?.text?.[langCode]} />
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="xl:mt-4 lg:mt-3 mt-2 flex items-center gap-2  pb-3 lg:pb-4">
-            <div className="flex justify-between items-center w-full">
-              <div className="flex items-center gap-2">
-                <MdOutlineLocationOn className="description-4" />
-                <div className="description-4 text-[#717171]">
-                  <TextWithTooltip limit={15} text={data?.destination?.name} />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <LuAlarmClockCheck className="description-4" />
-                <p className="description-4 text-[#717171]">
-                  {data?.duration} Days
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="flex justify-between items-center xl:mt-4 lg:mt-3 mt-2">
-            <p className="heading-4 text-[#EB662B] ">
-              {currency_symbol}
-              {data?.current_price?.toFixed(1)}
-              <span className="description-4 text-[#717171] ml-1">
-                <del className="text-red-600">({currency_symbol} {data?.regular_price?.toFixed(1)})</del>
-              </span>
-              <br />
-              <span className="description-4 text-[#717171]">per person</span>
-            </p>
-            <Link
-              href={`/package/${data?._id}`}
-              className="details-button "
-            >
-              {i18n.t("View Details")}
-            </Link>
-          </div>
-        </div>
+
       </div>
-    </AnimatedContent>
+    </Link>
   );
 };
 

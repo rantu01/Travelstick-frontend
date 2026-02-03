@@ -38,10 +38,23 @@ const Partner = () => {
             />
           </div>
 
+          <div>
+            {/* <h2>
+              Most Popular Airlines
+            </h2> */}
+            <p className="text-center">
+              With Banglaco, your journey begins With the best names in the sky
+            </p>
+          </div>
+
           {/* Marquee বাদ দিয়ে flex-wrap ব্যবহার করা হয়েছে */}
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10 lg:gap-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10 lg:gap-16">
             {partnerImages.map((image, index) => (
-              <div key={index} className="flex-shrink-0 transition-transform hover:scale-105 duration-300">
+              <div
+                key={index}
+                className="group flex items-center justify-between transition-transform hover:scale-105 duration-300"
+              >
+                {/* ইমেজের সাইজ আপনার কোড অনুযায়ী একই রাখা হয়েছে */}
                 <Image
                   className="w-[120px] h-[60px] md:w-[150px] md:h-[70px] object-contain"
                   src={image}
@@ -49,6 +62,21 @@ const Partner = () => {
                   height={100}
                   alt={`partner-image-${index}`}
                 />
+
+                {/* অ্যারো আইকন */}
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-gray-300 group-hover:text-blue-500 transform group-hover:translate-x-1 transition-all"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
               </div>
             ))}
           </div>

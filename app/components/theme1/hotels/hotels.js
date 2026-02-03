@@ -1,4 +1,3 @@
-
 "use client";
 import { Drawer, Empty } from "antd";
 import { useEffect, useState } from "react";
@@ -26,15 +25,18 @@ const HotelsPage = ({ destination, hotelType, roomType, reputation, theme }) => 
   }, [destination, hotelType, roomType, reputation]);
 
   const i18n = useI18n();
+
   return (
-    <div className="">
+    <div className="w-full">
       {
         theme === 'one' ?
           <Banner title="Hotels" /> :
           <Banner2 title="Hotels" />
       }
-      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative">
-        {/* Filter icon for mobile */}
+      
+      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">
+        
+        {/* মোবাইল ফিল্টার বাটন */}
         <div className="flex gap-2 items-center justify-end md:hidden mb-4 overflow-hidden">
           <button
             className="text-xl p-2 border border-gray-300 rounded-md"
@@ -47,10 +49,10 @@ const HotelsPage = ({ destination, hotelType, roomType, reputation, theme }) => 
               height={20}
             />
           </button>
-          <p className="heading-1 text-[#000000]">{i18n.t("Filters")}</p>
+          <p className="font-semibold text-[#000000]">{i18n.t("Filters")}</p>
         </div>
 
-        {/* Drawer for filters */}
+        {/* মোবাইল ড্রয়ার */}
         <Drawer
           title={i18n.t("Filters")}
           onClose={() => setOpenDrawer(false)}
@@ -59,14 +61,21 @@ const HotelsPage = ({ destination, hotelType, roomType, reputation, theme }) => 
         >
           <HotelFilters getData={getData} />
         </Drawer>
-        <div className="flex flex-col sm:flex-row xl:gap-6 lg:gap-5 md:gap-4 gap-3">
+
+        <div className="flex flex-col md:flex-row xl:gap-8 lg:gap-6 md:gap-4 gap-3">
+          
+          {/* সাইডবার ফিল্টার (Desktop) */}
           <div className="w-full md:w-[30%] xl:w-[25%] hidden md:block">
-            <HotelFilters getData={getData} />
+            <div className="sticky top-24">
+              <HotelFilters getData={getData} />
+            </div>
           </div>
+
+          {/* হোটেল কার্ড গ্রিড */}
           <div className="w-full md:w-[70%] xl:w-[75%]">
             {
               data?.docs?.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 xl:gap-6 lg:gap-5 md:gap-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4 md:gap-6">
                   {
                     data?.docs?.map((item, index) => (
                       <HotelCard key={index} data={item} index={index} />
@@ -74,10 +83,13 @@ const HotelsPage = ({ destination, hotelType, roomType, reputation, theme }) => 
                   }
                 </div>
               ) : (
-                <Empty description="No Hotels Found" />
+                <div className="flex justify-center items-center min-h-[300px] w-full bg-gray-50 rounded-2xl">
+                   <Empty description="No Hotels Found" />
+                </div>
               )
             }
           </div>
+
         </div>
       </div>
     </div>
