@@ -22,15 +22,16 @@ const Hero = () => {
     <>
       <div
         style={{
+          // Inline style e image thakbe, kintu className er maddhome mobile e eti hide hobe
           backgroundImage: `url(${bgImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
-        // Mobile e height kom hobe (h-[450px]), Large screen e h-[600px]
-        className="relative h-[450px] sm:h-[500px] md:h-[400px] flex flex-col items-center justify-center overflow-visible"
+        // md: (ba sm:) breakpoint er niche bg-none ebong bg-white use kora hoyeche
+        className="relative h-[450px] sm:h-[500px] md:h-[400px] flex flex-col items-center justify-center overflow-visible bg-white md:bg-transparent bg-none md:[background-image:inherit]"
       >
-        {/* Darker overlay for better text visibility */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        {/* Mobile e overlay hide thakbe (hidden md:block) jate white bg clear thake */}
+        <div className="absolute inset-0 bg-black/40 hidden md:block"></div>
 
         {/* <div className="travel-container relative z-10 w-full flex flex-col items-center px-4 text-center">
           

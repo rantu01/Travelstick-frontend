@@ -85,8 +85,8 @@ const Navbar2 = ({ textColor = "text-white" }) => {
     },
   ];
   return (
-    <div className="w-full font-lato overflow-hidden relative z-50">
-      <div className="travel-container flex flex-row justify-between items-center lg:py-8 py-4 lg:px-0">
+    <div className=" font-lato overflow-hidden relative z-50">
+      <div className="max-w-6xl mx-auto flex flex-row justify-between items-center lg:py-8 py-4 lg:px-0">
         {/* Logo */}
         {/* Logo */}
         <Link href="/">

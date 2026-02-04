@@ -79,8 +79,8 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
   ];
 
   return (
-    <div className="w-full bg-white shadow-sm font-lato sticky top-0 z-50 overflow-hidden">
-      <div className="max-w-[1300px] mx-auto flex flex-row justify-between items-center py-3 px-4 lg:px-0">
+    <div className=" bg-white shadow-sm font-lato sticky top-0 z-50 overflow-hidden">
+      <div className="max-w-6xl mx-auto flex flex-row justify-between items-center py-3 px-4 lg:px-0">
         
         {/* 1. Logo Section (Using site_logo from settings) */}
         <Link href="/">
