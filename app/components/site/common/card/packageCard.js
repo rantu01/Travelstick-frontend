@@ -17,7 +17,7 @@ const PackageCard = ({ data, index }) => {
   return (
     <AnimatedContent direction="horizontal" reverse={false}>
       <div className="group w-full flex flex-col md:flex-row bg-white rounded-[15px] border border-[#E8EAE8] overflow-hidden hover:shadow-lg transition-shadow duration-300 min-h-[250px]">
-        
+
         {/* Left Side: Image Section */}
         <div className="relative w-full md:w-[35%] overflow-hidden">
           {data?.card_image && (
@@ -50,13 +50,13 @@ const PackageCard = ({ data, index }) => {
             </div>
 
             <div className="flex items-center gap-4 text-sm text-[#717171] mb-4">
-               <span className="flex items-center gap-1">
-                 Hotel • {data?.duration} Days
-               </span>
-               <span className="flex items-center gap-1">
-                 <MdOutlineLocationOn className="text-[#1A4FA0]" />
-                 {data?.destination?.name}
-               </span>
+              <span className="flex items-center gap-1">
+                Hotel • {data?.duration} Days
+              </span>
+              <span className="flex items-center gap-1">
+                <MdOutlineLocationOn className="text-[#1A4FA0]" />
+                {data?.destination?.name}
+              </span>
             </div>
 
             {/* Features/Amenities */}
@@ -71,7 +71,7 @@ const PackageCard = ({ data, index }) => {
               ))}
               {data?.feathers?.length > 4 && (
                 <p className="text-[12px] text-[#1A4FA0] font-medium">
-                   + {data?.feathers.length - 4} more
+                  + {data?.feathers.length - 4} more
                 </p>
               )}
             </div>
@@ -79,15 +79,15 @@ const PackageCard = ({ data, index }) => {
 
           {/* Review text as per design */}
           <div className="mt-4 pt-4 border-t border-[#f1f1f1] flex items-center gap-2">
-             <Image src="/hotel-icon.png" width={20} height={20} alt="bed" className="opacity-50" />
-             <p className="text-[13px] text-[#4A4A4A] font-medium">
-                Standard Room • Non Refundable
-             </p>
+            <Image src="/hotel-icon.png" width={20} height={20} alt="bed" className="opacity-50" />
+            <p className="text-[13px] text-[#4A4A4A] font-medium">
+              Standard Room • Non Refundable
+            </p>
           </div>
         </div>
 
         {/* Right Side: Pricing Section */}
-        <div className="w-full md:w-[25%] bg-[#F5F9FF] p-6 flex flex-col items-center justify-center text-center">
+        <div className="w-full md:w-[25%] bg-[#d8eaff] p-6 flex flex-col items-end justify-center text-end">
           <p className="text-[12px] text-gray-500 mb-1">Starts From</p>
           <div className="mb-4">
             <h2 className="text-2xl font-bold text-[#1A1A1A]">
@@ -99,14 +99,15 @@ const PackageCard = ({ data, index }) => {
               </p>
             )}
             <p className="text-[11px] text-gray-400 mt-1">Per Person/Package</p>
+            <Link
+              href={`/package/${data?._id}`}
+              className="w-full mt-4 bg-[#3B82F6] hover:bg-[#1A4FA0] text-white font-medium py-2 px-6 rounded-full transition-colors duration-300 text-sm flex items-center justify-center gap-2 group-hover:shadow-md"
+            >
+              {i18n.t("Details")} &gt;
+            </Link>
           </div>
 
-          <Link
-            href={`/package/${data?._id}`}
-            className="w-full bg-[#3B82F6] hover:bg-[#1A4FA0] text-white font-medium py-2 px-6 rounded-full transition-colors duration-300 text-sm flex items-center justify-center gap-2 group-hover:shadow-md"
-          >
-            {i18n.t("Details")} &gt;
-          </Link>
+
         </div>
       </div>
     </AnimatedContent>
