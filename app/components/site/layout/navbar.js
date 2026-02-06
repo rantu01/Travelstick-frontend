@@ -48,7 +48,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
 
   // Menu items with icons like the image
   const menuItems = [
-    { path: "/", label: i18n.t("Flight"), icon: <FaPlane /> },
+    { path: "/flight", label: i18n.t("Flight"), icon: <FaPlane /> },
     { path: "/hotel", label: i18n.t("Hotel"), icon: <FaHotel /> },
     { path: "/visa", label: i18n.t("Visa"), icon: <FaPassport /> },
     { path: "/package", label: i18n.t("Holiday"), icon: <FaUmbrellaBeach /> },

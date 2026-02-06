@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect } from "react";
+import React, { useEffect } from "react";
 import SectionHeaderPage from "../common/sectionHeader";
 import Link from "next/link";
 import PackageCard from "../site/common/card/packageCard";
@@ -12,88 +12,88 @@ import {
 import SkeletonLoading from "../common/skeletonLoading";
 import SectionHeaderPage2 from "../common/sectionHeader2";
 import PackageCard2 from "../site/common/card/packageCard2";
+
+// Swiper imports
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+
 const Package = ({ theme }) => {
   const { langCode } = useI18n();
   const [packages] = useFetch(fetchPageContentTheme1);
   const packageData = packages?.content?.packages;
-  const [data, getData, { loading }] = useFetch(getAllPublicPackages, {
-    limit: 4,
+  const [data, getData] = useFetch(getAllPublicPackages, {
+    limit: 10,
   });
   const i18n = useI18n();
+
   useEffect(() => {
     getData();
   }, []);
-  const isLoading = data?.docs?.length === 0;
+
+  const isLoading = !data?.docs || data?.docs?.length === 0;
+
   return (
     <>
       {isLoading ? (
-
         <SkeletonLoading cols={4} />
-
       ) : (
         <div className="travel-container w-full">
-          {
-            theme === 'one' ?
-              <SectionHeaderPage
-                maxWidth="max-w-[800px]"
-                align="center"
-                title={packageData?.heading?.[langCode]}
-                heading={packageData?.title?.[langCode]}
-                description={packageData?.offer_description?.[langCode]}
-              /> :
-              <SectionHeaderPage2
-                maxWidth="max-w-[800px]"
-                align="center"
-                title={packageData?.heading?.[langCode]}
-                heading={packageData?.title?.[langCode]}
-                description={packageData?.offer_description?.[langCode]}
-              />
-          }
-          <div className="mt-6 sm:mt-7 lg:mt-9 xl:mt-[44px] w-full overflow-hidden">
-            {/* স্লাইডিং কন্টেইনার */}
-            <div className="flex w-max animate-marquee space-x-4 md:space-x-6 hover:[animation-play-state:paused]">
-              {/* ডাটা ডুপ্লিকেট করা হয়েছে যাতে লুপটি নিরবচ্ছিন্ন বা স্মুথ হয় */}
-              {[...(data?.docs || []), ...(data?.docs || [])].map((item, index) => (
-                <div
-                  key={index}
-                  className="w-[280px] sm:w-[320px] md:w-[380px] flex-shrink-0 transition-all duration-500 ease-in-out"
-                >
-                  {theme === 'one' ? (
-                    <PackageCard data={item} index={index} />
-                  ) : (
-                    <PackageCard2 data={item} index={index} />
-                  )}
-                </div>
+          {theme === 'one' ? (
+            <SectionHeaderPage
+              maxWidth="max-w-[800px]"
+              align="center"
+              title={packageData?.heading?.[langCode]}
+              heading={packageData?.title?.[langCode]}
+              description={packageData?.offer_description?.[langCode]}
+            />
+          ) : (
+            <SectionHeaderPage2
+              maxWidth="max-w-[800px]"
+              align="center"
+              title={packageData?.heading?.[langCode]}
+              heading={packageData?.title?.[langCode]}
+              description={packageData?.offer_description?.[langCode]}
+            />
+          )}
+
+          <div className="mt-6 sm:mt-7 lg:mt-9 xl:mt-[44px] w-full">
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              spaceBetween={20}
+              slidesPerView={1}
+              loop={true}
+              autoplay={{
+                delay: 3000,
+                disableOnInteraction: false,
+              }}
+              pagination={{
+                clickable: true,
+                dynamicBullets: true,
+              }}
+              breakpoints={{
+                640: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 },
+              }}
+              className="package-swiper pb-12"
+            >
+              {data?.docs?.map((item, index) => (
+                <SwiperSlide key={item._id || index}>
+                  <div className="h-full">
+                    {theme === 'one' ? (
+                      <PackageCard data={item} index={index} />
+                    ) : (
+                      <PackageCard2 data={item} index={index} />
+                    )}
+                  </div>
+                </SwiperSlide>
               ))}
-            </div>
-
-            {/* CSS অ্যানিমেশন (আপনি এটি আপনার গ্লোবাল CSS ফাইলে অথবা নিচের মতো ইনলাইন রাখতে পারেন) */}
-            <style jsx>{`
-    .animate-marquee {
-      display: flex;
-      width: max-content;
-      animation: marquee 30s linear infinite;
-    }
-
-    @keyframes marquee {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-50%);
-      }
-    }
-
-    /* মোবাইল ডিভাইসে অ্যানিমেশন কিছুটা দ্রুত করতে চাইলে */
-    @media (max-width: 640px) {
-      .animate-marquee {
-        animation: marquee 20s linear infinite;
-      }
-    }
-  `}</style>
+            </Swiper>
           </div>
+
           {data?.docs?.length > 0 && (
-            <div className="flex justify-center xl:mt-14 lg:mt-10 md:mt-8 sm:mt-5 mt-5">
+            <div className="flex justify-center xl:mt-10 lg:mt-8 md:mt-6 sm:mt-5 mt-5">
               <Link
                 href="/package"
                 className="common-btn animate-bounceLeftRight"
@@ -104,6 +104,24 @@ const Package = ({ theme }) => {
           )}
         </div>
       )}
+
+      <style jsx global>{`
+        .package-swiper .swiper-pagination-bullet-active {
+          background: #1A4FA0 !important;
+          width: 20px !important;
+          border-radius: 5px !important;
+        }
+
+        .package-swiper .swiper-pagination-bullet-active {
+        background: #28b6ea !important;
+        opacity: 1;
+        width: 20px !important;
+        border-radius: 5px !important;
+        }
+        .package-swiper .swiper-pagination {
+          bottom: -12px !important;
+        }
+      `}</style>
     </>
   );
 };

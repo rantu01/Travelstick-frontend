@@ -21,16 +21,21 @@ const Hero = () => {
   return (
     <>
       <div
-        style={{
-          // Inline style e image thakbe, kintu className er maddhome mobile e eti hide hobe
-          backgroundImage: `url(${bgImage})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-        // md: (ba sm:) breakpoint er niche bg-none ebong bg-white use kora hoyeche
-        className="relative h-[450px] sm:h-[500px] md:h-[400px] flex flex-col items-center justify-center overflow-visible bg-white md:bg-transparent bg-none md:[background-image:inherit]"
+        // Inline style theke backgroundImage remove kora hoyeche
+        // Responsive bg Tailwind diye control kora hocche
+        className="
+          relative 
+          h-[450px] sm:h-[500px] md:h-[400px]
+          flex flex-col items-center justify-center
+          overflow-visible
+          bg-white
+          bg-none
+          md:bg-[url('/homeBg.jpg')]
+          md:bg-cover
+          md:bg-center
+        "
       >
-        {/* Mobile e overlay hide thakbe (hidden md:block) jate white bg clear thake */}
+        {/* Mobile e overlay hide thakbe */}
         <div className="absolute inset-0 bg-black/40 hidden md:block"></div>
 
         {/* <div className="travel-container relative z-10 w-full flex flex-col items-center px-4 text-center">
@@ -52,16 +57,16 @@ const Hero = () => {
           </Link>
         </div> */}
 
-        {/* HeroFilters Section - Absolute position with High Z-Index */}
-        <div className="absolute left-0 right-0 bottom-0 translate-y-1/2 z-[999] w-full px-4">
+        {/* HeroFilters Section - Mobile e top e thakbe, Desktop e bottom */}
+        <div className="absolute left-0 right-0 top-10 md:top-auto md:bottom-0 md:translate-y-1/2 z-[999] w-full px-4">
           <div className="max-w-[1200px] mx-auto">
             <HeroFilters />
           </div>
         </div>
       </div>
-      
-      {/* Spacer for Responsiveness: Mobile e Search box boro hoy tai space beshi dorkar */}
-      <div className="h-[380px] xs:h-[350px] sm:h-[250px] md:h-[180px] lg:h-[120px]"></div>
+
+      {/* Spacer for Responsiveness */}
+      <div className="h-[140px] md:h-[180px] lg:h-[120px]"></div>
     </>
   );
 };
