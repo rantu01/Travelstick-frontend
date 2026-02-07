@@ -29,26 +29,27 @@ const Partner = () => {
       {isLoading ? (
         <SkeletonLoading cols={1} />
       ) : (
-        <div className="py-8 md:py-12 xl:py-16 max-w-7xl mx-auto px-4">
-          <div className="font-medium sm:text-xl md:text-2xl font-montserrat text-[#05073C] text-center mb-10">
+        <div className="py-8 md:py-8 xl:py-8 container mx-auto">
+          {/* <div className="font-medium sm:text-xl md:text-2xl font-montserrat text-[#05073C] text-center mb-10">
             <BlurText
               text={i18n.t("Trusted by over 32K growing companies")}
               className="flex justify-center text-center"
               delay={400}
             />
-          </div>
+          </div> */}
 
-          <div>
-            {/* <h2>
-              Most Popular Airlines
-            </h2> */}
-            <p className="text-center">
+          <div className="py-4">
+            
+            <h2 className="text-center text-[#1d2c71] text-3xl font-bold">
+              Save Big with Limited-Time Travel Offers
+            </h2>
+            <p className="text-center text-[#1d2c71] text-2xl font-bold">
               With Banglaco, your journey begins With the best names in the sky
             </p>
           </div>
 
           {/* Marquee বাদ দিয়ে flex-wrap ব্যবহার করা হয়েছে */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10 lg:gap-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10 lg:gap-16 bg-white p-6 rouned-xl">
             {partnerImages.map((image, index) => (
               <div
                 key={index}

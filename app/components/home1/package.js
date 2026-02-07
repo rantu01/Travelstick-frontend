@@ -39,8 +39,8 @@ const Package = ({ theme }) => {
       {isLoading ? (
         <SkeletonLoading cols={4} />
       ) : (
-        <div className="travel-container w-full">
-          {theme === 'one' ? (
+        <div className="travel-container w-full bg-[#f4f7f9] p-6 rouned-xl">
+          {/* {theme === 'one' ? (
             <SectionHeaderPage
               maxWidth="max-w-[800px]"
               align="center"
@@ -56,9 +56,15 @@ const Package = ({ theme }) => {
               heading={packageData?.title?.[langCode]}
               description={packageData?.offer_description?.[langCode]}
             />
-          )}
+          )} */}
 
-          <div className="mt-6 sm:mt-7 lg:mt-9 xl:mt-[44px] w-full">
+          <div className="mb-6 ml-4">
+            <h2 className="relative inline-block text-2xl font-bold text-black pb-2 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-[60%] after:h-[2px] after:bg-[#7f1b3d]">
+              Our <span className="text-[#7f1b3d]">Tour Packages</span>
+            </h2>
+          </div>
+
+          <div className="mt-6 sm:mt-7 lg:mt-9 xl:mt-[44px] w-full px-4">
             <Swiper
               modules={[Autoplay, Pagination]}
               spaceBetween={20}
@@ -93,12 +99,12 @@ const Package = ({ theme }) => {
           </div>
 
           {data?.docs?.length > 0 && (
-            <div className="flex justify-center xl:mt-10 lg:mt-8 md:mt-6 sm:mt-5 mt-5">
+            <div className="flex justify-center mt-5 ">
               <Link
                 href="/package"
-                className="common-btn animate-bounceLeftRight"
+                className=" animate-bounceLeftRight text-white bg-[#7f1b3d] px-4 py-2 rounded-2xl"
               >
-                {i18n.t("See All Package")}
+                {i18n.t("View All Packages")}
               </Link>
             </div>
           )}
@@ -107,16 +113,20 @@ const Package = ({ theme }) => {
 
       <style jsx global>{`
         .package-swiper .swiper-pagination-bullet-active {
-          background: #1A4FA0 !important;
+          background: #7f1b3d !important;
           width: 20px !important;
           border-radius: 5px !important;
         }
 
+        .package-swiper .swiper-pagination-bullet {
+           background: #7f1b3d;
+           opacity: 0.3;
+        }
+
         .package-swiper .swiper-pagination-bullet-active {
-        background: #28b6ea !important;
-        opacity: 1;
-        width: 20px !important;
-        border-radius: 5px !important;
+          opacity: 1;
+          width: 20px !important;
+          border-radius: 5px !important;
         }
         .package-swiper .swiper-pagination {
           bottom: -12px !important;

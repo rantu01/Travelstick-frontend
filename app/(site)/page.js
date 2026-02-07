@@ -33,6 +33,7 @@ import WhoWeAre2 from "../components/home2/whoWe2";
 import { Loader } from "../(dashboard)/components/common/loader";
 import Advertisement from "../components/site/common/advertisement";
 import { columnFormatter } from "../helper/utils";
+import BanglacoRoutes from "../components/home1/BanglacoRoutes";
 
 export default function Home() {
   const [data, getData, { loading }] = useFetch(fetchPageContentTheme1, {
@@ -72,15 +73,16 @@ export default function Home() {
   }
 
   const ThemeOne = (
-    <main className="flex flex-col 2xl:gap-[50px] xl:gap-[20px] md:gap-20 gap-10 ">
+    <main className="flex flex-col 2xl:gap-[50px] xl:gap-[20px] md:gap-20 gap-10 bg-[#e1e8f0]">
       <Hero data={data} />
       <div className="flex flex-col xl:gap-[80px] md:gap-20 gap-10 overflow-hidden max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <OffersSection theme={theme} />
         <Partner />
-        <PopularDestination />
+        {/* <PopularDestination /> */}
         {/* <WhoWeAre theme={theme} /> */}
         <Package theme={"two"} />
-        <VisaService />
+        <BanglacoRoutes></BanglacoRoutes>
+        {/* <VisaService /> */}
         {/* <Choose /> */}
         {/* <Testimonials theme={theme} /> */}
         {/* <Expert1 theme={theme} /> */}
