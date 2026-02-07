@@ -1,86 +1,75 @@
 "use client";
 import { useState } from "react";
-import { FaPlane, FaHotel, FaUmbrellaBeach, FaPassport, FaSearch, FaExchangeAlt, FaMinus, FaPlus } from "react-icons/fa";
-import { DatePicker, message, Popover } from "antd"; 
+import { FaPlane, FaHotel, FaUmbrellaBeach, FaPassport, FaSearch, FaExchangeAlt, FaMinus, FaPlus, FaTimesCircle } from "react-icons/fa";
+import { DatePicker, Popover } from "antd"; 
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/app/contexts/i18n";
 import { useFetch } from "@/app/helper/hooks";
 import { getHeroFilterData } from "@/app/helper/backend";
+import dayjs from "dayjs";
 
 const HeroFilters = () => {
   const i18n = useI18n();
-  const { langCode } = useI18n();
   const router = useRouter();
 
-  const [tab, setTab] = useState("flight");
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [destination, setDestination] = useState(null);
-  const [fromLocation, setFromLocation] = useState(null); // Added for flight
-  const [tourType, setTourType] = useState(null);
-  const [hotelType, setHotelType] = useState(null);
-  const [reputation, setReputation] = useState(null);
-  const [visaType, setVisaType] = useState(null);
-  const [visaMode, setVisaMode] = useState(null);
-  const [country, setCountry] = useState(null);
-  const [validity, setValidity] = useState(null);
+  const [tab, setTab] = useState("hotel");
+  const [tripType, setTripType] = useState("One Way");
+  const [startDate, setStartDate] = useState(dayjs("2026-02-05"));
+  const [endDate, setEndDate] = useState(dayjs("2026-02-05"));
 
+  // --- Dynamic Selection States ---
+  const [destination, setDestination] = useState("Dhaka, Bangladesh");
+  const [fromLocation, setFromLocation] = useState("Dhaka");
+  const [toLocation, setToLocation] = useState("Cox's Bazar");
+  const [citizenOf, setCitizenOf] = useState("Bangladesh");
+  const [travellingTo, setTravellingTo] = useState("Select you country");
+  const [visaCategory, setVisaCategory] = useState("Select visa category");
+
+  const [adults, setAdults] = useState(1); 
+  const [children, setChildren] = useState(1);
   const [rooms, setRooms] = useState(1);
-  const [adults, setAdults] = useState(1);
-  const [children, setChildren] = useState(0);
 
   const [filterData] = useFetch(getHeroFilterData);
 
+  // Reusable Selection Content (Design-safe)
+  const SelectionList = ({ options, onSelect }) => (
+    <div className="flex flex-col w-60 max-h-64 overflow-y-auto bg-white rounded-md shadow-lg border border-gray-100">
+      {options.map((opt, idx) => (
+        <button key={idx} onClick={() => onSelect(opt)} className="text-left px-4 py-3 hover:bg-gray-50 text-sm font-semibold text-gray-700 border-b border-gray-50 last:border-none">
+          {opt}
+        </button>
+      ))}
+    </div>
+  );
+
   const handleSearch = () => {
-    if (tab === "flight" || tab === "tour") {
-      if (destination || startDate || fromLocation) {
-        const query = new URLSearchParams();
-        if (startDate) query.append("startDate", startDate);
-        if (endDate) query.append("endDate", endDate);
-        if (destination) query.append("destination", destination);
-        if (fromLocation) query.append("from", fromLocation);
-        router.push(`/${tab === "flight" ? "flight" : "package"}?${query.toString()}`);
-      } else {
-        message.error(i18n.t("Please select at least one filter option."));
-      }
-    }
-
-    if (tab === "hotel") {
-      if (destination || hotelType || reputation) {
-        const query = new URLSearchParams();
-        if (destination) query.append("destination", destination);
-        query.append("rooms", rooms);
-        query.append("adults", adults);
-        query.append("children", children);
+    const query = new URLSearchParams();
+    if (tab === "flight") {
+        query.append("from", fromLocation);
+        query.append("to", toLocation);
+        query.append("startDate", startDate?.format("YYYY-MM-DD"));
+        router.push(`/flight?${query.toString()}`);
+    } else if (tab === "hotel") {
+        query.append("destination", destination);
         router.push(`/hotel?${query.toString()}`);
-      } else {
-        message.error(i18n.t("Please select at least one filter option."));
-      }
-    }
-
-    if (tab === "visa") {
-      if (visaType || country) {
-        const query = new URLSearchParams();
-        if (country) query.append("country", country);
-        if (visaType) query.append("visaType", visaType);
+    } else if (tab === "tour") {
+        query.append("destination", destination);
+        router.push(`/package?${query.toString()}`);
+    } else if (tab === "visa") {
+        query.append("citizen", citizenOf);
         router.push(`/visa?${query.toString()}`);
-      } else {
-        message.error(i18n.t("Please select at least one filter option."));
-      }
     }
   };
 
   const guestContent = (
-    <div className="w-72 p-4 bg-white rounded-lg">
+    <div className="w-72 p-4 bg-white rounded-lg shadow-xl">
       <div className="flex flex-col gap-6">
         <div>
           <p className="text-sm font-bold text-gray-800 mb-4">Travellers</p>
           <div className="flex flex-col gap-5">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500">
-                  <img src="/icon/user-red.svg" alt="" className="w-4 h-4" />
-                </div>
+                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 font-bold">A</div>
                 <div>
                   <p className="text-sm font-bold text-gray-700">Adult</p>
                   <p className="text-[10px] text-gray-400">12 years and above</p>
@@ -92,15 +81,12 @@ const HeroFilters = () => {
                 <button onClick={() => setAdults(adults + 1)} className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-red-500"><FaPlus size={8} /></button>
               </div>
             </div>
-
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500">
-                  <img src="/icon/user-red.svg" alt="" className="w-4 h-4" />
-                </div>
+                <div className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center text-red-500 font-bold">C</div>
                 <div>
                   <p className="text-sm font-bold text-gray-700">Children</p>
-                  <p className="text-[10px] text-gray-400">2 years - under 12 years</p>
+                  <p className="text-[10px] text-gray-400">2-12 years</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -111,22 +97,7 @@ const HeroFilters = () => {
             </div>
           </div>
         </div>
-
-        <div className="border-t pt-4">
-          <p className="text-sm font-bold text-gray-800 mb-3">Booking Class</p>
-          <div className="flex flex-col gap-3">
-            {["Economy", "Premium Economy", "Business", "First Class"].map((cls) => (
-              <label key={cls} className="flex items-center gap-3 cursor-pointer group">
-                <input type="radio" name="bookingClass" defaultChecked={cls === "Economy"} className="w-4 h-4 accent-red-600 border-gray-300" />
-                <span className="text-sm text-gray-600 group-hover:text-black transition-colors">{cls}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <button className="w-full bg-red-50 text-red-500 py-2.5 rounded-lg font-bold mt-2 hover:bg-red-500 hover:text-white transition-all">
-          Apply
-        </button>
+        <button className="w-full bg-red-500 text-white py-2.5 rounded-lg font-bold hover:bg-red-600 transition-all">Apply</button>
       </div>
     </div>
   );
@@ -139,15 +110,11 @@ const HeroFilters = () => {
   ];
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 mt-10">
+    <div className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans">
       <div className="flex justify-center">
-        <div className="flex bg-white rounded-t-xl overflow-x-auto no-scrollbar shadow-sm border-b max-w-full">
+        <div className="flex bg-white rounded-t-xl shadow-sm border-b overflow-hidden">
           {tabs.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 px-5 sm:px-8 py-4 text-xs sm:text-sm font-semibold transition-all whitespace-nowrap ${tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"}`}
-            >
+            <button key={t.id} onClick={() => setTab(t.id)} className={`flex items-center gap-2 px-8 py-4 text-sm font-semibold transition-all ${tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"}`}>
               <span className={tab === t.id ? "text-[#1A4FA0]" : "text-blue-500"}>{t.icon}</span>
               {i18n.t(t.label)}
             </button>
@@ -155,63 +122,148 @@ const HeroFilters = () => {
         </div>
       </div>
 
-      <div className="bg-white p-6 rounded-2xl shadow-2xl relative z-10">
-        {(tab === "tour" || tab === "flight") && (
-          <div className="flex flex-wrap gap-4 mb-5">
+      <div className="bg-white p-6 rounded-2xl shadow-2xl relative z-10 border border-gray-100">
+        {tab === "flight" && (
+          <div className="flex gap-2 mb-6">
             {['One Way', 'Round Trip', 'Multi City'].map(type => (
-              <label key={type} className="flex items-center gap-2 text-xs sm:text-sm cursor-pointer font-medium text-gray-600">
-                <input type="radio" name="trip" defaultChecked={type === 'One Way'} className="w-4 h-4 accent-cyan-500" />
+              <button key={type} onClick={() => setTripType(type)} className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 border ${tripType === type ? "bg-[#00BCE4] border-[#00BCE4] text-white" : "bg-[#F2F4F7] border-transparent text-gray-500"}`}>
+                <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${tripType === type ? "border-white" : "border-gray-400"}`}>
+                    {tripType === type && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
+                </div>
                 {type}
-              </label>
+              </button>
             ))}
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-0 border rounded-xl overflow-hidden shadow-inner">
-          
-          {/* From / Destination Logic for Flight */}
-          <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 transition-all relative group">
-            <p className="text-[10px] text-gray-400 uppercase font-extrabold tracking-wider">{i18n.t(tab === "flight" ? "From" : "Destination")}</p>
-            <select className="w-full bg-transparent font-bold text-base sm:text-lg outline-none appearance-none cursor-pointer mt-1" onChange={(e) => tab === "flight" ? setFromLocation(e.target.value) : setDestination(e.target.value)}>
-              <option value="">{i18n.t("Select Location")}</option>
-              {filterData?.find(i => i.key === "package_destination")?.values?.map(v => (
-                <option key={v._id} value={v._id}>{v.name}</option>
-              ))}
-            </select>
-            {tab === "flight" && (
-              <div className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 bg-white border rounded-full p-1.5 text-cyan-500 hidden md:block shadow-sm">
-                <FaExchangeAlt size={12} />
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-0 border rounded-xl overflow-hidden">
+          {tab === "hotel" ? (
+            <>
+              <div className="md:col-span-3 border-r p-4 hover:bg-gray-50 cursor-pointer">
+                <Popover content={<SelectionList options={["Dhaka, Bangladesh", "Chittagong", "Sylhet", "Cox's Bazar"]} onSelect={setDestination} />} trigger="click" placement="bottomLeft">
+                    <div>
+                        <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Destination")}</p>
+                        <div className="mt-1 font-bold text-gray-500 text-lg leading-tight truncate">{destination}</div>
+                    </div>
+                </Popover>
               </div>
-            )}
-          </div>
-
-          <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 transition-all relative group">
-            <p className="text-[10px] text-gray-400 uppercase font-extrabold tracking-wider">{i18n.t(tab === "flight" ? "To" : "Type")}</p>
-            <select className="w-full bg-transparent font-bold text-base sm:text-lg outline-none appearance-none cursor-pointer mt-1" onChange={(e) => setDestination(e.target.value)}>
-              <option value="">{i18n.t("Select Destination")}</option>
-              {filterData?.find(i => i.key === (tab === "hotel" ? "hotel_destination" : "package_destination"))?.values?.map(v => (
-                <option key={v._id} value={v._id}>{v.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-            <p className="text-[10px] text-gray-400 uppercase font-extrabold tracking-wider">{i18n.t(tab === "hotel" ? "Check In" : "Travel Date")}</p>
-            <DatePicker className="w-full border-none p-0 font-bold text-base sm:text-lg shadow-none mt-1" suffixIcon={null} placeholder="Select Date" onChange={(date, dateStr) => setStartDate(dateStr)} />
-          </div>
-
-          <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-            <p className="text-[10px] text-gray-400 uppercase font-extrabold tracking-wider">{i18n.t(tab === "hotel" ? "Guests" : "Travellers & Class")}</p>
-            <Popover content={guestContent} trigger="click" placement="bottomRight">
-              <div className="w-full font-bold text-base sm:text-lg mt-1 truncate">
-                {adults + children} {i18n.t("Person")}, Economy
+              <div className="md:col-span-2 border-r p-4 hover:bg-gray-50">
+                <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check In")}</p>
+                <DatePicker variant="borderless" className="p-0 font-bold text-gray-400 text-lg w-full mt-1" defaultValue={startDate} format="DD MMM, YYYY" suffixIcon={null} />
               </div>
-            </Popover>
-          </div>
+              <div className="md:col-span-2 border-r p-4 hover:bg-gray-50">
+                <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check Out")}</p>
+                <div className="flex items-center justify-between">
+                    <DatePicker variant="borderless" className="p-0 font-bold text-gray-400 text-lg w-full mt-1" defaultValue={endDate} format="DD MMM, YYYY" suffixIcon={null} />
+                    <FaTimesCircle className="text-gray-400 cursor-pointer" />
+                </div>
+              </div>
+              <div className="md:col-span-4 border-r p-4 hover:bg-gray-50">
+                 <Popover content={guestContent} trigger="click" placement="bottomRight">
+                    <div className="cursor-pointer">
+                        <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Room & Guests")}</p>
+                        <h4 className="font-bold text-gray-400 text-lg leading-tight mt-1 whitespace-nowrap">
+                            {rooms} Room, @ {adults} Adults, {children} Child
+                        </h4>
+                    </div>
+                 </Popover>
+              </div>
+            </>
+          ) : tab === "visa" ? (
+            <>
+              <div className="md:col-span-4 border-r p-4 hover:bg-gray-50 cursor-pointer">
+                <Popover content={<SelectionList options={["Bangladesh", "India", "USA"]} onSelect={setCitizenOf} />} trigger="click" placement="bottomLeft">
+                    <div>
+                        <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Citizen of")}</p>
+                        <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{citizenOf}</div>
+                    </div>
+                </Popover>
+              </div>
+              <div className="md:col-span-4 border-r p-4 hover:bg-gray-50 cursor-pointer">
+                <Popover content={<SelectionList options={["Thailand", "Malaysia", "Saudi Arabia"]} onSelect={setTravellingTo} />} trigger="click" placement="bottomLeft">
+                    <div>
+                        <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Travelling to")}</p>
+                        <div className={`mt-1 font-bold text-lg leading-tight ${travellingTo.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{travellingTo}</div>
+                    </div>
+                </Popover>
+              </div>
+              <div className="md:col-span-3 border-r p-4 hover:bg-gray-50 cursor-pointer">
+                <Popover content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa"]} onSelect={setVisaCategory} />} trigger="click" placement="bottomLeft">
+                    <div>
+                        <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Visa Category")}</p>
+                        <div className={`mt-1 font-bold text-lg leading-tight ${visaCategory.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{visaCategory}</div>
+                    </div>
+                </Popover>
+              </div>
+            </>
+          ) : tab === "tour" ? (
+            <>
+              <div className="md:col-span-6 border-r p-4 hover:bg-gray-50 cursor-pointer">
+                <Popover content={<SelectionList options={["Dubai", "Maldives", "Bhutan"]} onSelect={setDestination} />} trigger="click" placement="bottomLeft">
+                    <div>
+                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Destination")}</p>
+                        <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{destination}</div>
+                    </div>
+                </Popover>
+              </div>
+              <div className="md:col-span-5 border-r p-4 hover:bg-gray-50">
+                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Prefered Date")}</p>
+                <DatePicker variant="borderless" className="p-0 font-bold text-gray-700 text-lg w-full mt-1" defaultValue={startDate} format="DD MMM, YYYY" suffixIcon={null} />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="md:col-span-2 border-r p-4 hover:bg-gray-50 relative cursor-pointer">
+                <Popover content={<SelectionList options={["Dhaka", "Chittagong", "Sylhet"]} onSelect={setFromLocation} />} trigger="click" placement="bottomLeft">
+                    <div>
+                        <p className="text-[11px] text-gray-400 font-bold">From</p>
+                        <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{fromLocation}</h4>
+                        <p className="text-[10px] text-gray-400 truncate">DAC, Hazrat Shahjalal Int....</p>
+                    </div>
+                </Popover>
+                <div className="absolute -right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md">
+                    <FaExchangeAlt size={10} />
+                </div>
+              </div>
+              <div className="md:col-span-2 border-r p-4 hover:bg-gray-50 cursor-pointer">
+                <Popover content={<SelectionList options={["Cox's Bazar", "Bangkok", "Dubai"]} onSelect={setToLocation} />} trigger="click" placement="bottomLeft">
+                    <div>
+                        <p className="text-[11px] text-gray-400 font-bold">To</p>
+                        <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{toLocation}</h4>
+                        <p className="text-[10px] text-gray-400">CXB, Cox's Bazar</p>
+                    </div>
+                </Popover>
+              </div>
+              <div className="md:col-span-2 border-r p-4 hover:bg-gray-50">
+                <p className="text-[11px] text-gray-400 font-bold">Departure</p>
+                <DatePicker variant="borderless" className="p-0 font-bold text-gray-700 text-lg w-full mt-1" defaultValue={startDate} format="DD MMM, YYYY" suffixIcon={null} />
+                <p className="text-[10px] text-gray-400">{startDate?.format('dddd')}</p>
+              </div>
+              <div className="md:col-span-2 border-r p-4 hover:bg-gray-50 group">
+                <p className="text-[11px] text-gray-400 font-bold">Departure</p>
+                <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                        <DatePicker variant="borderless" className="p-0 font-bold text-gray-700 text-lg w-full mt-1" defaultValue={endDate} format="DD MMM, YYYY" suffixIcon={null} />
+                        <p className="text-[10px] text-gray-400">{endDate?.format('dddd')}</p>
+                    </div>
+                    <FaTimesCircle className="text-gray-400 cursor-pointer" />
+                </div>
+              </div>
+              <div className="md:col-span-3 border-r p-4 hover:bg-gray-50">
+                 <Popover content={guestContent} trigger="click" placement="bottomRight">
+                    <div className="cursor-pointer">
+                        <p className="text-[11px] text-gray-400 font-bold">Traveller, Class</p>
+                        <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">1 Traveller</h4>
+                        <p className="text-[10px] text-gray-400">Economy</p>
+                    </div>
+                 </Popover>
+              </div>
+            </>
+          )}
 
-          <div className="md:col-span-2 flex items-center justify-center p-3 bg-white">
-            <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-800 text-white w-full h-14 md:h-16 rounded-xl flex items-center justify-center transition-all shadow-md group">
-              <FaSearch size={22} className="group-hover:scale-110 transition-transform" />
+          <div className="md:col-span-1 flex items-center justify-center p-2 bg-white">
+            <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-14 rounded-lg flex items-center justify-center shadow-lg transition-transform active:scale-95">
+              <FaSearch size={20} />
             </button>
           </div>
         </div>
