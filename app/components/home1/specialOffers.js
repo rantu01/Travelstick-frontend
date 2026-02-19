@@ -30,7 +30,7 @@ const OffersSection = ({ theme }) => {
       {isLoading ? (
         <SkeletonLoading height1="50" height2="50" height3="50" height4="50" />
       ) : (
-        <div className="travel-container w-full py-8 md:py-8">
+        <div className="travel-container w-full md:pt-0 md:pb-8">
           {/* {theme === 'one' ? (
             <SectionHeaderPage
               maxWidth="max-w-[800px]"
@@ -53,7 +53,7 @@ const OffersSection = ({ theme }) => {
             <h2 className="text-start text-[#1d2c71] text-3xl font-bold">
               Save Big with Limited-Time Travel Offers
             </h2>
-          <div className="w-full mt-8 md:mt-12 offer-swiper-container relative">
+          <div className="w-full mt-6 offer-swiper-container relative">
             {/* Custom CSS: 1% ও পরিবর্তন না করে শুধু মোবাইল ভিউ অপ্টিমাইজ করা হয়েছে */}
             <style jsx global>{`
               .offer-swiper-container .swiper-pagination {

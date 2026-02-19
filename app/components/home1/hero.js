@@ -25,7 +25,7 @@ const Hero = () => {
         // Responsive bg Tailwind diye control kora hocche
         className="
           relative 
-          h-[450px] sm:h-[500px] md:h-[400px]
+          h-[450px] sm:h-[500px] md:h-[350px]
           flex flex-col items-center justify-center
           overflow-visible
           bg-white
@@ -58,15 +58,15 @@ const Hero = () => {
         </div> */}
 
         {/* HeroFilters Section - Mobile e top e thakbe, Desktop e bottom */}
-        <div className="absolute left-0 right-0 top-10 md:top-auto md:bottom-0 md:translate-y-1/2 z-[999] w-full px-4">
+        <div className="absolute left-0 right-0 top-10 md:top-auto md:bottom-14 md:translate-y-1/2 z-[999] w-full px-4">
           <div className="max-w-[1200px] mx-auto">
             <HeroFilters />
           </div>
         </div>
       </div>
 
-      {/* Spacer for Responsiveness */}
-      <div className="h-[140px] md:h-[180px] lg:h-[120px]"></div>
+      {/* Age eikhane h-[120px] ba h-[180px] chilo, seta komiye deya hoyeche */}
+      <div className="h-[250px] sm:h-[300px] md:h-[80px] lg:h-[70px]"></div>
     </>
   );
 };
