@@ -48,7 +48,7 @@ const HotelDetails = () => {
           <Banner title="Hotel Details" /> :
           <Banner2 title="Hotel Details" />
       }
-      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative overflow-hidden">
+      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 pb-20 relative overflow-hidden">
         <ImageVideo data={data} />
         <div className="xl:mt-10 lg:mt-8 md:mt-7 sm:mt-6 mt-5 ">
           <div className="flex items-center xl:gap-6 lg:gap-5 md:gap-4 sm:gap-3 gap-2 ">

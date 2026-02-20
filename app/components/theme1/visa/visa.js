@@ -33,7 +33,7 @@ const VisaPage = ({ visaType, visaMode, country, validity, theme }) => {
           <Banner title="Visa" /> :
           <Banner2 title="Visa" />
       }
-      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative">
+      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 pb-20 relative">
         {/* Filter icon for mobile */}
         <div className="flex gap-2 items-center justify-end md:hidden mb-4">
           <button

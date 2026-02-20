@@ -73,7 +73,7 @@ const VisaDetails = () => {
           <Banner title="Visa Details" /> :
           <Banner2 title="Visa Details" />
       }
-      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative">
+      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 pb-20 relative">
         <div className="w-full rounded-[10px] lg:rounded-[20px] overflow-hidden">
           {data?.banner_image && (
             <Image

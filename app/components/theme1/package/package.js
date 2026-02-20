@@ -34,7 +34,7 @@ const PackagePage = ({ discount, discount_type, destination, startDate, endDate,
           <Banner title="Tour Packages" /> :
           <Banner2 title="Tour Packages" />
       }
-      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative">
+      <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 pb-20 relative">
         <div className="flex gap-2 items-center justify-end md:hidden mb-4">
           <button
             className="text-xl p-2 border border-gray-300 rounded-md"

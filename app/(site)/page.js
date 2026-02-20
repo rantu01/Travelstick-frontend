@@ -75,7 +75,7 @@ export default function Home() {
   const ThemeOne = (
     <main className="flex flex-col 2xl:gap-[50px] md:gap-10 gap-10 bg-[#e1e8f0]">
       <Hero data={data} />
-      <div className="flex flex-col  md:gap-0 gap-5 overflow-hidden max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+      <div className="flex flex-col  md:gap-0 gap-12 overflow-hidden max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <OffersSection theme={theme} />
         <Partner />
         {/* <PopularDestination /> */}
