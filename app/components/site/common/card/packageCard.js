@@ -30,7 +30,7 @@ const PackageCard = ({ data, index }) => {
             />
           )}
           {/* Badge */}
-          <p className="capitalize absolute top-3 left-3 bg-[#F0691F] text-[10px] font-bold rounded-full px-3 py-1 text-white z-10">
+          <p className="capitalize absolute top-3 left-3 bg-[#1a4fa0] text-[10px] font-bold rounded-full px-3 py-1 text-white z-10">
             {data?.section?.[0] || "Featured"}
           </p>
         </div>

@@ -39,7 +39,9 @@ const Package = ({ theme }) => {
       {isLoading ? (
         <SkeletonLoading cols={4} />
       ) : (
-        <div className="travel-container w-full bg-[#f4f7f9] p-6 rouned-xl">
+        <div className="w-full bg-white ">
+
+          <div className="max-w-6xl mx-auto  py-6 rouned-xl">
           {/* {theme === 'one' ? (
             <SectionHeaderPage
               maxWidth="max-w-[800px]"
@@ -59,8 +61,8 @@ const Package = ({ theme }) => {
           )} */}
 
           <div className="mb-6 ml-4">
-            <h2 className="relative inline-block text-2xl font-bold text-black pb-2 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-[60%] after:h-[2px] after:bg-[#7f1b3d]">
-              Our <span className="text-[#7f1b3d]">Tour Packages</span>
+            <h2 className="relative inline-block text-2xl font-bold text-black pb-2 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-[60%] after:h-[2px] after:bg-[#1a4fa0]">
+              Our <span className="text-[#1a4fa0]">Tour Packages</span>
             </h2>
           </div>
 
@@ -102,24 +104,26 @@ const Package = ({ theme }) => {
             <div className="flex justify-center mt-5 ">
               <Link
                 href="/package"
-                className=" animate-bounceLeftRight text-white bg-[#7f1b3d] px-4 py-2 rounded-2xl"
+                className=" animate-bounceLeftRight text-white bg-[#1a4fa0] px-4 py-2 rounded-2xl"
               >
                 {i18n.t("View All Packages")}
               </Link>
             </div>
           )}
         </div>
+        </div>
+        
       )}
 
       <style jsx global>{`
         .package-swiper .swiper-pagination-bullet-active {
-          background: #7f1b3d !important;
+          background: #1a4fa0 !important;
           width: 20px !important;
           border-radius: 5px !important;
         }
 
         .package-swiper .swiper-pagination-bullet {
-           background: #7f1b3d;
+           background: #1a4fa0;
            opacity: 0.3;
         }
 

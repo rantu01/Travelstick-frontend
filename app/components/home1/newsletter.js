@@ -41,7 +41,7 @@ const Newsletter = ({theme}) => {
       {isLoading ? (
         <SkeletonLoading cols={1} />
       ) : (
-        <div className="travel-container w-full pb-[80px]">
+        <div className="travel-container w-full pb-[80px] mt-[80px]">
           <div className="border relative w-full xl:h-[500px] lg:h-[400px] md:h-[350px] sm:h-[300px] h-[320px] overflow-hidden rounded-[10px] lg:rounded-[20px]">
             {/* Background Video */}
             <iframe

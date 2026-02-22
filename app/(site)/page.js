@@ -34,6 +34,7 @@ import { Loader } from "../(dashboard)/components/common/loader";
 import Advertisement from "../components/site/common/advertisement";
 import { columnFormatter } from "../helper/utils";
 import BanglacoRoutes from "../components/home1/BanglacoRoutes";
+import FeatureBar from "../components/home1/FeatureBar";
 
 export default function Home() {
   const [data, getData, { loading }] = useFetch(fetchPageContentTheme1, {
@@ -73,22 +74,40 @@ export default function Home() {
   }
 
   const ThemeOne = (
-    <main className="flex flex-col 2xl:gap-[50px] md:gap-10 gap-10 bg-[#e1e8f0]">
+    <main className="flex flex-col w-full bg-[#e1e8f0] overflow-x-hidden">
+      {/* Hero Section - এটি সাধারণত নিজের ভেতরেই রেসপনসিভ থাকে */}
       <Hero data={data} />
-      <div className="flex flex-col  md:gap-0 gap-12 overflow-hidden max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <OffersSection theme={theme} />
-        <Partner />
-        {/* <PopularDestination /> */}
-        {/* <WhoWeAre theme={theme} /> */}
-        <Package theme={"two"} />
-        <BanglacoRoutes></BanglacoRoutes>
-        {/* <VisaService /> */}
-        {/* <Choose /> */}
-        {/* <Testimonials theme={theme} /> */}
-        {/* <Expert1 theme={theme} /> */}
-        {/* <ProductSection visible={hasProduct} theme={theme} /> */}
-        {/* <Blog1 theme={theme} /> */}
-        <Newsletter theme={theme} />
+
+      {/* Full Width Sections Container */}
+      <div className="w-full flex flex-col">
+        {/* প্রতিটি সেকশনের মাঝে মোবাইলে গ্যাপ দেওয়ার জন্য gap-4 বা gap-8 ব্যবহার করা হয়েছে */}
+        <div className="flex flex-col gap-0 md:gap-0 ">
+          <FeatureBar></FeatureBar>
+          <OffersSection theme={theme} />
+          <Partner />
+          <Package theme={"two"} />
+          <BanglacoRoutes />
+        </div>
+      </div>
+
+      {/* Restricted Width Section (Centered Container) */}
+      <div className="w-full px-4 sm:px-6 lg:px-8 mt-10 md:mt-16">
+        <div className="max-w-6xl mx-auto flex flex-col gap-10 md:gap-12 overflow-hidden">
+          {/* নিচের কমেন্ট করা সেকশনগুলো ফিউচারে আনকমেন্ট করলেও 
+            এই ডিভ-এর কারণে সেগুলো অটোমেটিক মাঝখানে (Centered) থাকবে।
+          */}
+
+          {/* <PopularDestination /> */}
+          {/* <WhoWeAre theme={theme} /> */}
+          {/* <VisaService /> */}
+          {/* <Choose /> */}
+          {/* <Testimonials theme={theme} /> */}
+          {/* <Expert1 theme={theme} /> */}
+          {/* <ProductSection visible={hasProduct} theme={theme} /> */}
+          {/* <Blog1 theme={theme} /> */}
+
+          <Newsletter theme={theme} />
+        </div>
       </div>
     </main>
   );

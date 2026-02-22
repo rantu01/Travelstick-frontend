@@ -119,9 +119,9 @@ const Footer = () => {
             <span className="font-semibold mr-2">We Accept</span>
             <div className="bg-white rounded-md px-4 py-2 flex items-center gap-3">
               {/* Dynamic or static payment icons */}
-              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-4" alt="visa" />
+              <img src="https://freelogopng.com/images/all_img/1656227518bkash-logo-png.png" className="h-4" alt="visa" />
               <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-6" alt="mastercard" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b1/BKash_Logo.svg" className="h-5" alt="bkash" />
+              <img src="https://www.logo.wine/a/logo/Nagad/Nagad-Logo.wine.svg" className="h-5" alt="nagad" />
               {/* Add more as per your backend settings */}
             </div>
           </div>

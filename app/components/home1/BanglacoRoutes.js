@@ -21,8 +21,8 @@ const BanglacoRoutes = () => {
     const currentRoutes = activeTab === 'domestic' ? domesticRoutes : internationalRoutes;
 
     return (
-        <div className=" py-4 font-sans ">
-            <div className="max-w-7xl mx-auto text-center ">
+        <div className="bg-white py-10 font-sans ">
+            <div className="max-w-6xl mx-auto text-center ">
                 {/* Title Section */}
                 <h2 className="text-[#1a2b6d] text-4xl font-bold mb-3">
                     Top Domestic & International Routes

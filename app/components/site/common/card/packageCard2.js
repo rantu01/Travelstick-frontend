@@ -39,10 +39,10 @@ const PackageCard = ({ data, index }) => {
           </div>
 
           {/* Red Overlay Gradient - এখানে 'rounded-[20px]' যোগ করা হয়েছে কোণার সমস্যা দূর করতে */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#7f1b3d] via-[#7f1b3d]/40 to-transparent opacity-80 z-10 rounded-[20px]"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1a4fa0] via-[#1a4fa0]/40 to-transparent opacity-80 z-10 rounded-[20px]"></div>
           
           {/* Hover Maroon Tint - এখানেও 'rounded-[20px]' যোগ করা হয়েছে */}
-          <div className="absolute inset-0 bg-[#7f1b3d]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-15 rounded-[20px]"></div>
+          <div className="absolute inset-0 bg-[#1a4fa0]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-15 rounded-[20px]"></div>
 
           {/* Content (Bottom Left) */}
           <div className="absolute bottom-6 left-6 z-20 text-white">

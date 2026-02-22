@@ -22,7 +22,8 @@ import { MdOutlineShoppingCart } from "react-icons/md";
 import NotificationDropdown from "../../common/notification";
 
 // Icons for Menu
-import { FaPlane, FaHotel, FaPassport, FaUmbrellaBeach } from "react-icons/fa";
+import { FaPlane, FaHotel, FaPassport, FaUmbrellaBeach, FaGlobeAsia } from "react-icons/fa";
+import { RiMoonClearLine } from "react-icons/ri"; // Umrah/Islamic Icon suggestion
 
 const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
   const [setting] = useFetch(fetchPublicSettings);
@@ -46,12 +47,14 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
     getCurrentUser();
   }, []);
 
-  // Menu items with icons like the image
+  // Updated Menu items with E-Sim and Umrah
   const menuItems = [
     { path: "/flight", label: i18n.t("Flight"), icon: <FaPlane /> },
     { path: "/hotel", label: i18n.t("Hotel"), icon: <FaHotel /> },
     { path: "/visa", label: i18n.t("Visa"), icon: <FaPassport /> },
     { path: "/package", label: i18n.t("Holiday"), icon: <FaUmbrellaBeach /> },
+    { path: "/e-sim", label: i18n.t("E-Sim"), icon: <FaGlobeAsia /> },
+    { path: "/umrah", label: i18n.t("Umrah"), icon: <RiMoonClearLine /> },
   ];
 
   const userMenuItems = [
@@ -82,7 +85,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
     <div className=" bg-white shadow-sm font-lato sticky top-0 z-50 overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-row justify-between items-center py-3 px-4 lg:px-0">
         
-        {/* 1. Logo Section (Using site_logo from settings) */}
+        {/* 1. Logo Section */}
         <Link href="/">
           <div className="flex flex-col">
             {setting?.fav_icon ? (
@@ -107,16 +110,16 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
         </Link>
 
         {/* 2. Central Menu (Icon + Text) */}
-        <ul className="hidden lg:flex items-center gap-8">
+        <ul className="hidden lg:flex items-center gap-6">
           {menuItems.map((item) => (
             <li key={item.path}>
               <Link href={item.path} className="flex flex-col items-center group">
                 <span className={`text-xl mb-1 transition-colors ${
-                  pathname === item.path ? 'text-[#00B7EB]' : 'text-blue-300 group-hover:text-[#1A2B6D]'
+                  pathname === item.path ? 'text-[#00B7EB]' : 'text-blue-500 group-hover:text-[#1A2B6D]'
                 }`}>
                   {item.icon}
                 </span>
-                <span className={`text-[14px] font-bold transition-colors ${
+                <span className={`text-[13px] font-bold transition-colors ${
                   pathname === item.path ? 'text-[#1A2B6D]' : 'text-[#1A2B6D] group-hover:text-[#00B7EB]'
                 }`}>
                   {item.label}
@@ -129,7 +132,6 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
         {/* 3. Right Side - Actions & Auth */}
         <div className="flex items-center gap-4">
           
-          {/* Cart Logic */}
           {isProduct && (
             <Link href={user ? "/cart" : "#"} onClick={() => !user && setAuthModalOpen(true)} className="relative">
               <MdOutlineShoppingCart className="text-2xl text-[#1A2B6D]" />
@@ -187,12 +189,6 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
                 >
                   Sign In
                 </button>
-                <button 
-                  onClick={() => setAuthModalOpen(true)}
-                  className="border-2 border-[#1A2B6D] text-[#1A2B6D] px-6 py-2 rounded-md text-sm font-bold hover:bg-[#1A2B6D] hover:text-white transition-all"
-                >
-                  Sign Up
-                </button>
               </div>
             ) : (
               <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
@@ -206,7 +202,6 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
               </Dropdown>
             )}
             
-            {/* Mobile Menu Toggle */}
             <button className="lg:hidden text-3xl text-[#1A2B6D]" onClick={() => setIsDrawerOpen(true)}>
               <IoMenuOutline />
             </button>
@@ -214,10 +209,8 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
         </div>
       </div>
 
-      {/* Auth Modal */}
       <AuthModal authModalOpen={authModalOpen} setAuthModalOpen={setAuthModalOpen} />
 
-      {/* Mobile Drawer */}
       <Drawer open={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} placement="right" width={280}>
         <div className="flex flex-col gap-6 mt-4">
           {menuItems.map(item => (
