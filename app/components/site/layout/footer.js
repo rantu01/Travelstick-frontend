@@ -48,7 +48,7 @@ const Footer = () => {
     <footer className="w-full bg-[#1e2e83] text-white pt-12 pb-6 px-4 md:px-10 lg:px-20 font-sans">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-          
+
           {/* Column 1: Logo & Description */}
           <div className="space-y-5">
             {setting?.site_logo ? (
@@ -101,19 +101,23 @@ const Footer = () => {
               <p>Phone: {setting?.site_phone || "091111122221"}</p>
             </div>
             {/* Fake Map Placeholder like in image */}
+            {/* Google Map Section */}
             <div className="mt-4 rounded-lg overflow-hidden border border-blue-400">
-                <img 
-                  src="https://www.maptive.com/wp-content/uploads/2020/10/Drive-Time-Polygon-Commute-Times-590x357.jpg" 
-                  alt="map" 
-                  className="w-full h-32 object-cover"
-                />
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.522438343715!2d90.4106594!3d23.7790195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37556dbb148e5a11%3A0xf093b226cfcb4bfc!2sBanglaco%20Limited.!5e0!3m2!1sen!2sbd!4v1710000000000!5m2!1sen!2sbd"
+                className="w-full h-32 border-0"
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Banglaco Limited Location"
+              ></iframe>
             </div>
           </div>
         </div>
 
         {/* Footer Bottom Section */}
         <div className="mt-16 pt-8 border-t border-blue-800 flex flex-col items-center space-y-6">
-          
+
           {/* Payment Partners */}
           <div className="flex flex-wrap items-center justify-center gap-4">
             <span className="font-semibold mr-2">We Accept</span>
