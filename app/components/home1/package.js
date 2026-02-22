@@ -61,8 +61,8 @@ const Package = ({ theme }) => {
           )} */}
 
           <div className="mb-6 ml-4">
-            <h2 className="relative inline-block text-2xl font-bold text-black pb-2 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-[60%] after:h-[2px] after:bg-[#1a4fa0]">
-              Our <span className="text-[#1a4fa0]">Tour Packages</span>
+            <h2 className="relative inline-block text-3xl font-bold text-black pb-2 after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-[60%] after:h-[2px] after:bg-[#1a4fa0]">
+              Our <span className="text-[#1d2c71]">Tour Packages</span>
             </h2>
           </div>
 

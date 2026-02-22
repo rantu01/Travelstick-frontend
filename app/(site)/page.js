@@ -74,7 +74,7 @@ export default function Home() {
   }
 
   const ThemeOne = (
-    <main className="flex flex-col w-full bg-[#e1e8f0] overflow-x-hidden">
+    <main className="flex flex-col w-full bg-white overflow-x-hidden">
       {/* Hero Section - এটি সাধারণত নিজের ভেতরেই রেসপনসিভ থাকে */}
       <Hero data={data} />
 

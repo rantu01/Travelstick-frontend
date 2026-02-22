@@ -14,8 +14,9 @@ const HeroFilters = () => {
 
   const [tab, setTab] = useState("flight");
   const [tripType, setTripType] = useState("One Way");
-  const [startDate, setStartDate] = useState(dayjs("2026-02-05"));
-  const [endDate, setEndDate] = useState(dayjs("2026-02-05"));
+  
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const [destination, setDestination] = useState("Dhaka, Bangladesh");
   const [fromLocation, setFromLocation] = useState("Dhaka");
@@ -30,10 +31,25 @@ const HeroFilters = () => {
   const [bookingClass, setBookingClass] = useState("Economy");
   const [rooms, setRooms] = useState(1);
 
+  const [openPopover, setOpenPopover] = useState(null);
+
   const [filterData] = useFetch(getHeroFilterData);
 
   const disabledDate = (current) => {
     return current && current < dayjs().startOf('day');
+  };
+
+  const handleSelect = (setter, value) => {
+    setter(value);
+    setOpenPopover(null);
+  };
+
+  // From এবং To লোকেশন সোয়াপ করার ফাংশন
+  const handleSwapLocations = (e) => {
+    e.stopPropagation(); // যাতে প্যারেন্ট ডিভের ক্লিক ইভেন্ট ট্রিগার না হয়
+    const temp = fromLocation;
+    setFromLocation(toLocation);
+    setToLocation(temp);
   };
 
   const SelectionList = ({ options, onSelect }) => (
@@ -51,7 +67,7 @@ const HeroFilters = () => {
     if (tab === "flight") {
       query.append("from", fromLocation);
       query.append("to", toLocation);
-      query.append("startDate", startDate?.format("YYYY-MM-DD"));
+      if (startDate) query.append("startDate", startDate.format("YYYY-MM-DD"));
       router.push(`/flight?${query.toString()}`);
     } else if (tab === "hotel") {
       query.append("destination", destination);
@@ -71,7 +87,6 @@ const HeroFilters = () => {
         <div>
           <p className="text-base font-bold text-gray-800 mb-4 border-b pb-2">Travellers</p>
           <div className="flex flex-col gap-5">
-            {/* Adult */}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-[#1A4FA0]">
@@ -88,7 +103,6 @@ const HeroFilters = () => {
                 <button onClick={() => setAdults(adults + 1)} className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center bg-white text-[#1A4FA0] hover:bg-[#1A4FA0] hover:text-white transition-all"><FaPlus size={8} /></button>
               </div>
             </div>
-            {/* Children */}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-[#1A4FA0]">
@@ -105,7 +119,6 @@ const HeroFilters = () => {
                 <button onClick={() => setChildren(children + 1)} className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center bg-white text-[#1A4FA0] hover:bg-[#1A4FA0] hover:text-white transition-all"><FaPlus size={8} /></button>
               </div>
             </div>
-            {/* Infants */}
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-[#1A4FA0]">
@@ -140,7 +153,7 @@ const HeroFilters = () => {
             ))}
           </div>
         </div>
-        <button className="w-full bg-[#1A4FA0] text-white py-3 rounded-lg font-bold hover:bg-[#123a7a] shadow-lg transition-all active:scale-[0.98]">Apply</button>
+        <button onClick={() => setOpenPopover(null)} className="w-full bg-[#1A4FA0] text-white py-3 rounded-lg font-bold hover:bg-[#123a7a] shadow-lg transition-all active:scale-[0.98]">Apply</button>
       </div>
     </div>
   );
@@ -183,7 +196,12 @@ const HeroFilters = () => {
           {tab === "hotel" ? (
             <>
               <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover content={<SelectionList options={["Dhaka, Bangladesh", "Chittagong", "Sylhet", "Cox's Bazar"]} onSelect={setDestination} />} trigger="click" placement="bottomLeft">
+                <Popover 
+                  open={openPopover === 'hotel-dest'}
+                  onOpenChange={(v) => setOpenPopover(v ? 'hotel-dest' : null)}
+                  content={<SelectionList options={["Dhaka, Bangladesh", "Chittagong", "Sylhet", "Cox's Bazar"]} onSelect={(v) => handleSelect(setDestination, v)} />} 
+                  trigger="click" placement="bottomLeft"
+                >
                   <div>
                     <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Destination")}</p>
                     <div className="mt-1 font-bold text-gray-500 text-lg leading-tight truncate">{destination}</div>
@@ -192,17 +210,21 @@ const HeroFilters = () => {
               </div>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check In")}</p>
-                <DatePicker onChange={(d) => setStartDate(d)} disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
+                <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
               </div>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check Out")}</p>
                 <div className="flex items-center justify-between">
-                  <DatePicker onChange={(d) => setEndDate(d)} disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} />
+                  <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} />
                   <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
                 </div>
               </div>
               <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <Popover content={guestContent} trigger="click" placement="bottomRight">
+                <Popover 
+                  open={openPopover === 'hotel-guests'}
+                  onOpenChange={(v) => setOpenPopover(v ? 'hotel-guests' : null)}
+                  content={guestContent} trigger="click" placement="bottomRight"
+                >
                   <div className="cursor-pointer">
                     <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Room & Guests")}</p>
                     <h4 className={`font-bold text-lg leading-tight mt-1 whitespace-nowrap text-gray-700`}>
@@ -215,7 +237,12 @@ const HeroFilters = () => {
           ) : tab === "visa" ? (
             <>
               <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover content={<SelectionList options={["Bangladesh", "India", "USA"]} onSelect={setCitizenOf} />} trigger="click" placement="bottomLeft">
+                <Popover 
+                  open={openPopover === 'visa-cit'}
+                  onOpenChange={(v) => setOpenPopover(v ? 'visa-cit' : null)}
+                  content={<SelectionList options={["Bangladesh", "India", "USA"]} onSelect={(v) => handleSelect(setCitizenOf, v)} />} 
+                  trigger="click" placement="bottomLeft"
+                >
                   <div>
                     <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Citizen of")}</p>
                     <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{citizenOf}</div>
@@ -223,7 +250,12 @@ const HeroFilters = () => {
                 </Popover>
               </div>
               <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover content={<SelectionList options={["Thailand", "Malaysia", "Saudi Arabia"]} onSelect={setTravellingTo} />} trigger="click" placement="bottomLeft">
+                <Popover 
+                  open={openPopover === 'visa-to'}
+                  onOpenChange={(v) => setOpenPopover(v ? 'visa-to' : null)}
+                  content={<SelectionList options={["Thailand", "Malaysia", "Saudi Arabia"]} onSelect={(v) => handleSelect(setTravellingTo, v)} />} 
+                  trigger="click" placement="bottomLeft"
+                >
                   <div>
                     <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Travelling to")}</p>
                     <div className={`mt-1 font-bold text-lg leading-tight ${travellingTo.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{travellingTo}</div>
@@ -231,7 +263,12 @@ const HeroFilters = () => {
                 </Popover>
               </div>
               <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa"]} onSelect={setVisaCategory} />} trigger="click" placement="bottomLeft">
+                <Popover 
+                  open={openPopover === 'visa-cat'}
+                  onOpenChange={(v) => setOpenPopover(v ? 'visa-cat' : null)}
+                  content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa"]} onSelect={(v) => handleSelect(setVisaCategory, v)} />} 
+                  trigger="click" placement="bottomLeft"
+                >
                   <div>
                     <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Visa Category")}</p>
                     <div className={`mt-1 font-bold text-lg leading-tight ${visaCategory.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{visaCategory}</div>
@@ -242,7 +279,12 @@ const HeroFilters = () => {
           ) : tab === "tour" ? (
             <>
               <div className="md:col-span-6 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover content={<SelectionList options={["Dubai", "Maldives", "Bhutan"]} onSelect={setDestination} />} trigger="click" placement="bottomLeft">
+                <Popover 
+                  open={openPopover === 'tour-dest'}
+                  onOpenChange={(v) => setOpenPopover(v ? 'tour-dest' : null)}
+                  content={<SelectionList options={["Dubai", "Maldives", "Bhutan"]} onSelect={(v) => handleSelect(setDestination, v)} />} 
+                  trigger="click" placement="bottomLeft"
+                >
                   <div>
                     <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Destination")}</p>
                     <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{destination}</div>
@@ -251,25 +293,39 @@ const HeroFilters = () => {
               </div>
               <div className="md:col-span-5 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Prefered Date")}</p>
-                <DatePicker onChange={(d) => setStartDate(d)} disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
+                <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
               </div>
             </>
           ) : (
             <>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 relative cursor-pointer">
-                <Popover content={<SelectionList options={["Dhaka", "Chittagong", "Sylhet"]} onSelect={setFromLocation} />} trigger="click" placement="bottomLeft">
+                <Popover 
+                  open={openPopover === 'flight-from'}
+                  onOpenChange={(v) => setOpenPopover(v ? 'flight-from' : null)}
+                  content={<SelectionList options={["Dhaka", "Chittagong", "Sylhet"]} onSelect={(v) => handleSelect(setFromLocation, v)} />} 
+                  trigger="click" placement="bottomLeft"
+                >
                   <div>
                     <p className="text-[11px] text-gray-400 font-bold">From</p>
                     <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{fromLocation}</h4>
                     <p className="text-[10px] text-gray-400 truncate">DAC, Hazrat Shahjalal Int....</p>
                   </div>
                 </Popover>
-                <div className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md">
+                {/* Swap বাটন লজিক এখানে */}
+                <div 
+                  onClick={handleSwapLocations}
+                  className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
+                >
                   <FaExchangeAlt size={10} className="rotate-90 md:rotate-0" />
                 </div>
               </div>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover content={<SelectionList options={["Cox's Bazar", "Bangkok", "Dubai"]} onSelect={setToLocation} />} trigger="click" placement="bottomLeft">
+                <Popover 
+                  open={openPopover === 'flight-to'}
+                  onOpenChange={(v) => setOpenPopover(v ? 'flight-to' : null)}
+                  content={<SelectionList options={["Cox's Bazar", "Bangkok", "Dubai"]} onSelect={(v) => handleSelect(setToLocation, v)} />} 
+                  trigger="click" placement="bottomLeft"
+                >
                   <div>
                     <p className="text-[11px] text-gray-400 font-bold">To</p>
                     <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{toLocation}</h4>
@@ -279,21 +335,25 @@ const HeroFilters = () => {
               </div>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold">Departure</p>
-                <DatePicker onChange={(d) => setStartDate(d)} disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
-                <p className="text-[10px] text-gray-400">{startDate?.format('dddd')}</p>
+                <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
+                <p className="text-[10px] text-gray-400">{startDate ? startDate.format('dddd') : ""}</p>
               </div>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
                 <p className="text-[11px] text-gray-400 font-bold">Departure</p>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <DatePicker onChange={(d) => setEndDate(d)} disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} />
-                    <p className="text-[10px] text-gray-400">{endDate?.format('dddd')}</p>
+                    <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} />
+                    <p className="text-[10px] text-gray-400">{endDate ? endDate.format('dddd') : ""}</p>
                   </div>
                   <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
                 </div>
               </div>
               <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <Popover content={guestContent} trigger="click" placement="bottomRight">
+                <Popover 
+                  open={openPopover === 'flight-guests'}
+                  onOpenChange={(v) => setOpenPopover(v ? 'flight-guests' : null)}
+                  content={guestContent} trigger="click" placement="bottomRight"
+                >
                   <div className="cursor-pointer">
                     <p className="text-[11px] text-gray-400 font-bold">Traveller, Class</p>
                     <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{adults + children + infants} Traveller</h4>

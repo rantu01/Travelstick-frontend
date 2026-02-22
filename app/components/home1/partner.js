@@ -15,7 +15,6 @@ const Partner = () => {
     false
   );
 
-  // লোগো স্থির রাখতে চাইলে ডুপ্লিকেট করার দরকার নেই, তাই array spread বাদ দেওয়া হয়েছে
   const partnerImages = setting?.partner || [];
 
   useEffect(() => {
@@ -30,34 +29,22 @@ const Partner = () => {
         <SkeletonLoading cols={1} />
       ) : (
         <div className="w-full bg-white">
-
-          <div className="py-8 md:py-8 xl:py-8 max-w-6xl mx-auto">
-            {/* <div className="font-medium sm:text-xl md:text-2xl font-montserrat text-[#05073C] text-center mb-10">
-            <BlurText
-              text={i18n.t("Trusted by over 32K growing companies")}
-              className="flex justify-center text-center"
-              delay={400}
-            />
-          </div> */}
-
+          <div className="py-8 md:py-8 xl:py-8 max-w-6xl mx-auto px-4">
             <div className="py-4">
-
               <h2 className="text-center text-[#1d2c71] text-3xl font-bold">
                 Save Big with Limited-Time Travel Offers
               </h2>
-              <p className="text-center text-[#1d2c71] text-2xl font-bold">
+              <p className="text-center text-[#4b5687] max-w-4xl  mx-auto mb-8 leading-relaxed">
                 With Banglaco, your journey begins With the best names in the sky
               </p>
             </div>
 
-            {/* Marquee বাদ দিয়ে flex-wrap ব্যবহার করা হয়েছে */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10 lg:gap-16 bg-white py-6 rouned-xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 bg-white py-6">
               {partnerImages.map((image, index) => (
                 <div
                   key={index}
-                  className="group flex items-center justify-between transition-transform hover:scale-105 duration-300"
+                  className="group flex items-center justify-between p-4 rounded-xl transition-all duration-300 border border-transparent hover:border-gray-100 hover:bg-white hover:shadow-xl cursor-pointer"
                 >
-                  {/* ইমেজের সাইজ আপনার কোড অনুযায়ী একই রাখা হয়েছে */}
                   <Image
                     className="w-[120px] h-[60px] md:w-[150px] md:h-[70px] object-contain"
                     src={image}
@@ -66,7 +53,6 @@ const Partner = () => {
                     alt={`partner-image-${index}`}
                   />
 
-                  {/* অ্যারো আইকন */}
                   <svg
                     width="16"
                     height="16"
@@ -85,7 +71,6 @@ const Partner = () => {
             </div>
           </div>
         </div>
-
       )}
     </>
   );

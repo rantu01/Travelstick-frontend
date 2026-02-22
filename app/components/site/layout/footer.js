@@ -96,7 +96,7 @@ const Footer = () => {
           <div className="space-y-5">
             <h4 className="text-lg font-bold mb-6">Contact Us</h4>
             <div className="text-sm space-y-4 opacity-90">
-              <p>Her wil be Banglaco Address Gulshan<br />1, Dhaka, Bangladesh</p>
+              <p>House#3, Road#13, Gulshan 01, <br />Dhaka-1212, Bangladesh</p>
               <p>Email: {setting?.site_email || "ask@banglaco.com"}</p>
               <p>Phone: {setting?.site_phone || "091111122221"}</p>
             </div>

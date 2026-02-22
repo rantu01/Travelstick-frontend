@@ -27,7 +27,7 @@ const MaintenancePage = () => {
           onClick={handleOpen}
           className="fixed top-24 right-5 z-[9999] cursor-pointer group animate-in fade-in zoom-in duration-500"
         >
-          <div className="bg-amber-500 p-2 rounded-full shadow-lg border-2 border-white animate-bounce">
+          <div className="bg-[#1a4fa0] p-2 rounded-full shadow-lg border-2 border-white animate-bounce">
             <Settings size={20} className="text-white animate-spin-slow" />
           </div>
           <span className="absolute right-10 top-1 bg-gray-800 text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap font-sans">
