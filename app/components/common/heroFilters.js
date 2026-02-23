@@ -44,9 +44,8 @@ const HeroFilters = () => {
     setOpenPopover(null);
   };
 
-  // From এবং To লোকেশন সোয়াপ করার ফাংশন
   const handleSwapLocations = (e) => {
-    e.stopPropagation(); // যাতে প্যারেন্ট ডিভের ক্লিক ইভেন্ট ট্রিগার না হয়
+    e.stopPropagation(); 
     const temp = fromLocation;
     setFromLocation(toLocation);
     setToLocation(temp);
@@ -167,12 +166,17 @@ const HeroFilters = () => {
 
   return (
     <div className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans">
+      {/* Tabs Section - Fixed for Mobile scroll */}
       <div className="flex justify-center">
-        <div className="flex bg-white rounded-t-xl shadow-sm border-b overflow-x-auto no-scrollbar max-w-full">
+        <div className="grid grid-cols-4 w-full md:w-auto bg-white rounded-t-xl shadow-sm border-b overflow-hidden">
           {tabs.map((t) => (
-            <button key={t.id} onClick={() => setTab(t.id)} className={`flex items-center gap-2 px-6 md:px-8 py-4 text-sm font-semibold transition-all whitespace-nowrap ${tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"}`}>
+            <button 
+              key={t.id} 
+              onClick={() => setTab(t.id)} 
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-3 md:py-4 text-[12px] md:text-sm font-semibold transition-all ${tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"}`}
+            >
               <span className={tab === t.id ? "text-[#1A4FA0]" : "text-blue-500"}>{t.icon}</span>
-              {i18n.t(t.label)}
+              <span className="text-center">{i18n.t(t.label)}</span>
             </button>
           ))}
         </div>
@@ -311,7 +315,6 @@ const HeroFilters = () => {
                     <p className="text-[10px] text-gray-400 truncate">DAC, Hazrat Shahjalal Int....</p>
                   </div>
                 </Popover>
-                {/* Swap বাটন লজিক এখানে */}
                 <div 
                   onClick={handleSwapLocations}
                   className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
@@ -339,7 +342,7 @@ const HeroFilters = () => {
                 <p className="text-[10px] text-gray-400">{startDate ? startDate.format('dddd') : ""}</p>
               </div>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
-                <p className="text-[11px] text-gray-400 font-bold">Departure</p>
+                <p className="text-[11px] text-gray-400 font-bold">Return</p>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} />
