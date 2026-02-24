@@ -7,7 +7,7 @@ import { Form, Image as ImageAntd } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FaFacebookF, FaInstagram, FaYoutube, FaTwitter } from "react-icons/fa6";
+import { FaFacebookF, FaInstagram, FaYoutube, FaGoogle  } from "react-icons/fa6";
 
 const Footer = () => {
   const i18n = useI18n();
@@ -27,21 +27,13 @@ const Footer = () => {
     { name: "Hotel", link: "/hotel" },
     { name: "Visa", link: "/visa" },
     { name: "Holiday", link: "/holiday" },
-    { name: "eSim", link: "/esim" },
-    { name: "Umrah", link: "/umrah" },
-    { name: "Promotions", link: "/promotions" },
-    { name: "Travel Guide", link: "/guide" },
-    { name: "Top Destinations", link: "/destinations" },
   ];
 
   // Map settings or use fake data for social icons
   const socialIcons = [
-    { icon: FaFacebookF, color: "bg-[#1877F2]", link: "#" },
-    { icon: FaInstagram, color: "bg-[#E4405F]", link: "#" },
-    { icon: FaYoutube, color: "bg-[#FF0000]", link: "#" },
-    { icon: FaFacebookF, color: "bg-[#1877F2]", link: "#" },
-    { icon: FaInstagram, color: "bg-[#E4405F]", link: "#" },
-    { icon: FaYoutube, color: "bg-[#FF0000]", link: "#" },
+    { icon: FaFacebookF, color: "bg-[#1877F2]", link: "https://www.facebook.com/banglacoltd" },
+    { icon: FaInstagram, color: "bg-[#E4405F]", link: "http://instagram.com/banglaco_com" },
+    { icon: FaGoogle, color: "bg-[#FF0000]", link: "https://share.google/pz5Q02hOifcZQcClt" },
   ];
 
   return (

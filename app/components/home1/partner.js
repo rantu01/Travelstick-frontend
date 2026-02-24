@@ -21,6 +21,14 @@ const Partner = () => {
     getSettings();
   }, []);
 
+  // Upore scroll korar logic
+  const handleScrollTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth", // Smoothly upore jabe
+    });
+  };
+
   const isLoading = loading && partnerImages.length === 0;
 
   return (
@@ -43,6 +51,7 @@ const Partner = () => {
               {partnerImages.map((image, index) => (
                 <div
                   key={index}
+                  onClick={handleScrollTop} // Ekhane click handle kora hoyeche
                   className="group flex items-center justify-between p-4 rounded-xl transition-all duration-300 border border-transparent hover:border-gray-100 hover:bg-white hover:shadow-xl cursor-pointer"
                 >
                   <Image
