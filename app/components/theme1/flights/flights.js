@@ -1,12 +1,14 @@
 "use client";
-import { Drawer, Empty } from "antd";
+import { Drawer, Empty, Popover, DatePicker } from "antd";
 import { useState } from "react";
 import Image from "next/image";
 import Banner from "../../site/common/component/Banner";
 import FlightFilters from "./flightFilters";
 import FlightCard from "../../site/common/card/flightCard";
+import dayjs from "dayjs";
+import { FaSearch, FaTimesCircle, FaExchangeAlt } from "react-icons/fa";
 
-// FAKE DATA for UI
+// FAKE DATA ... (আপনার দেওয়া ডাটা এখানে থাকবে)
 const FAKE_FLIGHTS = [
     {
         _id: "1",
@@ -290,13 +292,112 @@ const FAKE_FLIGHTS = [
     }
 ];
 
-
-const FlightsPage = ({ from, to, date, flightClass, theme }) => {
+const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flightClass, theme }) => {
     const [openDrawer, setOpenDrawer] = useState(false);
+
+    // --- Search States ---
+    const [searchFrom, setSearchFrom] = useState(initialFrom || "Dhaka (DAC)");
+    const [searchTo, setSearchTo] = useState(initialTo || null);
+    const [travelDate, setTravelDate] = useState(initialDate ? dayjs(initialDate) : null);
+    const [openPopover, setOpenPopover] = useState(null);
+
+    const disabledDate = (current) => {
+        return current && current < dayjs().startOf('day');
+    };
+
+    const SelectionList = ({ options, onSelect, type }) => (
+        <div className="flex flex-col w-64 max-h-72 overflow-y-auto bg-white rounded-md shadow-xl border border-gray-100">
+            {options.map((opt, idx) => (
+                <button
+                    key={idx}
+                    onClick={() => { onSelect(opt); setOpenPopover(null); }}
+                    className="text-left px-4 py-3 hover:bg-blue-50 text-sm font-semibold text-gray-700 border-b border-gray-50 last:border-none transition-colors"
+                >
+                    {opt}
+                </button>
+            ))}
+        </div>
+    );
+
+    const airportOptions = ["Dhaka (DAC)", "Chittagong (CGP)", "Sylhet (ZYL)", "Cox's Bazar (CXB)", "Saidpur (SPD)", "Jashore (JSR)"];
 
     return (
         <div className="w-full">
             <Banner title="Flights" />
+
+            {/* --- Flight Search Bar --- */}
+            <div className="travel-container -mt-10 relative z-30">
+                <div className="bg-white rounded-xl shadow-2xl flex flex-col md:flex-row items-stretch border border-gray-100 overflow-hidden">
+
+                    {/* From */}
+                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer relative group">
+                        <Popover
+                            open={openPopover === 'from'}
+                            onOpenChange={(v) => setOpenPopover(v ? 'from' : null)}
+                            content={<SelectionList options={airportOptions} onSelect={(v) => setSearchFrom(v)} />}
+                            trigger="click" placement="bottomLeft"
+                        >
+                            <div className="w-full">
+                                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">From</p>
+                                <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
+                                    {searchFrom || "Select City"}
+                                </div>
+                            </div>
+                        </Popover>
+                    </div>
+
+                    {/* To */}
+                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+                        <div className="flex justify-between items-center">
+                            <Popover
+                                open={openPopover === 'to'}
+                                onOpenChange={(v) => setOpenPopover(v ? 'to' : null)}
+                                content={<SelectionList options={airportOptions.filter(a => a !== searchFrom)} onSelect={(v) => setSearchTo(v)} />}
+                                trigger="click" placement="bottomLeft"
+                            >
+                                <div className="flex-1">
+                                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">To</p>
+                                    <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
+                                        {searchTo || "Select Destination"}
+                                    </div>
+                                </div>
+                            </Popover>
+                            {searchTo && (
+                                <button onClick={() => setSearchTo(null)} className="text-gray-300 hover:text-red-500 transition-colors">
+                                    <FaTimesCircle size={16} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Date */}
+                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Departure Date</p>
+                        <div className="flex items-center justify-between">
+                            <DatePicker
+                                onChange={(d) => setTravelDate(d)}
+                                disabledDate={disabledDate}
+                                variant="borderless"
+                                className="p-0 font-bold text-lg w-full mt-1"
+                                value={travelDate}
+                                format="DD MMM, YYYY"
+                                placeholder="Pick a date"
+                                suffixIcon={null}
+                            />
+                            {travelDate && <FaTimesCircle className="text-gray-300 hover:text-red-400 cursor-pointer" onClick={() => setTravelDate(null)} />}
+                        </div>
+                    </div>
+
+                    {/* Search Button */}
+                    <div className="p-3 bg-white flex items-center justify-center">
+                        <button className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full md:w-20 h-12 md:h-14 rounded-lg flex items-center justify-center shadow-lg transition-all active:scale-95">
+                            <FaSearch size={20} className="md:hidden mr-2" />
+                            <span className="md:hidden font-bold">Search Flights</span>
+                            <FaSearch size={20} className="hidden md:block" />
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">
 
@@ -322,11 +423,15 @@ const FlightsPage = ({ from, to, date, flightClass, theme }) => {
 
                     {/* Flight List */}
                     <div className="w-full md:w-[70%] xl:w-[75%]">
-                        <h2 className="mb-4 font-bold text-xl">{FAKE_FLIGHTS.length} Flights Available</h2>
+                        <h2 className="mb-4 font-bold text-xl text-gray-800">{FAKE_FLIGHTS.length} Flights Available</h2>
                         <div className="grid grid-cols-1 gap-4 md:gap-6">
-                            {FAKE_FLIGHTS.map((item, index) => (
-                                <FlightCard key={index} data={item} />
-                            ))}
+                            {FAKE_FLIGHTS.length > 0 ? (
+                                FAKE_FLIGHTS.map((item, index) => (
+                                    <FlightCard key={index} data={item} />
+                                ))
+                            ) : (
+                                <Empty description="No Flights Found" />
+                            )}
                         </div>
                     </div>
                 </div>
