@@ -14,7 +14,7 @@ const HeroFilters = () => {
 
   const [tab, setTab] = useState("flight");
   const [tripType, setTripType] = useState("One Way");
-  
+
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -31,6 +31,9 @@ const HeroFilters = () => {
   const [bookingClass, setBookingClass] = useState("Economy");
   const [rooms, setRooms] = useState(1);
 
+
+  const [withPets, setWithPets] = useState(false);
+
   const [openPopover, setOpenPopover] = useState(null);
 
   const [filterData] = useFetch(getHeroFilterData);
@@ -45,7 +48,7 @@ const HeroFilters = () => {
   };
 
   const handleSwapLocations = (e) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     const temp = fromLocation;
     setFromLocation(toLocation);
     setToLocation(temp);
@@ -157,6 +160,113 @@ const HeroFilters = () => {
     </div>
   );
 
+  const hotelGuestContent = (
+    <div className="w-80 p-5 bg-white rounded-lg shadow-2xl border border-gray-100">
+      <div className="flex flex-col gap-5">
+
+        {/* Room Selection */}
+        <div className="flex items-center justify-between">
+          <span className="text-gray-700 font-bold text-base">Room</span>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setRooms(Math.max(1, rooms - 1))}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${rooms > 1 ? "border-[#1a4fa0] text-[#1a4fa0]" : "border-gray-200 text-gray-300"}`}
+            >
+              <FaMinus size={10} />
+            </button>
+            <span className="font-bold text-gray-700 w-4 text-center">{rooms}</span>
+            <button
+              onClick={() => setRooms(rooms + 1)}
+              className="w-8 h-8 rounded-full border border-[#1a4fa0] text-[#1a4fa0] flex items-center justify-center hover:bg-red-50"
+            >
+              <FaPlus size={10} />
+            </button>
+          </div>
+        </div>
+
+        <hr className="border-gray-100" />
+
+        {/* Adults Selection */}
+        <div className="flex items-center justify-between">
+          <span className="text-gray-700 font-bold text-base">Adults</span>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setAdults(Math.max(1, adults - 1))}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${adults > 1 ? "border-[#1a4fa0] text-[#1a4fa0]" : "border-gray-200 text-gray-300"}`}
+            >
+              <FaMinus size={10} />
+            </button>
+            <span className="font-bold text-gray-700 w-4 text-center">{adults}</span>
+            <button
+              onClick={() => setAdults(adults + 1)}
+              className="w-8 h-8 rounded-full border border-[#1a4fa0] text-[#1a4fa0] flex items-center justify-center hover:bg-red-50"
+            >
+              <FaPlus size={10} />
+            </button>
+          </div>
+        </div>
+
+        <hr className="border-gray-100" />
+
+        {/* Child Selection */}
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-gray-700 font-bold text-base">Child</p>
+            <p className="text-[10px] text-gray-400">0-12 Years</p>
+          </div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setChildren(Math.max(0, children - 1))}
+              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${children > 0 ? "border-[#1a4fa0] text-[#1a4fa0]" : "border-gray-200 text-gray-300"}`}
+            >
+              <FaMinus size={10} />
+            </button>
+            <span className="font-bold text-gray-700 w-4 text-center">{children}</span>
+            <button
+              onClick={() => setChildren(children + 1)}
+              className="w-8 h-8 rounded-full border border-[#1a4fa0] text-[#1a4fa0] flex items-center justify-center hover:bg-red-50"
+            >
+              <FaPlus size={10} />
+            </button>
+          </div>
+        </div>
+
+        {/* Traveling with Pets Section */}
+        <div className="mt-2">
+          <div className="flex items-center justify-between">
+            <span className="text-gray-700 font-bold text-sm">Traveling with pets?</span>
+            <div
+              onClick={() => setWithPets(!withPets)}
+              className={`w-11 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors ${withPets ? 'bg-red-500' : 'bg-gray-300'}`}
+            >
+              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${withPets ? 'translate-x-5' : 'translate-x-0'}`} />
+            </div>
+          </div>
+          <p className="text-[10px] text-gray-400 mt-2 leading-tight">
+            Assistance animals are not classified as pets. <span className=" text-[#1a4fa0] cursor-pointer hover:underline">Learn more about traveling with assistance animals.</span>
+          </p>
+        </div>
+
+        {/* Action Buttons: Reset & Apply */}
+        <div className="flex items-center justify-between pt-2">
+          <button
+            onClick={() => { setRooms(1); setAdults(2); setChildren(0); setWithPets(false); }}
+            className="text-[#1a4fa0] font-bold text-sm hover:underline"
+          >
+            Reset
+          </button>
+          <button
+            onClick={() => setOpenPopover(null)}
+            className="border-[#1a4fa0] text-[#1a4fa0] px-6 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-red-50 transition-all active:scale-95 shadow-sm"
+          >
+            Apply
+            <span className="flex items-center justify-center w-4 h-4 rounded-full border border-[#1a4fa0] text-[10px]">✓</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   const tabs = [
     { id: "flight", label: "Flight", icon: <FaPlane /> },
     { id: "hotel", label: "Hotel", icon: <FaHotel /> },
@@ -170,9 +280,9 @@ const HeroFilters = () => {
       <div className="flex justify-center">
         <div className="grid grid-cols-4 w-full md:w-auto bg-white rounded-t-xl shadow-sm border-b overflow-hidden">
           {tabs.map((t) => (
-            <button 
-              key={t.id} 
-              onClick={() => setTab(t.id)} 
+            <button
+              key={t.id}
+              onClick={() => setTab(t.id)}
               className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-3 md:py-4 text-[12px] md:text-sm font-semibold transition-all ${tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"}`}
             >
               <span className={tab === t.id ? "text-[#1A4FA0]" : "text-blue-500"}>{t.icon}</span>
@@ -200,10 +310,10 @@ const HeroFilters = () => {
           {tab === "hotel" ? (
             <>
               <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover 
+                <Popover
                   open={openPopover === 'hotel-dest'}
                   onOpenChange={(v) => setOpenPopover(v ? 'hotel-dest' : null)}
-                  content={<SelectionList options={["Dhaka, Bangladesh", "Chittagong", "Sylhet", "Cox's Bazar"]} onSelect={(v) => handleSelect(setDestination, v)} />} 
+                  content={<SelectionList options={["Dhaka, Bangladesh", "Chittagong", "Sylhet", "Cox's Bazar"]} onSelect={(v) => handleSelect(setDestination, v)} />}
                   trigger="click" placement="bottomLeft"
                 >
                   <div>
@@ -212,10 +322,12 @@ const HeroFilters = () => {
                   </div>
                 </Popover>
               </div>
+
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check In")}</p>
                 <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
               </div>
+
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check Out")}</p>
                 <div className="flex items-center justify-between">
@@ -223,16 +335,20 @@ const HeroFilters = () => {
                   <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
                 </div>
               </div>
+
               <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <Popover 
+                <Popover
                   open={openPopover === 'hotel-guests'}
                   onOpenChange={(v) => setOpenPopover(v ? 'hotel-guests' : null)}
-                  content={guestContent} trigger="click" placement="bottomRight"
+                  /* এখানে আগের বানানো hotelGuestContent ব্যবহার করুন */
+                  content={hotelGuestContent}
+                  trigger="click"
+                  placement="bottomRight"
                 >
                   <div className="cursor-pointer">
-                    <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Room & Guests")}</p>
-                    <h4 className={`font-bold text-lg leading-tight mt-1 whitespace-nowrap text-gray-700`}>
-                      {rooms} Room, {adults + children + infants} Guests
+                    <p className="text-[11px] text-gray-400 font-bold leading-none">{i18n.t("Rooms & Guests")}</p>
+                    <h4 className="font-bold text-[17px] leading-tight mt-1 whitespace-nowrap text-gray-800">
+                      {rooms} Room, {adults} Adults, {children} Child
                     </h4>
                   </div>
                 </Popover>
@@ -241,10 +357,10 @@ const HeroFilters = () => {
           ) : tab === "visa" ? (
             <>
               <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover 
+                <Popover
                   open={openPopover === 'visa-cit'}
                   onOpenChange={(v) => setOpenPopover(v ? 'visa-cit' : null)}
-                  content={<SelectionList options={["Bangladesh", "India", "USA"]} onSelect={(v) => handleSelect(setCitizenOf, v)} />} 
+                  content={<SelectionList options={["Bangladesh", "India", "USA"]} onSelect={(v) => handleSelect(setCitizenOf, v)} />}
                   trigger="click" placement="bottomLeft"
                 >
                   <div>
@@ -254,10 +370,10 @@ const HeroFilters = () => {
                 </Popover>
               </div>
               <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover 
+                <Popover
                   open={openPopover === 'visa-to'}
                   onOpenChange={(v) => setOpenPopover(v ? 'visa-to' : null)}
-                  content={<SelectionList options={["Thailand", "Malaysia", "Saudi Arabia"]} onSelect={(v) => handleSelect(setTravellingTo, v)} />} 
+                  content={<SelectionList options={["Thailand", "Malaysia", "Saudi Arabia"]} onSelect={(v) => handleSelect(setTravellingTo, v)} />}
                   trigger="click" placement="bottomLeft"
                 >
                   <div>
@@ -267,10 +383,10 @@ const HeroFilters = () => {
                 </Popover>
               </div>
               <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover 
+                <Popover
                   open={openPopover === 'visa-cat'}
                   onOpenChange={(v) => setOpenPopover(v ? 'visa-cat' : null)}
-                  content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa"]} onSelect={(v) => handleSelect(setVisaCategory, v)} />} 
+                  content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa"]} onSelect={(v) => handleSelect(setVisaCategory, v)} />}
                   trigger="click" placement="bottomLeft"
                 >
                   <div>
@@ -283,10 +399,10 @@ const HeroFilters = () => {
           ) : tab === "tour" ? (
             <>
               <div className="md:col-span-6 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover 
+                <Popover
                   open={openPopover === 'tour-dest'}
                   onOpenChange={(v) => setOpenPopover(v ? 'tour-dest' : null)}
-                  content={<SelectionList options={["Dubai", "Maldives", "Bhutan"]} onSelect={(v) => handleSelect(setDestination, v)} />} 
+                  content={<SelectionList options={["Dubai", "Maldives", "Bhutan"]} onSelect={(v) => handleSelect(setDestination, v)} />}
                   trigger="click" placement="bottomLeft"
                 >
                   <div>
@@ -303,10 +419,10 @@ const HeroFilters = () => {
           ) : (
             <>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 relative cursor-pointer">
-                <Popover 
+                <Popover
                   open={openPopover === 'flight-from'}
                   onOpenChange={(v) => setOpenPopover(v ? 'flight-from' : null)}
-                  content={<SelectionList options={["Dhaka", "Chittagong", "Sylhet"]} onSelect={(v) => handleSelect(setFromLocation, v)} />} 
+                  content={<SelectionList options={["Dhaka", "Chittagong", "Sylhet"]} onSelect={(v) => handleSelect(setFromLocation, v)} />}
                   trigger="click" placement="bottomLeft"
                 >
                   <div>
@@ -315,7 +431,7 @@ const HeroFilters = () => {
                     <p className="text-[10px] text-gray-400 truncate">DAC, Hazrat Shahjalal Int....</p>
                   </div>
                 </Popover>
-                <div 
+                <div
                   onClick={handleSwapLocations}
                   className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
                 >
@@ -323,10 +439,10 @@ const HeroFilters = () => {
                 </div>
               </div>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover 
+                <Popover
                   open={openPopover === 'flight-to'}
                   onOpenChange={(v) => setOpenPopover(v ? 'flight-to' : null)}
-                  content={<SelectionList options={["Cox's Bazar", "Bangkok", "Dubai"]} onSelect={(v) => handleSelect(setToLocation, v)} />} 
+                  content={<SelectionList options={["Cox's Bazar", "Bangkok", "Dubai"]} onSelect={(v) => handleSelect(setToLocation, v)} />}
                   trigger="click" placement="bottomLeft"
                 >
                   <div>
@@ -352,7 +468,7 @@ const HeroFilters = () => {
                 </div>
               </div>
               <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <Popover 
+                <Popover
                   open={openPopover === 'flight-guests'}
                   onOpenChange={(v) => setOpenPopover(v ? 'flight-guests' : null)}
                   content={guestContent} trigger="click" placement="bottomRight"

@@ -18,12 +18,13 @@ import { useFetch } from "@/app/helper/hooks";
 import { fetchPublicSettings, getNotificationsByAdmin } from "@/app/helper/backend";
 import AuthModal from "../common/component/authModal";
 import { useCart } from "@/app/contexts/cartContext";
-import { MdOutlineShoppingCart } from "react-icons/md";
+import { MdOutlineShoppingCart, MdSimCard } from "react-icons/md";
 import NotificationDropdown from "../../common/notification";
 
 // Icons for Menu
-import { FaPlane, FaHotel, FaPassport, FaUmbrellaBeach, FaGlobeAsia } from "react-icons/fa";
+import { FaPlane, FaHotel, FaPassport, FaUmbrellaBeach, FaGlobeAsia, FaShoppingCart } from "react-icons/fa";
 import { RiMoonClearLine } from "react-icons/ri"; // Umrah/Islamic Icon suggestion
+import { FaGift } from "react-icons/fa6";
 
 const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
   const [setting] = useFetch(fetchPublicSettings);
@@ -53,22 +54,24 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
     { path: "/hotel", label: i18n.t("Hotel"), icon: <FaHotel /> },
     { path: "/visa", label: i18n.t("Visa"), icon: <FaPassport /> },
     { path: "/package", label: i18n.t("Holiday"), icon: <FaUmbrellaBeach /> },
-    { path: "/e-sim", label: i18n.t("E-Sim"), icon: <FaGlobeAsia /> },
     { path: "/umrah", label: i18n.t("Umrah"), icon: <RiMoonClearLine /> },
+    { path: "/Shop", label: i18n.t("Shop"), icon: <FaShoppingCart /> }, // Shop এর জন্য Shopping Cart
+    { path: "/e-sim", label: i18n.t("E-Sim"), icon: <MdSimCard /> },    // E-Sim এর জন্য Sim Card আইকন
+    { path: "/Gift Card", label: i18n.t("Gift Card"), icon: <FaGift /> }, // Gift Card এর জন্য Gift আইকন
   ];
 
   const userMenuItems = [
     user?.role === "admin" || user?.role === "employee"
       ? {
-          key: "dashboard",
-          label: i18n.t("Dashboard"),
-          onClick: () => router.push("/admin"),
-        }
+        key: "dashboard",
+        label: i18n.t("Dashboard"),
+        onClick: () => router.push("/admin"),
+      }
       : {
-          key: "userDashboard",
-          label: i18n.t("Dashboard"),
-          onClick: () => router.push("/user"),
-        },
+        key: "userDashboard",
+        label: i18n.t("Dashboard"),
+        onClick: () => router.push("/user"),
+      },
     {
       key: "logout",
       label: i18n.t("Logout"),
@@ -84,7 +87,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
   return (
     <div className=" bg-white shadow-sm font-lato sticky top-0 z-50 overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-row justify-between items-center py-3 px-4 lg:px-0">
-        
+
         {/* 1. Logo Section */}
         <Link href="/">
           <div className="flex flex-col">
@@ -114,14 +117,12 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
           {menuItems.map((item) => (
             <li key={item.path}>
               <Link href={item.path} className="flex flex-col items-center group">
-                <span className={`text-xl mb-1 transition-colors ${
-                  pathname === item.path ? 'text-[#00B7EB]' : 'text-blue-500 group-hover:text-[#1A2B6D]'
-                }`}>
+                <span className={`text-xl mb-1 transition-colors ${pathname === item.path ? 'text-[#00B7EB]' : 'text-blue-500 group-hover:text-[#1A2B6D]'
+                  }`}>
                   {item.icon}
                 </span>
-                <span className={`text-[13px] font-bold transition-colors ${
-                  pathname === item.path ? 'text-[#1A2B6D]' : 'text-[#1A2B6D] group-hover:text-[#00B7EB]'
-                }`}>
+                <span className={`text-[13px] font-bold transition-colors ${pathname === item.path ? 'text-[#1A2B6D]' : 'text-[#1A2B6D] group-hover:text-[#00B7EB]'
+                  }`}>
                   {item.label}
                 </span>
               </Link>
@@ -131,7 +132,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
 
         {/* 3. Right Side - Actions & Auth */}
         <div className="flex items-center gap-4">
-          
+
           {isProduct && (
             <Link href={user ? "/cart" : "#"} onClick={() => !user && setAuthModalOpen(true)} className="relative">
               <MdOutlineShoppingCart className="text-2xl text-[#1A2B6D]" />
@@ -145,25 +146,25 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
 
           {/* Language Select */}
           <div className="hidden sm:block">
-             <Select
-                labelInValue
-                value={{ value: langFromLocalStorage || defaultLang }}
-                variant="borderless"
-                onChange={(selected) => {
-                  i18n?.changeLanguage(selected.value);
-                  localStorage.setItem("lang", selected.value);
-                }}
-                options={i18n?.languages?.map((lang) => ({
-                  value: lang._id,
-                  label: (
-                    <div className="flex items-center gap-2">
-                      <Image width={16} height={12} src={lang?.flag || "/eng.png"} alt="flag" className="rounded-sm" />
-                      <span className="text-xs font-bold text-[#1A2B6D] uppercase">{lang.code}</span>
-                    </div>
-                  ),
-                }))}
-                className="min-w-[70px]"
-              />
+            <Select
+              labelInValue
+              value={{ value: langFromLocalStorage || defaultLang }}
+              variant="borderless"
+              onChange={(selected) => {
+                i18n?.changeLanguage(selected.value);
+                localStorage.setItem("lang", selected.value);
+              }}
+              options={i18n?.languages?.map((lang) => ({
+                value: lang._id,
+                label: (
+                  <div className="flex items-center gap-2">
+                    <Image width={16} height={12} src={lang?.flag || "/eng.png"} alt="flag" className="rounded-sm" />
+                    <span className="text-xs font-bold text-[#1A2B6D] uppercase">{lang.code}</span>
+                  </div>
+                ),
+              }))}
+              className="min-w-[70px]"
+            />
           </div>
 
           {/* Notification */}
@@ -183,7 +184,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
           <div className="flex items-center gap-2">
             {!user?._id ? (
               <div className="hidden sm:flex gap-2">
-                <button 
+                <button
                   onClick={() => setAuthModalOpen(true)}
                   className="bg-[#1A2B6D] text-white px-6 py-2 rounded-md text-sm font-bold hover:bg-opacity-90 transition-all"
                 >
@@ -201,7 +202,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
                 </div>
               </Dropdown>
             )}
-            
+
             <button className="lg:hidden text-3xl text-[#1A2B6D]" onClick={() => setIsDrawerOpen(true)}>
               <IoMenuOutline />
             </button>
@@ -221,8 +222,8 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
           <hr />
           {!user?._id && (
             <div className="flex flex-col gap-3">
-              <button onClick={() => {setAuthModalOpen(true); setIsDrawerOpen(false)}} className="bg-[#1A2B6D] text-white py-3 rounded-md font-bold">Sign In</button>
-              <button onClick={() => {setAuthModalOpen(true); setIsDrawerOpen(false)}} className="border-2 border-[#1A2B6D] text-[#1A2B6D] py-3 rounded-md font-bold">Sign Up</button>
+              <button onClick={() => { setAuthModalOpen(true); setIsDrawerOpen(false) }} className="bg-[#1A2B6D] text-white py-3 rounded-md font-bold">Sign In</button>
+              <button onClick={() => { setAuthModalOpen(true); setIsDrawerOpen(false) }} className="border-2 border-[#1A2B6D] text-[#1A2B6D] py-3 rounded-md font-bold">Sign Up</button>
             </div>
           )}
         </div>

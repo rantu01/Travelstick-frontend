@@ -6,9 +6,9 @@ import Banner from "../../site/common/component/Banner";
 import FlightFilters from "./flightFilters";
 import FlightCard from "../../site/common/card/flightCard";
 import dayjs from "dayjs";
-import { FaSearch, FaTimesCircle, FaExchangeAlt } from "react-icons/fa";
+import { FaSearch, FaTimesCircle, FaExchangeAlt, FaPlus, FaMinus } from "react-icons/fa";
 
-// FAKE DATA ... (আপনার দেওয়া ডাটা এখানে থাকবে)
+// FAKE DATA
 const FAKE_FLIGHTS = [
     {
         _id: "1",
@@ -292,25 +292,51 @@ const FAKE_FLIGHTS = [
     }
 ];
 
-const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flightClass, theme }) => {
+const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flightClass }) => {
     const [openDrawer, setOpenDrawer] = useState(false);
+    const [openPopover, setOpenPopover] = useState(null);
 
     // --- Search States ---
-    const [searchFrom, setSearchFrom] = useState(initialFrom || "Dhaka (DAC)");
-    const [searchTo, setSearchTo] = useState(initialTo || null);
-    const [travelDate, setTravelDate] = useState(initialDate ? dayjs(initialDate) : null);
-    const [openPopover, setOpenPopover] = useState(null);
+    const [fromLocation, setFromLocation] = useState(initialFrom || "Dhaka (DAC)");
+    const [toLocation, setToLocation] = useState(initialTo || "Cox's Bazar (CXB)");
+    const [startDate, setStartDate] = useState(initialDate ? dayjs(initialDate) : dayjs());
+    const [endDate, setEndDate] = useState(null);
+
+    // Guest States
+    const [adults, setAdults] = useState(1);
+    const [children, setChildren] = useState(0);
+    const [infants, setInfants] = useState(0);
+    const [bookingClass, setBookingClass] = useState(flightClass || "Economy");
+
+    // --- Handlers ---
+    const handleSelect = (setter, value) => {
+        setter(value);
+        setOpenPopover(null);
+    };
+
+    const handleSwapLocations = (e) => {
+        e.stopPropagation();
+        const temp = fromLocation;
+        setFromLocation(toLocation);
+        setToLocation(temp);
+    };
+
+    const handleSearch = () => {
+        console.log("Searching for:", { fromLocation, toLocation, startDate, endDate, adults, children, infants, bookingClass });
+        // Add your search logic/API call here
+    };
 
     const disabledDate = (current) => {
         return current && current < dayjs().startOf('day');
     };
 
-    const SelectionList = ({ options, onSelect, type }) => (
+    // --- Components ---
+    const SelectionList = ({ options, onSelect }) => (
         <div className="flex flex-col w-64 max-h-72 overflow-y-auto bg-white rounded-md shadow-xl border border-gray-100">
             {options.map((opt, idx) => (
                 <button
                     key={idx}
-                    onClick={() => { onSelect(opt); setOpenPopover(null); }}
+                    onClick={() => onSelect(opt)}
                     className="text-left px-4 py-3 hover:bg-blue-50 text-sm font-semibold text-gray-700 border-b border-gray-50 last:border-none transition-colors"
                 >
                     {opt}
@@ -319,7 +345,70 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
         </div>
     );
 
-    const airportOptions = ["Dhaka (DAC)", "Chittagong (CGP)", "Sylhet (ZYL)", "Cox's Bazar (CXB)", "Saidpur (SPD)", "Jashore (JSR)"];
+    const guestContent = (
+        <div className="p-4 w-72 bg-white shadow-xl rounded-lg border border-gray-100">
+            <div className="space-y-4">
+                {/* Adults */}
+                <div className="flex justify-between items-center">
+                    <div>
+                        <p className="font-bold text-gray-700">Adults</p>
+                        <p className="text-xs text-gray-400">12 years +</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button onClick={() => setAdults(Math.max(1, adults - 1))} className="p-1 border rounded text-blue-500"><FaMinus size={12} /></button>
+                        <span className="font-bold w-4 text-center">{adults}</span>
+                        <button onClick={() => setAdults(adults + 1)} className="p-1 border rounded text-blue-500"><FaPlus size={12} /></button>
+                    </div>
+                </div>
+                {/* Children */}
+                <div className="flex justify-between items-center">
+                    <div>
+                        <p className="font-bold text-gray-700">Children</p>
+                        <p className="text-xs text-gray-400">2-12 years</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button onClick={() => setChildren(Math.max(0, children - 1))} className="p-1 border rounded text-blue-500"><FaMinus size={12} /></button>
+                        <span className="font-bold w-4 text-center">{children}</span>
+                        <button onClick={() => setChildren(children + 1)} className="p-1 border rounded text-blue-500"><FaPlus size={12} /></button>
+                    </div>
+                </div>
+                {/* Infants */}
+                <div className="flex justify-between items-center">
+                    <div>
+                        <p className="font-bold text-gray-700">Infants</p>
+                        <p className="text-xs text-gray-400">Below 2 years</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button onClick={() => setInfants(Math.max(0, infants - 1))} className="p-1 border rounded text-blue-500"><FaMinus size={12} /></button>
+                        <span className="font-bold w-4 text-center">{infants}</span>
+                        <button onClick={() => setInfants(infants + 1)} className="p-1 border rounded text-blue-500"><FaPlus size={12} /></button>
+                    </div>
+                </div>
+
+                <hr className="my-2 border-gray-100" />
+
+                {/* Class Selection */}
+                <div className="grid grid-cols-2 gap-2">
+                    {["Economy", "Premium", "Business", "First Class"].map((cls) => (
+                        <button
+                            key={cls}
+                            onClick={() => setBookingClass(cls)}
+                            className={`text-[11px] py-1 px-2 rounded border transition-all ${bookingClass === cls ? "bg-blue-600 text-white border-blue-600" : "bg-gray-50 text-gray-600 border-gray-200"}`}
+                        >
+                            {cls}
+                        </button>
+                    ))}
+                </div>
+
+                <button
+                    onClick={() => setOpenPopover(null)}
+                    className="w-full bg-[#1A4FA0] text-white py-2 rounded-md font-bold text-sm mt-2"
+                >
+                    Done
+                </button>
+            </div>
+        </div>
+    );
 
     return (
         <div className="w-full">
@@ -332,68 +421,117 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                     {/* From */}
                     <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer relative group">
                         <Popover
-                            open={openPopover === 'from'}
-                            onOpenChange={(v) => setOpenPopover(v ? 'from' : null)}
-                            content={<SelectionList options={airportOptions} onSelect={(v) => setSearchFrom(v)} />}
+                            open={openPopover === 'flight-from'}
+                            onOpenChange={(v) => setOpenPopover(v ? 'flight-from' : null)}
+                            content={<SelectionList options={["Dhaka (DAC)", "Chittagong (CGP)", "Sylhet (ZYL)"]} onSelect={(v) => handleSelect(setFromLocation, v)} />}
                             trigger="click" placement="bottomLeft"
                         >
                             <div className="w-full">
                                 <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">From</p>
                                 <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
-                                    {searchFrom || "Select City"}
+                                    {fromLocation}
                                 </div>
+                                <p className="text-[10px] text-gray-400 truncate">Hazrat Shahjalal Int....</p>
                             </div>
                         </Popover>
+
+                        {/* Swap Icon */}
+                        <div
+                            onClick={handleSwapLocations}
+                            className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
+                        >
+                            <FaExchangeAlt size={10} className="rotate-90 md:rotate-0" />
+                        </div>
                     </div>
 
                     {/* To */}
                     <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
-                        <div className="flex justify-between items-center">
-                            <Popover
-                                open={openPopover === 'to'}
-                                onOpenChange={(v) => setOpenPopover(v ? 'to' : null)}
-                                content={<SelectionList options={airportOptions.filter(a => a !== searchFrom)} onSelect={(v) => setSearchTo(v)} />}
-                                trigger="click" placement="bottomLeft"
-                            >
-                                <div className="flex-1">
-                                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">To</p>
-                                    <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
-                                        {searchTo || "Select Destination"}
-                                    </div>
+                        <Popover
+                            open={openPopover === 'flight-to'}
+                            onOpenChange={(v) => setOpenPopover(v ? 'flight-to' : null)}
+                            content={<SelectionList options={["Cox's Bazar (CXB)", "Bangkok (BKK)", "Dubai (DXB)"]} onSelect={(v) => handleSelect(setToLocation, v)} />}
+                            trigger="click" placement="bottomLeft"
+                        >
+                            <div className="flex-1">
+                                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">To</p>
+                                <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
+                                    {toLocation}
                                 </div>
-                            </Popover>
-                            {searchTo && (
-                                <button onClick={() => setSearchTo(null)} className="text-gray-300 hover:text-red-500 transition-colors">
-                                    <FaTimesCircle size={16} />
-                                </button>
-                            )}
-                        </div>
+                                <p className="text-[10px] text-gray-400">Destination Airport</p>
+                            </div>
+                        </Popover>
                     </div>
 
-                    {/* Date */}
+                    {/* Departure Date */}
                     <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Departure Date</p>
-                        <div className="flex items-center justify-between">
+                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Departure</p>
+                        <div className="flex flex-col">
                             <DatePicker
-                                onChange={(d) => setTravelDate(d)}
+                                onChange={(d) => setStartDate(d)}
                                 disabledDate={disabledDate}
                                 variant="borderless"
-                                className="p-0 font-bold text-lg w-full mt-1"
-                                value={travelDate}
+                                className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
+                                value={startDate}
                                 format="DD MMM, YYYY"
                                 placeholder="Pick a date"
                                 suffixIcon={null}
                             />
-                            {travelDate && <FaTimesCircle className="text-gray-300 hover:text-red-400 cursor-pointer" onClick={() => setTravelDate(null)} />}
+                            <p className="text-[10px] text-gray-400">{startDate ? startDate.format('dddd') : "Select Day"}</p>
                         </div>
+                    </div>
+
+                    {/* Return Date */}
+                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
+                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Return</p>
+                        <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                                <DatePicker
+                                    onChange={(d) => setEndDate(d)}
+                                    placeholder="Select date"
+                                    disabledDate={disabledDate}
+                                    variant="borderless"
+                                    className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
+                                    value={endDate}
+                                    format="DD MMM, YYYY"
+                                    suffixIcon={null}
+                                />
+                                <p className="text-[10px] text-gray-400">{endDate ? endDate.format('dddd') : "Add return"}</p>
+                            </div>
+                            {endDate && (
+                                <FaTimesCircle
+                                    className="text-gray-300 hover:text-red-400 cursor-pointer"
+                                    onClick={() => setEndDate(null)}
+                                />
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Travellers & Class */}
+                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                        <Popover
+                            open={openPopover === 'flight-guests'}
+                            onOpenChange={(v) => setOpenPopover(v ? 'flight-guests' : null)}
+                            content={guestContent}
+                            trigger="click"
+                            placement="bottomRight"
+                        >
+                            <div className="cursor-pointer">
+                                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Traveller, Class</p>
+                                <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">
+                                    {adults + children + infants} Traveller
+                                </h4>
+                                <p className="text-[10px] text-gray-400">{bookingClass}</p>
+                            </div>
+                        </Popover>
                     </div>
 
                     {/* Search Button */}
                     <div className="p-3 bg-white flex items-center justify-center">
-                        <button className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full md:w-20 h-12 md:h-14 rounded-lg flex items-center justify-center shadow-lg transition-all active:scale-95">
-                            <FaSearch size={20} className="md:hidden mr-2" />
-                            <span className="md:hidden font-bold">Search Flights</span>
-                            <FaSearch size={20} className="hidden md:block" />
+                        <button
+                            onClick={handleSearch}
+                            className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full md:w-16 h-12 md:h-14 rounded-lg flex items-center justify-center shadow-lg transition-all active:scale-95"
+                        >
+                            <FaSearch size={20} />
                         </button>
                     </div>
                 </div>
