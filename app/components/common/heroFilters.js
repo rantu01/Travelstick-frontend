@@ -7,6 +7,76 @@ import { useI18n } from "@/app/contexts/i18n";
 import { useFetch } from "@/app/helper/hooks";
 import { getHeroFilterData } from "@/app/helper/backend";
 import dayjs from "dayjs";
+import Image from "next/image";
+
+// Bangladesh fixed public holidays (MM-DD format)
+const bangladeshFixedHolidays = new Set([
+  "02-21", // International Mother Language Day
+  "03-17", // Birth Anniversary of Bangabandhu Sheikh Mujibur Rahman
+  "03-26", // Independence Day
+  "04-14", // Pahela Baishakh (Bengali New Year)
+  "05-01", // May Day / Labour Day
+  "08-15", // National Mourning Day
+  "12-16", // Victory Day
+]);
+
+// Approximate Islamic holiday dates (lunar, changes yearly — update as needed)
+const bangladeshIslamicHolidays = new Set([
+  // 2025
+  "2025-03-30", // Eid ul Fitr
+  "2025-03-31",
+  "2025-04-01",
+  "2025-06-06", // Eid ul Adha
+  "2025-06-07",
+  "2025-06-08",
+  "2025-09-04", // Eid e Milad un Nabi
+  "2025-07-27", // Ashura
+  // 2026
+  "2026-03-19", // Eid ul Fitr (approx)
+  "2026-03-20",
+  "2026-03-21",
+  "2026-05-26", // Eid ul Adha (approx)
+  "2026-05-27",
+  "2026-05-28",
+  "2026-08-25", // Eid e Milad un Nabi (approx)
+  "2026-07-16", // Ashura (approx)
+]);
+
+const isHoliday = (date) => {
+  const mmdd = date.format("MM-DD");
+  const full = date.format("YYYY-MM-DD");
+  const dayOfWeek = date.day(); // 0 = Sunday, 5 = Friday, 6 = Saturday
+
+  return (
+    dayOfWeek === 5 || // শুক্রবার
+    dayOfWeek === 6 || // শনিবার
+    bangladeshFixedHolidays.has(mmdd) || 
+    bangladeshIslamicHolidays.has(full)
+  );
+};
+
+const dateRender = (current) => {
+  const holiday = isHoliday(current);
+  return (
+    <div style={{ position: "relative", display: "inline-block", width: "100%", textAlign: "center" }}>
+      <div className="ant-picker-cell-inner">{current.date()}</div>
+      {holiday && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: 1,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 5,
+            height: 5,
+            borderRadius: "50%",
+            backgroundColor: "#e11d48",
+          }}
+        />
+      )}
+    </div>
+  );
+};
 
 const HeroFilters = () => {
   const i18n = useI18n();
@@ -30,7 +100,6 @@ const HeroFilters = () => {
   const [infants, setInfants] = useState(0);
   const [bookingClass, setBookingClass] = useState("Economy");
   const [rooms, setRooms] = useState(1);
-
 
   const [withPets, setWithPets] = useState(false);
 
@@ -268,10 +337,26 @@ const HeroFilters = () => {
   );
 
   const tabs = [
-    { id: "flight", label: "Flight", icon: <FaPlane /> },
-    { id: "hotel", label: "Hotel", icon: <FaHotel /> },
-    { id: "tour", label: "Holiday", icon: <FaUmbrellaBeach /> },
-    { id: "visa", label: "Visa", icon: <FaPassport /> },
+    {
+      id: "flight",
+      label: "Flight",
+      icon: <Image src="/Header Icon/2.png" width={20} height={20} alt="Flight" />
+    },
+    {
+      id: "hotel",
+      label: "Hotel",
+      icon: <Image src="/Header Icon/1.png" width={20} height={20} alt="Hotel" />
+    },
+    {
+      id: "tour",
+      label: "Holiday",
+      icon: <Image src="/Header Icon/3.png" width={20} height={20} alt="Holiday" />
+    },
+    {
+      id: "visa",
+      label: "Visa",
+      icon: <Image src="/Header Icon/4.png" width={20} height={20} alt="Visa" />
+    },
   ];
 
   return (
@@ -283,9 +368,14 @@ const HeroFilters = () => {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-3 md:py-4 text-[12px] md:text-sm font-semibold transition-all ${tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"}`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-3 md:py-4 text-[12px] md:text-sm font-semibold transition-all ${tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"
+                }`}
             >
-              <span className={tab === t.id ? "text-[#1A4FA0]" : "text-blue-500"}>{t.icon}</span>
+              {/* আইকন সেকশন */}
+              <span className="flex items-center justify-center">
+                {t.icon}
+              </span>
+
               <span className="text-center">{i18n.t(t.label)}</span>
             </button>
           ))}
@@ -325,13 +415,33 @@ const HeroFilters = () => {
 
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check In")}</p>
-                <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
+                <DatePicker
+                  onChange={(d) => setStartDate(d)}
+                  placeholder="Select date"
+                  disabledDate={disabledDate}
+                  variant="borderless"
+                  className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
+                  value={startDate}
+                  format="DD MMM, YYYY"
+                  suffixIcon={null}
+                  dateRender={dateRender}
+                />
               </div>
 
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check Out")}</p>
                 <div className="flex items-center justify-between">
-                  <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} />
+                  <DatePicker
+                    onChange={(d) => setEndDate(d)}
+                    placeholder="Select date"
+                    disabledDate={disabledDate}
+                    variant="borderless"
+                    className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
+                    value={endDate}
+                    format="DD MMM, YYYY"
+                    suffixIcon={null}
+                    dateRender={dateRender}
+                  />
                   <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
                 </div>
               </div>
@@ -340,7 +450,6 @@ const HeroFilters = () => {
                 <Popover
                   open={openPopover === 'hotel-guests'}
                   onOpenChange={(v) => setOpenPopover(v ? 'hotel-guests' : null)}
-                  /* এখানে আগের বানানো hotelGuestContent ব্যবহার করুন */
                   content={hotelGuestContent}
                   trigger="click"
                   placement="bottomRight"
@@ -413,7 +522,17 @@ const HeroFilters = () => {
               </div>
               <div className="md:col-span-5 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Prefered Date")}</p>
-                <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
+                <DatePicker
+                  onChange={(d) => setStartDate(d)}
+                  placeholder="Select date"
+                  disabledDate={disabledDate}
+                  variant="borderless"
+                  className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
+                  value={startDate}
+                  format="DD MMM, YYYY"
+                  suffixIcon={null}
+                  dateRender={dateRender}
+                />
               </div>
             </>
           ) : (
@@ -454,14 +573,34 @@ const HeroFilters = () => {
               </div>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                 <p className="text-[11px] text-gray-400 font-bold">Departure</p>
-                <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} />
+                <DatePicker
+                  onChange={(d) => setStartDate(d)}
+                  placeholder="Select date"
+                  disabledDate={disabledDate}
+                  variant="borderless"
+                  className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
+                  value={startDate}
+                  format="DD MMM, YYYY"
+                  suffixIcon={null}
+                  dateRender={dateRender}
+                />
                 <p className="text-[10px] text-gray-400">{startDate ? startDate.format('dddd') : ""}</p>
               </div>
               <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
                 <p className="text-[11px] text-gray-400 font-bold">Return</p>
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} />
+                    <DatePicker
+                      onChange={(d) => setEndDate(d)}
+                      placeholder="Select date"
+                      disabledDate={disabledDate}
+                      variant="borderless"
+                      className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
+                      value={endDate}
+                      format="DD MMM, YYYY"
+                      suffixIcon={null}
+                      dateRender={dateRender}
+                    />
                     <p className="text-[10px] text-gray-400">{endDate ? endDate.format('dddd') : ""}</p>
                   </div>
                   <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />

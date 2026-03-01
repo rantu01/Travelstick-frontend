@@ -48,16 +48,48 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
     getCurrentUser();
   }, []);
 
-  // Updated Menu items with E-Sim and Umrah
+  // Updated Menu items with Custom Icons from /Header Icon/
   const menuItems = [
-    { path: "/flight", label: i18n.t("Flight"), icon: <FaPlane /> },
-    { path: "/hotel", label: i18n.t("Hotel"), icon: <FaHotel /> },
-    { path: "/visa", label: i18n.t("Visa"), icon: <FaPassport /> },
-    { path: "/package", label: i18n.t("Holiday"), icon: <FaUmbrellaBeach /> },
-    { path: "/umrah", label: i18n.t("Umrah"), icon: <RiMoonClearLine /> },
-    { path: "/Shop", label: i18n.t("Shop"), icon: <FaShoppingCart /> }, // Shop এর জন্য Shopping Cart
-    { path: "/e-sim", label: i18n.t("E-Sim"), icon: <MdSimCard /> },    // E-Sim এর জন্য Sim Card আইকন
-    { path: "/Gift Card", label: i18n.t("Gift Card"), icon: <FaGift /> }, // Gift Card এর জন্য Gift আইকন
+    {
+      path: "/flight",
+      label: i18n.t("Flight"),
+      icon: <Image src="/Header Icon/2.png" width={28} height={28} alt="Flight" />
+    },
+    {
+      path: "/hotel",
+      label: i18n.t("Hotel"),
+      icon: <Image src="/Header Icon/1.png" width={28} height={28} alt="Hotel" />
+    },
+    {
+      path: "/visa",
+      label: i18n.t("Visa"),
+      icon: <Image src="/Header Icon/4.png" width={28} height={28} alt="Visa" />
+    },
+    {
+      path: "/package",
+      label: i18n.t("Holiday"),
+      icon: <Image src="/Header Icon/3.png" width={28} height={28} alt="Holiday" />
+    },
+    {
+      path: "/umrah",
+      label: i18n.t("Umrah"),
+      icon: <Image src="/Header Icon/5.png" width={28} height={28} alt="Umrah" />
+    },
+    {
+      path: "/Shop",
+      label: i18n.t("Shop"),
+      icon: <Image src="/Header Icon/6.png" width={28} height={28} alt="Shop" />
+    },
+    {
+      path: "/e-sim",
+      label: i18n.t("E-Sim"),
+      icon: <Image src="/Header Icon/7.png" width={28} height={28} alt="E-Sim" />
+    },
+    {
+      path: "/Gift Card",
+      label: i18n.t("Gift Card"),
+      icon: <Image src="/Header Icon/8.png" width={28} height={28} alt="Gift Card" />
+    },
   ];
 
   const userMenuItems = [
