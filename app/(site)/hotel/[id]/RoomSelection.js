@@ -1,106 +1,157 @@
 "use client";
-import React from 'react';
-import { FaCheck } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { ShowerHead, Wind, Construction, Bath, Plus, Minus } from 'lucide-react';
 
 const RoomSelection = () => {
-  const rooms = [
+  // ১. এখানে আপনার সব রুমের ডেটা রাখা হয়েছে
+  const [roomData, setRoomData] = useState([
     {
       id: 1,
       type: "Standard Double Room",
       size: "20 m²",
       sleeps: "2 adults",
       bed: "1 double bed",
-      price: 23,
-      oldPrice: 28,
-      discount: "17%",
-      image: "https://img.freepik.com/free-photo/modern-living-room-style_53876-144814.jpg?semt=ais_rp_progressive&w=740&q=80"
+      price: 5000,
+      count: 1,
+      image: "https://img.freepik.com/free-photo/modern-living-room-style_53876-144814.jpg"
     },
     {
       id: 2,
       type: "Deluxe Double Room",
-      size: "20 m²",
+      size: "25 m²",
       sleeps: "2 adults",
-      bed: "1 double bed",
-      price: 23,
-      oldPrice: 38,
-      discount: "37%",
-      image: "https://img.freepik.com/free-photo/modern-living-room-style_53876-144814.jpg?semt=ais_rp_progressive&w=740&q=80"
+      bed: "1 king bed",
+      price: 7500,
+      count: 1,
+      image: "https://img.freepik.com/free-photo/luxury-bedroom-suite-resort-high-rise-hotel-with-working-table_1150-10790.jpg"
     },
     {
       id: 3,
       type: "Standard Triple Room",
-      size: "23 m²",
+      size: "30 m²",
       sleeps: "3 adults",
-      bed: "1 single bed and 1 double bed",
-      price: 26,
-      oldPrice: 35,
-      discount: "25%",
-      image: "https://img.freepik.com/free-photo/modern-living-room-style_53876-144814.jpg?semt=ais_rp_progressive&w=740&q=80"
-    },
-  ];
+      bed: "1 single and 1 double bed",
+      price: 9000,
+      count: 1,
+      image: "https://img.freepik.com/free-photo/interior-hotel-bedroom_23-2148084981.jpg"
+    }
+  ]);
+
+  // ২. রুমের সংখ্যা কমানো বা বাড়ানোর ফাংশন
+  const handleCountChange = (id, delta) => {
+    setRoomData(prevData =>
+      prevData.map(room =>
+        room.id === id
+          ? { ...room, count: Math.max(0, room.count + delta) }
+          : room
+      )
+    );
+  };
 
   return (
-    <div className="mt-8 max-w-6xl mx-auto">
-      <h2 className="text-xl font-bold mb-4">Select your room</h2>
+    <div className="p-6 bg-gray-50 min-h-screen flex flex-col items-center gap-6">
+      <h2 className="text-2xl font-bold self-start max-w-6xl w-full mx-auto">Select your room</h2>
 
-      <div className="space-y-4">
-        {rooms.map((room) => (
-          <div key={room.id} className="flex flex-col md:flex-row border border-gray-200 rounded shadow-sm overflow-hidden hover:shadow-md">
-            
-            {/* Left Image */}
-            <div className="md:w-1/4 w-full">
-              <img src={room.image} alt={room.type} className="w-full h-full object-cover"/>
+      {roomData.map((room) => (
+        <div key={room.id} className="w-full max-w-6xl bg-white border border-gray-300 rounded-[20px] overflow-hidden flex flex-col md:flex-row p-4 gap-4 shadow-sm font-sans mb-6">
+
+          {/* Left: Image Section */}
+          <div className="md:w-[240px] w-full shrink-0">
+            <img
+              src={room.image}
+              alt={room.type}
+              className="w-full h-full min-h-[180px] object-cover rounded-lg"
+            />
+          </div>
+
+          {/* Right: Content Section */}
+          <div className="flex-1">
+            {/* Header Row: Title and Top Action Bar */}
+            <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+              <div>
+                <h2 className="text-[28px] md:text-[32px] font-bold text-black leading-tight">
+                  {room.type}
+                </h2>
+                <p className="text-[14px] font-semibold text-gray-700 mt-1">
+                  {room.size} | Max {room.sleeps} | {room.bed}
+                </p>
+              </div>
+
+              {/* Price, Counter & Button - Exact Image Layout */}
+              <div className="flex items-center gap-6 self-end md:self-start">
+                <div className="text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <span className="text-[22px] font-bold text-gray-800">{room.price} ৳</span>
+                  </div>
+                  <p className="text-[10px] text-gray-500 -mt-1 whitespace-nowrap">Per night before taxes</p>
+                </div>
+
+                {/* Counter Input */}
+                <div className="flex items-center border border-gray-400 rounded-lg overflow-hidden h-[40px] bg-white">
+                  <button
+                    onClick={() => handleCountChange(room.id, 1)}
+                    className="px-3 hover:bg-gray-100 border-r border-gray-400"
+                  >
+                    <Plus size={14} />
+                  </button>
+                  <div className="px-4 font-bold text-md min-w-[45px] text-center">
+                    {room.count < 10 ? `0${room.count}` : room.count}
+                  </div>
+                  <button
+                    onClick={() => handleCountChange(room.id, -1)}
+                    className="px-3 hover:bg-gray-100 border-l border-gray-400"
+                  >
+                    <Minus size={14} />
+                  </button>
+                </div>
+
+                {/* Book Now Button */}
+                <button className="bg-[#1e3a8a] hover:bg-[#172554] text-white px-8 py-2.5 rounded-lg text-[16px] font-bold transition-all shadow-sm">
+                  Book Now
+                </button>
+              </div>
             </div>
 
-            {/* Room Details */}
-            <div className="md:w-3/4 w-full flex flex-col md:flex-row justify-between p-4 bg-white">
-              
-              {/* Left Info */}
-              <div className="md:w-1/2 space-y-2">
-                <h3 className="text-blue-600 font-bold underline text-sm cursor-pointer">{room.type}</h3>
-                <p className="text-xs text-gray-500">{room.size} • Max {room.sleeps} • {room.bed}</p>
-                <div className="mt-2 text-xs text-gray-600 space-y-1">
-                  <p className="flex items-center gap-1"><FaCheck size={10}/> Private bathroom</p>
-                  <p className="flex items-center gap-1"><FaCheck size={10}/> Air conditioning</p>
-                  <p className="flex items-center gap-1"><FaCheck size={10}/> Balcony/terrace</p>
+            <hr className="my-4 border-gray-200" />
+
+            {/* Details Row: Amenities and Benefits */}
+            <div className="flex flex-col md:flex-row justify-between gap-6">
+              {/* Column 1: Icons */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-3 text-gray-700 font-medium">
+                  <Bath size={20} className="text-gray-600" />
+                  <span className="text-[15px]">Private bathroom</span>
+                </div>
+                <div className="flex items-center gap-3 text-gray-700 font-medium">
+                  <Wind size={20} className="text-gray-600" />
+                  <span className="text-[15px]">Air conditioning</span>
+                </div>
+                <div className="flex items-center gap-3 text-gray-700 font-medium">
+                  <Construction size={20} className="text-gray-600" />
+                  <span className="text-[15px]">Balcony/terrace</span>
+                </div>
+                <div className="flex items-center gap-3 text-gray-700 font-medium">
+                  <ShowerHead size={20} className="text-gray-600" />
+                  <span className="text-[15px]">Shower</span>
                 </div>
               </div>
 
-              {/* Middle Options */}
-              <div className="md:w-1/4 mt-4 md:mt-0 text-xs space-y-1">
-                <p className="text-green-700 font-bold flex items-center gap-1"><FaCheck size={12}/> Breakfast Included</p>
-                <p className="text-green-700 font-bold flex items-center gap-1"><FaCheck size={12}/> Free Cancellation</p>
-                <p className="text-gray-600 flex items-center gap-1"><FaCheck size={12}/> Book without credit card</p>
-              </div>
-
-              {/* Price & Action */}
-              <div className="md:w-1/4 mt-4 md:mt-0 flex flex-col items-end justify-between">
-                <div className="flex flex-col items-end">
-                  <div className="flex items-center gap-1">
-                    <span className="text-gray-400 line-through text-[10px]">USD {room.oldPrice}</span>
-                    <span className="text-red-600 font-bold text-[10px]">-{room.discount}</span>
+              {/* Column 2: Green Checkmarks */}
+              <div className="space-y-2">
+                {["Breakfast Included", "Free Cancellation", "Book without credit Card", "Parking"].map((item, index) => (
+                  <div key={index} className="flex items-center gap-3 text-[#10a310]">
+                    <span className="text-[18px] font-bold italic">✓</span>
+                    <span className="text-[15px] font-bold">{item}</span>
                   </div>
-                  <div className="text-lg font-bold text-black">USD {room.price}</div>
-                  <p className="text-[9px] text-gray-500">Per night before taxes</p>
-                </div>
-
-                <div className="mt-2 flex flex-col items-end gap-1">
-                  <select className="border border-gray-300 p-1 rounded text-xs">
-                    <option>1 room</option>
-                    <option>2 rooms</option>
-                  </select>
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded text-sm font-bold shadow-sm mt-1">
-                    Book <br/>
-                    <span className="text-[10px] font-normal italic">Pay at hotel</span>
-                  </button>
-                  <p className="text-green-700 text-[10px] font-bold mt-1">FREE Cancellation</p>
-                </div>
+                ))}
               </div>
 
+              {/* Placeholder for spacing alignment */}
+              <div className="hidden md:block w-32"></div>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
   );
 };

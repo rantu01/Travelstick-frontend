@@ -415,7 +415,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
             <Banner title="Flights" />
 
             {/* --- Flight Search Bar --- */}
-            <div className="travel-container -mt-10 relative z-30">
+            <div className="travel-container -mt-10 relative z-30 sticky top-20 z-50">
                 <div className="bg-white rounded-xl shadow-2xl flex flex-col md:flex-row items-stretch border border-gray-100 overflow-hidden">
 
                     {/* From */}

@@ -83,7 +83,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
       }
 
       {/* --- Search Section --- */}
-      <div className="travel-container -mt-10 relative z-20 ">
+      <div className="travel-container -mt-10 relative z-20 sticky top-20">
         <div className="bg-white rounded-xl shadow-xl flex flex-col md:flex-row items-stretch border border-gray-200 overflow-hidden">
 
           {/* Destination */}

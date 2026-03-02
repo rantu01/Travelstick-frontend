@@ -73,7 +73,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
       }
 
       {/* --- Visa Search Bar --- */}
-      <div className="travel-container -mt-10 relative z-30">
+      <div className="travel-container -mt-10 relative z-30 sticky top-20">
         <div className="bg-white rounded-xl shadow-2xl flex flex-col md:grid md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
 
           {/* Citizen Of */}

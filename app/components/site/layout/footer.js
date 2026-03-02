@@ -7,7 +7,7 @@ import { Form, Image as ImageAntd } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FaFacebookF, FaInstagram, FaYoutube, FaGoogle  } from "react-icons/fa6";
+import { FaFacebookF, FaInstagram, FaYoutube, FaGoogle } from "react-icons/fa6";
 
 const Footer = () => {
   const i18n = useI18n();
@@ -88,15 +88,25 @@ const Footer = () => {
           <div className="space-y-5">
             <h4 className="text-lg font-bold mb-6">Contact Us</h4>
             <div className="text-sm space-y-4 opacity-90">
-              <p>House#3, Road#13, Gulshan 01, <br />Dhaka-1212, Bangladesh</p>
+
+              {/* Address with Map Link */}
+              <a
+                href="https://www.google.com/maps/search/?api=1&query=House+3+Road+13+Gulshan+1+Dhaka+1212+Bangladesh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block hover:text-blue-400 transition-colors cursor-pointer"
+              >
+                <p>House#3, Road#13, Gulshan 01, <br />Dhaka-1212, Bangladesh</p>
+              </a>
+
               <p>Email: {setting?.site_email || "ask@banglaco.com"}</p>
               <p>Phone: {setting?.site_phone || "091111122221"}</p>
             </div>
-            {/* Fake Map Placeholder like in image */}
+
             {/* Google Map Section */}
             <div className="mt-4 rounded-lg overflow-hidden border border-blue-400">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.522438343715!2d90.4106594!3d23.7790195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x37556dbb148e5a11%3A0xf093b226cfcb4bfc!2sBanglaco%20Limited.!5e0!3m2!1sen!2sbd!4v1710000000000!5m2!1sen!2sbd"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.157865246237!2d90.4005!3d23.7788!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c76e27357493%3A0x673f4e9185483241!2sGulshan%201%2C%20Dhaka!5e0!3m2!1sen!2sbd!4v1700000000000"
                 className="w-full h-32 border-0"
                 allowFullScreen=""
                 loading="lazy"
