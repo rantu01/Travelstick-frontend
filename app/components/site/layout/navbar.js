@@ -76,7 +76,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
       icon: <Image src="/Header Icon/5.png" width={36} height={36} alt="Umrah" />
     },
     {
-      path: "/Shop",
+      path: "/cart",
       label: i18n.t("Shop"),
       icon: <Image src="/Header Icon/6.png" width={36} height={36} alt="Shop" />
     },
@@ -165,7 +165,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
         {/* 3. Right Side - Actions & Auth */}
         <div className="flex items-center gap-4">
 
-          {isProduct && (
+          {/* {isProduct && (
             <Link href={user ? "/cart" : "#"} onClick={() => !user && setAuthModalOpen(true)} className="relative">
               <MdOutlineShoppingCart className="text-2xl text-[#1A2B6D]" />
               {cart?.docs?.length > 0 && (
@@ -174,7 +174,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
                 </span>
               )}
             </Link>
-          )}
+          )} */}
 
           {/* Language Select */}
           <div className="hidden sm:block">

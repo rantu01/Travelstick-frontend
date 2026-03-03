@@ -1,8 +1,16 @@
 "use client";
 import React, { useState } from 'react';
 import { ShowerHead, Wind, Construction, Bath, Plus, Minus } from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 const RoomSelection = () => {
+  const params = useParams();
+  const hotelId = params?.id;
+
+  // ২. ডিবাগিং এর জন্য কনসোলে চেক করে নিন আইডি আসছে কি না
+  console.log("Current Hotel ID:", hotelId);
+
   // ১. এখানে আপনার সব রুমের ডেটা রাখা হয়েছে
   const [roomData, setRoomData] = useState([
     {
@@ -106,9 +114,11 @@ const RoomSelection = () => {
                 </div>
 
                 {/* Book Now Button */}
-                <button className="bg-[#1e3a8a] hover:bg-[#172554] text-white px-8 py-2.5 rounded-lg text-[16px] font-bold transition-all shadow-sm">
-                  Book Now
-                </button>
+                <Link href={`/hotel/${hotelId}/booking`}>
+                  <button className="bg-[#1e3a8a] hover:bg-[#172554] text-white px-8 py-2.5 rounded-lg text-[16px] font-bold transition-all shadow-sm">
+                    Book Now
+                  </button>
+                </Link>
               </div>
             </div>
 

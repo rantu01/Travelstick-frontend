@@ -7,8 +7,8 @@ import { useFetch } from "@/app/helper/hooks";
 import { getAllPublicHotel } from "@/app/helper/backend";
 import { useI18n } from "@/app/contexts/i18n";
 import Banner from "@/app/components/site/common/component/Banner";
-import RoomSelection from "./RoomSelection";
 import { FaCheck } from "react-icons/fa6";
+import RoomSelection from "@/app/components/theme1/hotels/RoomSelection";
 
 const HotelDetails = () => {
   const params = useParams();
@@ -16,9 +16,13 @@ const HotelDetails = () => {
   const { langCode } = useI18n();
   const [data, getData] = useFetch(getAllPublicHotel, {}, false);
 
+  // HotelDetails.js এর উপরের অংশ
   useEffect(() => {
-    if (id) getData({ _id: id });
-  }, [id, getData]);
+    if (id) {
+      getData({ _id: id });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]); // এখানে getData বাদ দিলে লুপ বন্ধ হবে
 
   const hotelName = useMemo(() => {
     if (!data?.name) return "Blissful Heaven Residence at BTS Phromphong Emdistrict Shopping Area";
@@ -38,7 +42,7 @@ const HotelDetails = () => {
   }, [data, langCode]);
 
   return (
-    <div className="bg-white min-h-screen pb-20 font-sans text-[#1a1a1a]">
+    <div className="bg-white min-h-screen pb-20 font-sans text-[#1a1a1a] isolate">
       <Banner title="Hotel Details" />
 
       <div className="max-w-6xl mx-auto mt-6">
@@ -292,7 +296,7 @@ const HotelDetails = () => {
 
 
         {/* Room Selection Section */}
-        <RoomSelection />
+        <RoomSelection/>
 
       </div>
     </div>
