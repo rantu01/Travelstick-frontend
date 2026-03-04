@@ -72,19 +72,7 @@ const VisaFilters = ({ getData }) => {
   return (
     <div>
       {/* Search */}
-      <div className="border border-[#E8EAE8] rounded-[10px] lg:rounded-[20px] xl:p-6 lg:p-5 md:p-4 p-3">
-        <h4 className="description-2 text-[#05073C] !font-bold border-b border-[#E8EAE8] pb-2">{i18n.t("Search Visa")}</h4>
-        <div className="xl:mt-6 lg:mt-5 mt-4 package-slider">
-          <Form layout="vertical" form={form}>
-            <FormInput
-              placeholder={i18n.t("Type Visa Name")}
-              type="text"
-              onChange={(e) => getData({ search: e.target.value })}
-              className={"focus:outline-primary w-full border border-[#E8EAE8] rounded-[10px] lg:rounded-[20px] xl:p-5 lg:p-4 p-3"}
-            />
-          </Form>
-        </div>
-      </div>
+      
 
       {/* Price Range */}
       <div className="xl:mt-6 lg:mt-5 mt-4 border border-[#E8EAE8] rounded-[10px] lg:rounded-[20px] xl:p-6 lg:p-5 md:p-4 p-3">

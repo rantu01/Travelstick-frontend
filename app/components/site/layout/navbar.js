@@ -53,42 +53,42 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
     {
       path: "/flight",
       label: i18n.t("Flight"),
-      icon: <Image src="/Header Icon/2.png" width={36} height={36} alt="Flight" />
+      icon: <Image src="/Header Icon/2.png" width={40} height={40} alt="Flight" />
     },
     {
       path: "/hotel",
       label: i18n.t("Hotel"),
-      icon: <Image src="/Header Icon/1.png" width={36} height={36} alt="Hotel" />
+      icon: <Image src="/Header Icon/1.png" width={40} height={40} alt="Hotel" />
     },
     {
       path: "/visa",
       label: i18n.t("Visa"),
-      icon: <Image src="/Header Icon/4.png" width={36} height={36} alt="Visa" />
+      icon: <Image src="/Header Icon/4.png" width={40} height={40} alt="Visa" />
     },
     {
       path: "/package",
       label: i18n.t("Holiday"),
-      icon: <Image src="/Header Icon/3.png" width={36} height={36} alt="Holiday" />
+      icon: <Image src="/Header Icon/3.png" width={40} height={40} alt="Holiday" />
     },
     {
       path: "/umrah",
       label: i18n.t("Umrah"),
-      icon: <Image src="/Header Icon/5.png" width={36} height={36} alt="Umrah" />
+      icon: <Image src="/Header Icon/5.png" width={40} height={40} alt="Umrah" />
     },
     {
       path: "/cart",
       label: i18n.t("Shop"),
-      icon: <Image src="/Header Icon/6.png" width={36} height={36} alt="Shop" />
+      icon: <Image src="/Header Icon/6.png" width={40} height={40} alt="Shop" />
     },
     {
       path: "/e-sim",
       label: i18n.t("E-Sim"),
-      icon: <Image src="/Header Icon/7.png" width={36} height={36} alt="E-Sim" />
+      icon: <Image src="/Header Icon/7.png" width={40} height={40} alt="E-Sim" />
     },
     {
       path: "/Gift Card",
       label: i18n.t("Gift Card"),
-      icon: <Image src="/Header Icon/8.png" width={36} height={36} alt="Gift Card" />
+      icon: <Image src="/Header Icon/8.png" width={40} height={40} alt="Gift Card" />
     },
   ];
 
@@ -153,7 +153,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
                   }`}>
                   {item.icon}
                 </span>
-                <span className={`text-[13px] font-bold transition-colors ${pathname === item.path ? 'text-[#1A2B6D]' : 'text-[#1A2B6D] group-hover:text-[#00B7EB]'
+                <span className={`text-[16px] font-bold transition-colors ${pathname === item.path ? 'text-[#1A2B6D]' : 'text-[#1A2B6D] group-hover:text-[#00B7EB]'
                   }`}>
                   {item.label}
                 </span>

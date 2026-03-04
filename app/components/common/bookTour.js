@@ -121,16 +121,7 @@ const BookTour = ({ data, user }) => {
             </div>
           </div>
           <div className="xl:mt-6 lg:mt-5 md:mt-4 mt-4 xl:p-6 lg:p-5 md:p-4 p-3">
-            <h3 className="description-3 !font-semibold !font-montserrat">{i18n.t("Tickets")}</h3>
-            <div className="flex justify-between items-center xl:mt-6 lg:mt-5 md:mt-4 mt-4">
-              <p className="description-1 text-[#717171]">
-                Adult (18+ years)
-                <span className="text-[#05073C] !font-bold pl-2">{currency_symbol}{data?.current_price}</span>
-              </p>
-              <div>
-                <CounterButton selectedServices={selectedServices} count={count} setCount={setCount} id={data?._id} postPackageBookingCalculation={postPackageBookingCalculation} initialPrice={initialPrice} setInitialPrice={setInitialPrice} />
-              </div>
-            </div>
+            
             <div className="xl:mt-8 lg:mt-7 md:mt-6 mt-4">
               <h3 className="description-3 !font-semibold !font-montserrat">{i18n.t("Extra Services")}</h3>
               {

@@ -1,8 +1,8 @@
 "use client";
-import { FaMapMarkedAlt } from "react-icons/fa";
-import { FaAward } from "react-icons/fa6";
-import { FaMoneyBillWave } from "react-icons/fa";
-import { FaHandPointer } from "react-icons/fa";
+import { FaGlobeAmericas } from "react-icons/fa";
+import { FaShieldAlt } from "react-icons/fa";
+import { FaCreditCard } from "react-icons/fa";
+import { FaBolt } from "react-icons/fa";
 
 const FeatureBar = () => {
   return (
@@ -12,33 +12,33 @@ const FeatureBar = () => {
 
           {/* Item 1 */}
           <div className="flex items-center gap-4">
-            <FaMapMarkedAlt className="text-blue-600 text-3xl" />
+            <FaGlobeAmericas className="text-blue-600 text-3xl" />
             <p className="text-gray-800 font-medium text-sm md:text-base">
-              Top Travel App in Bangladesh
+              Largest Selection of Global Flights
             </p>
           </div>
 
           {/* Item 2 */}
           <div className="flex items-center gap-4">
-            <FaAward className="text-yellow-500 text-3xl" />
+            <FaShieldAlt className="text-yellow-500 text-3xl" />
             <p className="text-gray-800 font-medium text-sm md:text-base">
-              Travel With Confidence
+              Secure Payments & Protected Data
             </p>
           </div>
 
           {/* Item 3 */}
           <div className="flex items-center gap-4">
-            <FaMoneyBillWave className="text-teal-500 text-3xl" />
+            <FaCreditCard className="text-teal-500 text-3xl" />
             <p className="text-gray-800 font-medium text-sm md:text-base">
-              Pay The Way You Want
+              EMI Facilities with Major Banks
             </p>
           </div>
 
           {/* Item 4 */}
           <div className="flex items-center gap-4">
-            <FaHandPointer className="text-red-500 text-3xl" />
+            <FaBolt className="text-red-500 text-3xl" />
             <p className="text-gray-800 font-medium text-sm md:text-base">
-              Instant Bookings, Anytime, Anywhere
+              Real-time Availability & Support
             </p>
           </div>
 

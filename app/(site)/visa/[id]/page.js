@@ -11,12 +11,30 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import CommonContact from "@/app/components/common/commonConatc";
 import { FiHeart, FiShare2, FiMapPin, FiCheckCircle } from "react-icons/fi";
 
+
+const countryToCode = {
+  "usa": "us",
+  "united states": "us",
+  "japan": "jp",
+  "australia": "au",
+  "bangladesh": "bd",
+  "canada": "ca",
+  "uk": "gb",
+  "united kingdom": "gb",
+  "turkey": "tr",
+  // আপনার প্রোজেক্টে থাকা অন্য দেশের নামগুলো এখানে যোগ করুন
+};
+
 const VisaDetails = () => {
   const i18n = useI18n();
   const { langCode, t } = useI18n();
   const [data, getData] = useFetch(getAllPublicVisa, {}, false);
   const params = useParams();
   const { id } = params;
+
+  // data ডিক্লেয়ার করার পর এখন এটি ব্যবহার করা নিরাপদ
+  const countryName = data?.country?.toLowerCase() || "";
+  const countryCode = countryToCode[countryName] || "bd";
 
   const [activePanel, setActivePanel] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -65,8 +83,17 @@ const VisaDetails = () => {
                 {data?.country} {data?.visa_type?.name?.[langCode]} Visa From Bangladesh
               </h1>
               <div className="flex items-center gap-4 mt-3">
-                <div className="flex items-center gap-1 text-[#717171] text-sm">
-                  <FiMapPin className="text-primary" /> {data?.country}
+                <div className="flex items-center gap-2 text-[#717171] text-sm">
+                  <div className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
+                    <Image
+                      src={`https://flagcdn.com/w40/${countryCode}.png`}
+                      alt="flag"
+                      width={20}
+                      height={14}
+                      className="object-contain rounded-sm shadow-sm"
+                    />
+                    <span className="font-medium">{data?.country}</span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-2 border-l pl-4">
                   <Rate disabled defaultValue={4.5} className="text-xs text-orange-400" />
@@ -85,96 +112,92 @@ const VisaDetails = () => {
           </div>
         </div>
 
-        {/* 2. Gallery Grid - Container width limited to 7xl or 6xl as requested */}
+        {/* 2. Gallery Grid */}
         <div className="travel-container pb-10">
-          {/* 2. Gallery Grid - Image এর মতো ৩ কলাম ও ২ সারির লেআউট */}
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 h-[300px] md:h-[600px] overflow-hidden rounded-2xl mb-6">
-            {/* বাম পাশের বড় ইমেজ */}
-            <div className="md:col-span-3 md:row-span-2 h-full">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-3 h-[250px] md:h-[420px] overflow-hidden rounded-2xl mb-6">
+
+            <div className="md:col-span-3 md:row-span-2 h-full relative group overflow-hidden">
               <Image
                 src={data?.banner_image || "/placeholder.jpg"}
                 alt="Main"
-                width={1200}
-                height={800}
-                className="w-full h-full object-cover transition-transform hover:scale-105 duration-700"
+                fill
+                sizes="(max-width: 768px) 100vw, 60vw"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
             </div>
 
-            {/* ডান পাশের উপরের ভিডিও/ইমেজ */}
-            <div className="hidden md:block h-full relative group">
-              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-1" width={400} height={300} className="w-full h-full object-cover rounded-xl" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/50 cursor-pointer">
-                  <div className="w-0 h-0 border-t-[8px] border-t-transparent border-l-[12px] border-l-white border-b-[8px] border-b-transparent ml-1"></div>
+            <div className="hidden md:block h-full relative group overflow-hidden rounded-xl">
+              <Image
+                src={data?.banner_image || "/placeholder.jpg"}
+                alt="sub-1"
+                fill
+                className="object-cover"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/10">
+                <div className="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 cursor-pointer hover:scale-110 transition-transform">
+                  <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1"></div>
                 </div>
               </div>
             </div>
 
-            {/* একদম ডানের উপরের ইমেজ */}
-            <div className="hidden md:block h-full">
-              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-2" width={400} height={300} className="w-full h-full object-cover rounded-xl" />
+            <div className="hidden md:block h-full relative overflow-hidden rounded-xl">
+              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-2" fill className="object-cover" />
             </div>
 
-            {/* ডান পাশের নিচের বামের ইমেজ */}
-            <div className="hidden md:block h-full">
-              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-3" width={400} height={300} className="w-full h-full object-cover rounded-xl" />
+            <div className="hidden md:block h-full relative overflow-hidden rounded-xl">
+              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-3" fill className="object-cover" />
             </div>
 
-            {/* একদম ডানের নিচের ইমেজ (See all photos overlay) */}
             <div className="hidden md:block h-full relative overflow-hidden rounded-xl group cursor-pointer">
-              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-4" width={400} height={300} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white transition-all group-hover:bg-black/50">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-4" fill className="object-cover" />
+              <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white transition-all group-hover:bg-black/60">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span className="text-sm font-semibold whitespace-nowrap">See all 9 photos</span>
+                <span className="text-xs font-bold">See all 9 photos</span>
               </div>
             </div>
           </div>
+          
+          <div className="bg-white rounded-3xl border border-gray-100 p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.07)] transition-shadow duration-500">
+            <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-8">
 
-          {/* 4. Quick Stats Cards - ইমেজের মতো ক্লিন হোয়াইট লেআউট */}
-          <div className="bg-white rounded-2xl border border-gray-100 p-6 md:p-8 shadow-sm">
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
-
-              {/* Left Side: Visa Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-y-8 gap-x-12 flex-grow">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 flex-grow">
                 {visaStats.map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-4">
-                    {/* Icon Container */}
-                    <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center relative">
-                      {/* যদি প্রথম আইটেম (Visa Type) হয় তবে স্পেশাল গ্রাফিক্স ইফেক্ট যোগ করতে পারেন */}
+                  <div key={idx} className="group flex items-center gap-4 border-r-0 md:border-r border-gray-50 last:border-0">
+                    <div className="relative w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-2xl bg-gray-50 group-hover:bg-blue-50 transition-colors duration-300">
                       {idx === 0 && (
-                        <div className="absolute -top-2 -left-2 w-14 h-14 bg-gradient-to-br from-yellow-200/40 to-transparent rounded-full blur-lg -z-10"></div>
+                        <div className="absolute inset-0 bg-blue-400/10 rounded-2xl animate-pulse"></div>
                       )}
                       <Image
                         src={item.img}
                         alt={item.label}
-                        width={35}
-                        height={35}
-                        className="object-contain"
+                        width={28}
+                        height={28}
+                        className="object-contain z-10 group-hover:scale-110 transition-transform duration-300"
                       />
                     </div>
 
-                    {/* Text Content */}
                     <div className="flex flex-col">
-                      <p className="text-[13px] text-gray-400 font-normal leading-tight">
+                      <span className="text-[12px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
                         {t(item.label)}
-                      </p>
-                      <p className="text-[16px] font-bold text-[#05073C] mt-0.5 leading-tight">
+                      </span>
+                      <span className="text-[17px] font-bold text-[#1e293b] leading-tight">
                         {item.value || "N/A"}
-                      </p>
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
 
-              {/* Right Side: Processing Fee - ইমেজের মতো ভার্টিক্যাল ডিভাইডার সহ */}
-              <div className="w-full lg:w-auto flex justify-end items-center lg:border-l lg:border-gray-100 lg:pl-10 min-h-[60px]">
-                <div className="flex items-center gap-2">
-                  <span className="text-gray-400 text-[15px] font-medium">Processing Fee:</span>
+              <div className="w-full lg:w-auto flex items-center justify-center lg:justify-end lg:border-l lg:border-dashed lg:border-gray-200 lg:pl-12">
+                <div className="bg-[#f8fafc] px-6 py-4 rounded-2xl border border-gray-100 flex flex-col items-center lg:items-end">
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">
+                    Processing Fee
+                  </span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-[#28b6ea] text-2xl font-extrabold">৳ 9000</span>
-                    <span className="text-gray-400 text-sm">/ person</span>
+                    <span className="text-[#0ea5e9] text-3xl font-black">৳ 9,000</span>
+                    <span className="text-gray-400 text-sm font-medium">/ person</span>
                   </div>
                 </div>
               </div>
@@ -187,11 +210,9 @@ const VisaDetails = () => {
       <div className="travel-container mt-8">
         <div className="flex flex-col lg:flex-row gap-8">
 
-          {/* LEFT SIDE CONTENT */}
           <div className="w-full lg:w-[68%]">
 
-            {/* Sticky Navigation Bar */}
-            <div className="sticky top-16 z-50 bg-white border-b flex gap-8 mb-8 overflow-x-auto no-scrollbar px-4 shadow-sm">
+            <div className="sticky top-[90px] z-50 bg-white border-b flex gap-8 mb-8 overflow-x-auto no-scrollbar px-4 shadow-sm">
               {[
                 { label: "Details", ref: overviewRef },
                 { label: "Other Information", ref: infoRef },
@@ -208,9 +229,6 @@ const VisaDetails = () => {
               ))}
             </div>
 
-
-
-            {/* 5. Visa Overview Section */}
             <div ref={overviewRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
               <h2 className="text-2xl font-bold text-[#05073C] mb-5">Visa Overview</h2>
               <div
@@ -219,7 +237,6 @@ const VisaDetails = () => {
               />
             </div>
 
-            {/* 6. Required Documents Section */}
             <div ref={infoRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
               <h2 className="text-2xl font-bold text-[#05073C] mb-4">Required Documents</h2>
               <p className="text-[#717171] mb-6">{data?.document_about?.[langCode]}</p>
@@ -236,7 +253,6 @@ const VisaDetails = () => {
               </div>
             </div>
 
-            {/* 7. FAQs Section */}
             <div ref={faqRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
               <h2 className="text-2xl font-bold text-[#05073C] mb-6">Frequently Asked Questions</h2>
               <Collapse
@@ -261,7 +277,6 @@ const VisaDetails = () => {
               </Collapse>
             </div>
 
-            {/* Reviews Section Placeholder */}
             <div ref={reviewRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
               <h2 className="text-2xl font-bold text-[#05073C] mb-6">Guest Reviews</h2>
               <div className="flex flex-col items-center justify-center py-10 text-gray-400">
@@ -271,7 +286,6 @@ const VisaDetails = () => {
 
           </div>
 
-          {/* RIGHT SIDEBAR (Sticky Form) */}
           <div className="w-full lg:w-[32%]">
             <div className="sticky top-24">
               <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden mb-6">
@@ -282,15 +296,12 @@ const VisaDetails = () => {
                     <span className="text-sm opacity-80">/ Per Person</span>
                   </div>
                 </div>
-                <div className="p-6">
+                <div className="">
                   <VisaForm id={data?._id} />
                 </div>
               </div>
 
-              {/* --- নতুন ডিজাইন করা সেকশন (হুবহু ইমেজের মতো) --- */}
-              {/* --- নতুন ডিজাইন করা সেকশন (হুবহু ইমেজের মতো) --- */}
               <div className="space-y-6 mb-6 ">
-                {/* You May Like Tour Section */}
                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-5">
                     <h3 className="text-[#05073C] font-bold text-sm uppercase tracking-wide whitespace-nowrap">You May Like Tour</h3>
@@ -340,7 +351,6 @@ const VisaDetails = () => {
                   </div>
                 </div>
 
-                {/* You May Like Hajj Umrah Section */}
                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-5">
                     <h3 className="text-[#05073C] font-bold text-sm uppercase tracking-wide whitespace-nowrap">You May Like Hajj Umrah</h3>
@@ -384,17 +394,12 @@ const VisaDetails = () => {
                   </div>
                 </div>
               </div>
-
-              {/* <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <CommonContact />
-              </div> */}
             </div>
           </div>
 
         </div>
       </div>
 
-      {/* Mobile Sticky CTA */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white p-4 border-t z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
         <div>
           <p className="text-xs text-gray-400 font-bold uppercase">Price Starts From</p>

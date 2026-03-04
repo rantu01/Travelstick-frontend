@@ -38,6 +38,35 @@ export default function BookingDetailsPage() {
                         </div>
                     </div>
 
+                    {/* Who are you booking for? */}
+                    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                        <h3 className="font-bold text-lg mb-4">Who are you booking for?</h3>
+                        <div className="space-y-3">
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <div className="relative flex items-center justify-center">
+                                    <input
+                                        type="radio"
+                                        name="bookingFor"
+                                        defaultChecked
+                                        className="w-5 h-5 cursor-pointer appearance-none border-2 border-gray-300 rounded-full checked:border-[#003580] checked:border-[6px] transition-all"
+                                    />
+                                </div>
+                                <span className="text-sm font-medium text-[#1a1a1a]">I am the main guest</span>
+                            </label>
+
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                                <div className="relative flex items-center justify-center">
+                                    <input
+                                        type="radio"
+                                        name="bookingFor"
+                                        className="w-5 h-5 cursor-pointer appearance-none border-2 border-gray-300 rounded-full checked:border-[#003580] checked:border-[6px] transition-all"
+                                    />
+                                </div>
+                                <span className="text-sm font-medium text-[#1a1a1a]">I'm booking for someone else</span>
+                            </label>
+                        </div>
+                    </div>
+
                     {/* Lead Guest Form */}
                     <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
                         <h3 className="font-bold text-lg mb-1">Who's the lead guest?</h3>
@@ -68,6 +97,51 @@ export default function BookingDetailsPage() {
                                     <input type="text" className="flex-1 border border-gray-300 rounded p-2 outline-none" placeholder="Mobile number" />
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Your arrival time */}
+                    <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                        <div className="flex items-center gap-2 mb-2">
+                            <Clock size={20} className="text-[#1a1a1a]" />
+                            <h3 className="font-bold text-lg text-[#1a1a1a]">Your arrival time</h3>
+                        </div>
+
+                        <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4 flex items-start gap-3">
+                            <Check size={18} className="text-green-700 mt-0.5" />
+                            <p className="text-xs font-medium text-[#1a1a1a]">
+                                Your room will be ready for check-in at <span className="font-bold">02:00 PM</span>. 
+                                If you arrive early, you can drop off your luggage.
+                            </p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-xs font-bold block">Add your estimated arrival time (optional)</label>
+                            <div className="relative max-w-xs">
+                                <select className="w-full border border-gray-300 rounded p-2.5 bg-white text-sm outline-none focus:ring-1 focus:ring-blue-500 appearance-none cursor-pointer pr-10">
+                                    <option value="dont_know">I don't know</option>
+                                    <option value="09:00">09:00 AM - 10:00 AM</option>
+                                    <option value="10:00">10:00 AM - 11:00 AM</option>
+                                    <option value="11:00">11:00 AM - 12:00 PM</option>
+                                    <option value="12:00">12:00 PM - 01:00 PM</option>
+                                    <option value="13:00">01:00 PM - 02:00 PM</option>
+                                    <option value="14:00">02:00 PM - 03:00 PM</option>
+                                    <option value="15:00">03:00 PM - 04:00 PM</option>
+                                    <option value="16:00">04:00 PM - 05:00 PM</option>
+                                    <option value="17:00">05:00 PM - 06:00 PM</option>
+                                    <option value="18:00">06:00 PM - 07:00 PM</option>
+                                    <option value="19:00">07:00 PM - 08:00 PM</option>
+                                    <option value="20:00">08:00 PM - 09:00 PM</option>
+                                    <option value="21:00">09:00 PM - 10:00 PM</option>
+                                    <option value="22:00">10:00 PM - 11:00 PM</option>
+                                    <option value="23:00">11:00 PM - 12:00 AM (midnight)</option>
+                                    <option value="00:00">12:00 AM - 01:00 AM (next day)</option>
+                                </select>
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-gray-400">
+                                    <ChevronDown size={18} />
+                                </div>
+                            </div>
+                            <p className="text-[10px] text-gray-500 italic mt-1">Times are based on the property's local time</p>
                         </div>
                     </div>
 
@@ -107,14 +181,42 @@ export default function BookingDetailsPage() {
                         </div>
                     </div>
 
-                    <div className="text-right pt-4">
+                    {/* BUTTON SECTION WITH HOVER DETAILS */}
+                    <div className="text-right pt-4 relative group">
                         <p className="text-orange-600 text-[11px] font-bold italic mb-2">Hurry! Our last room for your dates at this price</p>
-                        <button className="w-full bg-[#003580] text-white font-black py-4 rounded-lg text-lg uppercase tracking-wider hover:bg-blue-900 transition-colors">Next: Final Step</button>
+                        
+                        {/* Hover Tooltip/Card */}
+                        <div className="absolute bottom-full right-0 mb-4 w-72 bg-white border border-gray-200 shadow-xl rounded-xl p-4 text-left hidden group-hover:block z-50 transition-all">
+                            <h4 className="font-bold text-sm border-b pb-2 mb-2">Booking Summary</h4>
+                            <div className="space-y-2 text-xs">
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Lead Guest:</span>
+                                    <span className="font-bold">Selected Name</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Arrival:</span>
+                                    <span className="font-bold">I don't know</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-gray-500">Room:</span>
+                                    <span className="font-bold">1x Standard Room</span>
+                                </div>
+                                <div className="flex justify-between border-t pt-2 mt-2">
+                                    <span className="text-gray-500">Total Price:</span>
+                                    <span className="font-bold text-[#003580]">USD 154.96</span>
+                                </div>
+                            </div>
+                            {/* Triangle Arrow */}
+                            <div className="absolute -bottom-2 right-10 w-4 h-4 bg-white border-b border-r border-gray-200 rotate-45"></div>
+                        </div>
+
+                        <button className="w-full bg-[#003580] text-white font-black py-4 rounded-lg text-lg uppercase tracking-wider hover:bg-blue-900 transition-colors">
+                            Next: Final Step
+                        </button>
                         <p className="text-green-600 text-xs font-bold mt-2">You will pay USD0 today</p>
                     </div>
                 </div>
 
-                {/* RIGHT: SIDEBAR SECTION */}
                 {/* RIGHT: SIDEBAR SECTION */}
                 <div className="lg:w-[370px] space-y-4">
 
@@ -224,16 +326,13 @@ export default function BookingDetailsPage() {
                         </p>
                         <button className="text-[#006ce4] text-[11px] font-bold mb-4">See more details</button>
 
-                        {/* Timeline Graphic */}
                         <div className="relative mt-6 pb-6">
                             <div className="h-1.5 bg-gray-200 rounded-full w-full">
                                 <div className="absolute h-1.5 bg-[#008009] rounded-full w-[60%]"></div>
                             </div>
-                            {/* Dots */}
                             <div className="absolute -top-1.5 left-0 w-4 h-4 rounded-full bg-white border-[3px] border-[#008009]"></div>
                             <div className="absolute -top-1.5 left-[60%] w-4 h-4 rounded-full bg-white border-[3px] border-[#008009]"></div>
                             <div className="absolute -top-1.5 right-0 w-4 h-4 rounded-full bg-white border-[3px] border-gray-300"></div>
-                            {/* Labels */}
                             <div className="flex justify-between mt-3 text-[10px] font-bold">
                                 <span className="text-[#1a1a1a]">today</span>
                                 <span className="text-[#1a1a1a] absolute left-[56%]">5 Mar</span>
@@ -252,7 +351,6 @@ export default function BookingDetailsPage() {
                         </div>
                         <div className="p-4">
                             <div className="border-2 border-dashed border-[#008009] rounded-xl p-3 bg-[#f2faf3] flex justify-between items-center relative">
-                                {/* Notch effect */}
                                 <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-r border-gray-200 rounded-full"></div>
                                 <div className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-l border-gray-200 rounded-full"></div>
 

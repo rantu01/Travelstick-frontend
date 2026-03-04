@@ -59,7 +59,7 @@ const CheckOut = () => {
   return (
     <section>
       <Banner title="Checkout" />
-      <div className="travel-container mt-12 md:mt-16 lg:mt-20 xl:mt-24">
+      <div className="travel-container mt-12 md:mt-16 lg:mt-20 xl:mt-24 mb-20">
         <h4 className="heading-3 text-[#05073C] mb-6">{i18n.t("Checkout")}</h4>
         <Form  layout="vertical" form={form}>
           <div className="mt-8 flex flex-col md:flex-row gap-3 lg:gap-5">

@@ -17,71 +17,76 @@ const ImageVideo = ({ data }) => {
 
   return (
     <div className="w-full h-full relative">
-      <div className="flex flex-col lg:flex-row lg:space-x-6">
-        <div className="w-full lg:w-3/5">
+      <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+        {/* Left Side: Image Slider */}
+        <div className="w-full lg:w-[60%]">
           <ProductImageSlider
             banner_image={data?.banner_image}
             images={data?.images}
           />
         </div>
-        <div className="w-full lg:w-2/5">
-          <div className="w-full max-w-5xl mx-auto">
-            <div className="relative w-full h-[290px] rounded-xl overflow-hidden mb-4">
-              {data?.card_image && (
-                <Image
-                  src={data?.card_image}
-                  alt="Video Thumbnail"
-                  layout="fill"
-                  objectFit="cover"
-                />
-              )}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <button
-                  onClick={() => setIsOpen(true)}
-                  className="w-14 h-14 bg-white bg-opacity-60 backdrop-blur-md rounded-full flex items-center justify-center"
-                >
-                  <div className="w-10 h-10 bg-[#FEF5EE] text-primary rounded-full flex items-center justify-center">
-                    <FaPlay className="text-2xl" />
-                  </div>
-                </button>
-              </div>
+
+        {/* Right Side: Video and Small Images */}
+        <div className="w-full lg:w-[40%] flex flex-col gap-4">
+          {/* Video Thumbnail Section */}
+          <div className="relative w-full h-[220px] md:h-[290px] lg:h-[240px] xl:h-[290px] rounded-2xl overflow-hidden shadow-sm">
+            {data?.card_image && (
+              <Image
+                src={data?.card_image}
+                alt="Video Thumbnail"
+                fill
+                className="object-cover"
+              />
+            )}
+            {/* Play Button Overlay */}
+            <div className="absolute inset-0 bg-black/10 flex items-center justify-center transition-colors hover:bg-black/20">
+              <button
+                onClick={() => setIsOpen(true)}
+                className="w-16 h-16 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 transition-transform hover:scale-110"
+              >
+                <div className="w-12 h-12 bg-white text-primary rounded-full flex items-center justify-center shadow-lg">
+                  <FaPlay className="text-xl ml-1" />
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Two Small Images */}
+          <div className="grid grid-cols-2 gap-4 h-[150px] md:h-[200px] lg:h-[180px] xl:h-[235px]">
+            {/* First Small Image - fallback to banner_image if images[0] is missing */}
+            <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-sm">
+              <Image
+                src={data?.images?.[0] || data?.banner_image || "/placeholder.jpg"}
+                alt="Gallery 1"
+                fill
+                className="object-cover hover:scale-105 transition-transform duration-500"
+              />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="relative w-full h-[290px] rounded-xl overflow-hidden">
-                {data?.images?.[0] && (
-                  <Image
-                    src={data?.images?.[0]}
-                    alt="Small Image 1"
-                    layout="fill"
-                    className="object-cover"
-                  />
-                )}
-              </div>
-              <div className="relative w-full h-[290px] rounded-xl overflow-hidden">
-                {data?.images?.[1] && (
-                  <Image
-                    src={data?.images?.[1]}
-                    alt="Small Image 2"
-                    layout="fill"
-                    className="object-cover"
-                  />
-                )}
-              </div>
+            {/* Second Small Image - fallback to banner_image or placeholder if images[1] is missing */}
+            <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-sm">
+              <Image
+                src={data?.images?.[1] || data?.banner_image || "/placeholder.jpg"}
+                alt="Gallery 2"
+                fill
+                className="object-cover hover:scale-105 transition-transform duration-500"
+              />
             </div>
           </div>
         </div>
       </div>
 
+      {/* Video Modal */}
       <Modal
         open={isOpen}
         onCancel={() => setIsOpen(false)}
         footer={null}
-        width="70%"
+        width="75%"
         centered
         destroyOnClose
+        styles={{ body: { padding: '25px 10px 10px 10px' } }}
       >
-        <div className="w-full h-0 pb-[56.25%] relative mt-6">
+        <div className="w-full h-0 pb-[56.25%] relative rounded-xl overflow-hidden">
           <iframe
             className="absolute top-0 left-0 w-full h-full"
             src={getEmbedUrl(data?.banner_video_url || data?.video_url)}

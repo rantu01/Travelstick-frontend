@@ -30,7 +30,7 @@ const Cart = () => {
   return (
     <section>
       <Banner title="cart" />
-      <div className="travel-container mt-12 md:mt-16 lg:mt-20 xl:mt-24">
+      <div className="travel-container mt-12 md:mt-16 lg:mt-20 xl:mt-24 mb-20">
         <h4 className="heading-3 text-[#05073C]">{i18n.t("Cart")}</h4>
         <div className="mt-8 md:mt-10 lg:mt-12 xl:mt-14 flex flex-col md:flex-row gap-3 lg:gap-5 xl:gap-8">
           <div className="w-full md:w-[60%]">

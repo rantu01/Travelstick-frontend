@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FaPlane, FaHotel, FaUmbrellaBeach, FaPassport, FaSearch, FaExchangeAlt, FaMinus, FaPlus, FaTimesCircle, FaUser } from "react-icons/fa";
+import { FaPlane, FaHotel, FaUmbrellaBeach, FaPassport, FaSearch, FaExchangeAlt, FaMinus, FaPlus, FaTimesCircle, FaUser, FaTrash } from "react-icons/fa";
 import { DatePicker, Popover } from "antd";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/app/contexts/i18n";
@@ -11,46 +11,42 @@ import Image from "next/image";
 
 // Bangladesh fixed public holidays (MM-DD format)
 const bangladeshFixedHolidays = new Set([
-  "02-21", // International Mother Language Day
-  "03-17", // Birth Anniversary of Bangabandhu Sheikh Mujibur Rahman
-  "03-26", // Independence Day
-  "04-14", // Pahela Baishakh (Bengali New Year)
-  "05-01", // May Day / Labour Day
-  "08-15", // National Mourning Day
-  "12-16", // Victory Day
+  "02-21",
+  "03-17",
+  "03-26",
+  "04-14",
+  "05-01",
+  "08-15",
+  "12-16",
 ]);
 
-// Approximate Islamic holiday dates (lunar, changes yearly — update as needed)
 const bangladeshIslamicHolidays = new Set([
-  // 2025
-  "2025-03-30", // Eid ul Fitr
+  "2025-03-30",
   "2025-03-31",
   "2025-04-01",
-  "2025-06-06", // Eid ul Adha
+  "2025-06-06",
   "2025-06-07",
   "2025-06-08",
-  "2025-09-04", // Eid e Milad un Nabi
-  "2025-07-27", // Ashura
-  // 2026
-  "2026-03-19", // Eid ul Fitr (approx)
+  "2025-09-04",
+  "2025-07-27",
+  "2026-03-19",
   "2026-03-20",
   "2026-03-21",
-  "2026-05-26", // Eid ul Adha (approx)
+  "2026-05-26",
   "2026-05-27",
   "2026-05-28",
-  "2026-08-25", // Eid e Milad un Nabi (approx)
-  "2026-07-16", // Ashura (approx)
+  "2026-08-25",
+  "2026-07-16",
 ]);
 
 const isHoliday = (date) => {
   const mmdd = date.format("MM-DD");
   const full = date.format("YYYY-MM-DD");
-  const dayOfWeek = date.day(); // 0 = Sunday, 5 = Friday, 6 = Saturday
-
+  const dayOfWeek = date.day();
   return (
-    dayOfWeek === 5 || // শুক্রবার
-    dayOfWeek === 6 || // শনিবার
-    bangladeshFixedHolidays.has(mmdd) || 
+    dayOfWeek === 5 ||
+    dayOfWeek === 6 ||
+    bangladeshFixedHolidays.has(mmdd) ||
     bangladeshIslamicHolidays.has(full)
   );
 };
@@ -83,7 +79,8 @@ const HeroFilters = () => {
   const router = useRouter();
 
   const [tab, setTab] = useState("flight");
-  const [tripType, setTripType] = useState("One Way");
+  // ✅ Round Trip default selected
+  const [tripType, setTripType] = useState("Round Trip");
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -105,10 +102,16 @@ const HeroFilters = () => {
 
   const [openPopover, setOpenPopover] = useState(null);
 
+  // ✅ Multi City rows state
+  const [multiCityFlights, setMultiCityFlights] = useState([
+    { from: "Dhaka", to: "Cox's Bazar", date: null },
+    { from: "Cox's Bazar", to: "Dhaka", date: null },
+  ]);
+
   const [filterData] = useFetch(getHeroFilterData);
 
   const disabledDate = (current) => {
-    return current && current < dayjs().startOf('day');
+    return current && current < dayjs().startOf("day");
   };
 
   const handleSelect = (setter, value) => {
@@ -123,10 +126,45 @@ const HeroFilters = () => {
     setToLocation(temp);
   };
 
+  // ✅ Multi City helpers
+  const handleMultiCityChange = (index, field, value) => {
+    const updated = [...multiCityFlights];
+    updated[index][field] = value;
+    setMultiCityFlights(updated);
+  };
+
+  const handleSwapMultiCity = (index) => {
+    const updated = [...multiCityFlights];
+    const temp = updated[index].from;
+    updated[index].from = updated[index].to;
+    updated[index].to = temp;
+    setMultiCityFlights(updated);
+  };
+
+  const handleAddMultiCityFlight = () => {
+    if (multiCityFlights.length < 5) {
+      const last = multiCityFlights[multiCityFlights.length - 1];
+      setMultiCityFlights([
+        ...multiCityFlights,
+        { from: last.to, to: "", date: null },
+      ]);
+    }
+  };
+
+  const handleRemoveMultiCityFlight = (index) => {
+    if (multiCityFlights.length > 2) {
+      setMultiCityFlights(multiCityFlights.filter((_, i) => i !== index));
+    }
+  };
+
   const SelectionList = ({ options, onSelect }) => (
     <div className="flex flex-col w-60 max-h-64 overflow-y-auto bg-white rounded-md shadow-lg border border-gray-100">
       {options.map((opt, idx) => (
-        <button key={idx} onClick={() => onSelect(opt)} className="text-left px-4 py-3 hover:bg-gray-50 text-sm font-semibold text-gray-700 border-b border-gray-50 last:border-none">
+        <button
+          key={idx}
+          onClick={() => onSelect(opt)}
+          className="text-left px-4 py-3 hover:bg-gray-50 text-sm font-semibold text-gray-700 border-b border-gray-50 last:border-none"
+        >
           {opt}
         </button>
       ))}
@@ -232,102 +270,50 @@ const HeroFilters = () => {
   const hotelGuestContent = (
     <div className="w-80 p-5 bg-white rounded-lg shadow-2xl border border-gray-100">
       <div className="flex flex-col gap-5">
-
-        {/* Room Selection */}
         <div className="flex items-center justify-between">
           <span className="text-gray-700 font-bold text-base">Room</span>
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setRooms(Math.max(1, rooms - 1))}
-              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${rooms > 1 ? "border-[#1a4fa0] text-[#1a4fa0]" : "border-gray-200 text-gray-300"}`}
-            >
-              <FaMinus size={10} />
-            </button>
+            <button onClick={() => setRooms(Math.max(1, rooms - 1))} className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${rooms > 1 ? "border-[#1a4fa0] text-[#1a4fa0]" : "border-gray-200 text-gray-300"}`}><FaMinus size={10} /></button>
             <span className="font-bold text-gray-700 w-4 text-center">{rooms}</span>
-            <button
-              onClick={() => setRooms(rooms + 1)}
-              className="w-8 h-8 rounded-full border border-[#1a4fa0] text-[#1a4fa0] flex items-center justify-center hover:bg-red-50"
-            >
-              <FaPlus size={10} />
-            </button>
+            <button onClick={() => setRooms(rooms + 1)} className="w-8 h-8 rounded-full border border-[#1a4fa0] text-[#1a4fa0] flex items-center justify-center hover:bg-red-50"><FaPlus size={10} /></button>
           </div>
         </div>
-
         <hr className="border-gray-100" />
-
-        {/* Adults Selection */}
         <div className="flex items-center justify-between">
           <span className="text-gray-700 font-bold text-base">Adults</span>
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setAdults(Math.max(1, adults - 1))}
-              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${adults > 1 ? "border-[#1a4fa0] text-[#1a4fa0]" : "border-gray-200 text-gray-300"}`}
-            >
-              <FaMinus size={10} />
-            </button>
+            <button onClick={() => setAdults(Math.max(1, adults - 1))} className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${adults > 1 ? "border-[#1a4fa0] text-[#1a4fa0]" : "border-gray-200 text-gray-300"}`}><FaMinus size={10} /></button>
             <span className="font-bold text-gray-700 w-4 text-center">{adults}</span>
-            <button
-              onClick={() => setAdults(adults + 1)}
-              className="w-8 h-8 rounded-full border border-[#1a4fa0] text-[#1a4fa0] flex items-center justify-center hover:bg-red-50"
-            >
-              <FaPlus size={10} />
-            </button>
+            <button onClick={() => setAdults(adults + 1)} className="w-8 h-8 rounded-full border border-[#1a4fa0] text-[#1a4fa0] flex items-center justify-center hover:bg-red-50"><FaPlus size={10} /></button>
           </div>
         </div>
-
         <hr className="border-gray-100" />
-
-        {/* Child Selection */}
         <div className="flex items-center justify-between">
           <div>
             <p className="text-gray-700 font-bold text-base">Child</p>
             <p className="text-[10px] text-gray-400">0-12 Years</p>
           </div>
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => setChildren(Math.max(0, children - 1))}
-              className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${children > 0 ? "border-[#1a4fa0] text-[#1a4fa0]" : "border-gray-200 text-gray-300"}`}
-            >
-              <FaMinus size={10} />
-            </button>
+            <button onClick={() => setChildren(Math.max(0, children - 1))} className={`w-8 h-8 rounded-full border flex items-center justify-center transition-colors ${children > 0 ? "border-[#1a4fa0] text-[#1a4fa0]" : "border-gray-200 text-gray-300"}`}><FaMinus size={10} /></button>
             <span className="font-bold text-gray-700 w-4 text-center">{children}</span>
-            <button
-              onClick={() => setChildren(children + 1)}
-              className="w-8 h-8 rounded-full border border-[#1a4fa0] text-[#1a4fa0] flex items-center justify-center hover:bg-red-50"
-            >
-              <FaPlus size={10} />
-            </button>
+            <button onClick={() => setChildren(children + 1)} className="w-8 h-8 rounded-full border border-[#1a4fa0] text-[#1a4fa0] flex items-center justify-center hover:bg-red-50"><FaPlus size={10} /></button>
           </div>
         </div>
-
-        {/* Traveling with Pets Section */}
         <div className="mt-2">
           <div className="flex items-center justify-between">
             <span className="text-gray-700 font-bold text-sm">Traveling with pets?</span>
-            <div
-              onClick={() => setWithPets(!withPets)}
-              className={`w-11 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors ${withPets ? 'bg-red-500' : 'bg-gray-300'}`}
-            >
-              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${withPets ? 'translate-x-5' : 'translate-x-0'}`} />
+            <div onClick={() => setWithPets(!withPets)} className={`w-11 h-6 flex items-center rounded-full p-1 cursor-pointer transition-colors ${withPets ? "bg-red-500" : "bg-gray-300"}`}>
+              <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform ${withPets ? "translate-x-5" : "translate-x-0"}`} />
             </div>
           </div>
           <p className="text-[10px] text-gray-400 mt-2 leading-tight">
-            Assistance animals are not classified as pets. <span className=" text-[#1a4fa0] cursor-pointer hover:underline">Learn more about traveling with assistance animals.</span>
+            Assistance animals are not classified as pets.{" "}
+            <span className="text-[#1a4fa0] cursor-pointer hover:underline">Learn more about traveling with assistance animals.</span>
           </p>
         </div>
-
-        {/* Action Buttons: Reset & Apply */}
         <div className="flex items-center justify-between pt-2">
-          <button
-            onClick={() => { setRooms(1); setAdults(2); setChildren(0); setWithPets(false); }}
-            className="text-[#1a4fa0] font-bold text-sm hover:underline"
-          >
-            Reset
-          </button>
-          <button
-            onClick={() => setOpenPopover(null)}
-            className="border-[#1a4fa0] text-[#1a4fa0] px-6 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-red-50 transition-all active:scale-95 shadow-sm"
-          >
+          <button onClick={() => { setRooms(1); setAdults(2); setChildren(0); setWithPets(false); }} className="text-[#1a4fa0] font-bold text-sm hover:underline">Reset</button>
+          <button onClick={() => setOpenPopover(null)} className="border-[#1a4fa0] text-[#1a4fa0] px-6 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-red-50 transition-all active:scale-95 shadow-sm">
             Apply
             <span className="flex items-center justify-center w-4 h-4 rounded-full border border-[#1a4fa0] text-[10px]">✓</span>
           </button>
@@ -337,45 +323,154 @@ const HeroFilters = () => {
   );
 
   const tabs = [
-    {
-      id: "flight",
-      label: "Flight",
-      icon: <Image src="/Header Icon/2.png" width={20} height={20} alt="Flight" />
-    },
-    {
-      id: "hotel",
-      label: "Hotel",
-      icon: <Image src="/Header Icon/1.png" width={20} height={20} alt="Hotel" />
-    },
-    {
-      id: "tour",
-      label: "Holiday",
-      icon: <Image src="/Header Icon/3.png" width={20} height={20} alt="Holiday" />
-    },
-    {
-      id: "visa",
-      label: "Visa",
-      icon: <Image src="/Header Icon/4.png" width={20} height={20} alt="Visa" />
-    },
+    { id: "flight", label: "Flight", icon: <Image src="/Header Icon/2.png" width={40} height={40} alt="Flight" /> },
+    { id: "hotel", label: "Hotel", icon: <Image src="/Header Icon/1.png" width={40} height={40} alt="Hotel" /> },
+    { id: "tour", label: "Holiday", icon: <Image src="/Header Icon/3.png" width={40} height={40} alt="Holiday" /> },
+    { id: "visa", label: "Visa", icon: <Image src="/Header Icon/4.png" width={40} height={40} alt="Visa" /> },
   ];
+
+  // ✅ Multi City UI
+  const renderMultiCity = () => (
+    <div className="flex flex-col gap-3">
+      {multiCityFlights.map((flight, index) => (
+        <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-0 border rounded-xl overflow-hidden relative">
+          {/* From */}
+          <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 relative cursor-pointer">
+            <Popover
+              open={openPopover === `mc-from-${index}`}
+              onOpenChange={(v) => setOpenPopover(v ? `mc-from-${index}` : null)}
+              content={
+                <SelectionList
+                  options={["Dhaka", "Chittagong", "Sylhet", "Cox's Bazar", "Bangkok", "Dubai"]}
+                  onSelect={(v) => { handleMultiCityChange(index, "from", v); setOpenPopover(null); }}
+                />
+              }
+              trigger="click"
+              placement="bottomLeft"
+            >
+              <div>
+                <p className="text-[11px] text-gray-400 font-bold">From</p>
+                <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{flight.from || "Select city"}</h4>
+              </div>
+            </Popover>
+            {/* Swap button */}
+            <div
+              onClick={() => handleSwapMultiCity(index)}
+              className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
+            >
+              <FaExchangeAlt size={10} className="rotate-90 md:rotate-0" />
+            </div>
+          </div>
+
+          {/* To */}
+          <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+            <Popover
+              open={openPopover === `mc-to-${index}`}
+              onOpenChange={(v) => setOpenPopover(v ? `mc-to-${index}` : null)}
+              content={
+                <SelectionList
+                  options={["Cox's Bazar", "Bangkok", "Dubai", "Dhaka", "Chittagong", "Sylhet"]}
+                  onSelect={(v) => { handleMultiCityChange(index, "to", v); setOpenPopover(null); }}
+                />
+              }
+              trigger="click"
+              placement="bottomLeft"
+            >
+              <div>
+                <p className="text-[11px] text-gray-400 font-bold">To</p>
+                <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{flight.to || "Select city"}</h4>
+              </div>
+            </Popover>
+          </div>
+
+          {/* Date */}
+          <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+            <p className="text-[11px] text-gray-400 font-bold">Departure</p>
+            <DatePicker
+              onChange={(d) => handleMultiCityChange(index, "date", d)}
+              placeholder="Select date"
+              disabledDate={disabledDate}
+              variant="borderless"
+              className={`p-0 font-bold text-lg w-full mt-1 ${flight.date ? "text-gray-700" : "text-gray-400"}`}
+              value={flight.date}
+              format="DD MMM, YYYY"
+              suffixIcon={null}
+              dateRender={dateRender}
+            />
+            <p className="text-[10px] text-gray-400">{flight.date ? flight.date.format("dddd") : ""}</p>
+          </div>
+
+          {/* Traveller */}
+          <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+            <Popover
+              open={openPopover === `mc-guests-${index}`}
+              onOpenChange={(v) => setOpenPopover(v ? `mc-guests-${index}` : null)}
+              content={guestContent}
+              trigger="click"
+              placement="bottomRight"
+            >
+              <div className="cursor-pointer">
+                <p className="text-[11px] text-gray-400 font-bold">Traveller, Class</p>
+                <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{adults + children + infants} Traveller</h4>
+                <p className="text-[10px] text-gray-400">{bookingClass}</p>
+              </div>
+            </Popover>
+          </div>
+
+          {/* Remove button */}
+          <div className="md:col-span-1 flex items-center justify-center p-2">
+            {multiCityFlights.length > 2 ? (
+              <button
+                onClick={() => handleRemoveMultiCityFlight(index)}
+                className="text-red-400 hover:text-red-600 transition-colors p-2 rounded-full hover:bg-red-50"
+              >
+                <FaTrash size={14} />
+              </button>
+            ) : (
+              <div className="w-8 h-8" />
+            )}
+          </div>
+        </div>
+      ))}
+
+      {/* Add Flight + Search row */}
+      <div className="flex items-center justify-between mt-1">
+        {multiCityFlights.length < 5 ? (
+          <button
+            onClick={handleAddMultiCityFlight}
+            className="flex items-center gap-2 text-[#1A4FA0] font-bold text-sm border border-[#1A4FA0] px-4 py-2 rounded-lg hover:bg-[#E8F3FF] transition-all"
+          >
+            <FaPlus size={10} />
+            Add Another Flight
+          </button>
+        ) : (
+          <span className="text-xs text-gray-400">Maximum 5 flights added</span>
+        )}
+        <button
+          onClick={handleSearch}
+          className="bg-[#1A4FA0] hover:bg-blue-900 text-white px-8 h-12 rounded-lg flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-95 font-bold"
+        >
+          <FaSearch size={16} />
+          Search
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans">
-      {/* Tabs Section - Fixed for Mobile scroll */}
+      {/* Tabs */}
       <div className="flex justify-center">
         <div className="grid grid-cols-4 w-full md:w-auto bg-white rounded-t-xl shadow-sm border-b overflow-hidden">
           {tabs.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-3 md:py-4 text-[12px] md:text-sm font-semibold transition-all ${tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"
-                }`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-3 md:py-4 text-[12px] md:text-sm font-semibold transition-all ${
+                tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"
+              }`}
             >
-              {/* আইকন সেকশন */}
-              <span className="flex items-center justify-center">
-                {t.icon}
-              </span>
-
+              <span className="flex items-center justify-center">{t.icon}</span>
               <span className="text-center">{i18n.t(t.label)}</span>
             </button>
           ))}
@@ -385,8 +480,16 @@ const HeroFilters = () => {
       <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm relative z-10 border border-gray-100">
         {tab === "flight" && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {['One Way', 'Round Trip', 'Multi City'].map(type => (
-              <button key={type} onClick={() => setTripType(type)} className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 border ${tripType === type ? "bg-[#00BCE4] border-[#00BCE4] text-white" : "bg-[#F2F4F7] border-transparent text-gray-500"}`}>
+            {["One Way", "Round Trip", "Multi City"].map((type) => (
+              <button
+                key={type}
+                onClick={() => setTripType(type)}
+                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 border ${
+                  tripType === type
+                    ? "bg-[#00BCE4] border-[#00BCE4] text-white"
+                    : "bg-[#F2F4F7] border-transparent text-gray-500"
+                }`}
+              >
                 <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${tripType === type ? "border-white" : "border-gray-400"}`}>
                   {tripType === type && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
                 </div>
@@ -396,238 +499,164 @@ const HeroFilters = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-0 border rounded-xl overflow-hidden">
-          {tab === "hotel" ? (
-            <>
-              <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover
-                  open={openPopover === 'hotel-dest'}
-                  onOpenChange={(v) => setOpenPopover(v ? 'hotel-dest' : null)}
-                  content={<SelectionList options={["Dhaka, Bangladesh", "Chittagong", "Sylhet", "Cox's Bazar"]} onSelect={(v) => handleSelect(setDestination, v)} />}
-                  trigger="click" placement="bottomLeft"
-                >
-                  <div>
-                    <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Destination")}</p>
-                    <div className="mt-1 font-bold text-gray-500 text-lg leading-tight truncate">{destination}</div>
-                  </div>
-                </Popover>
-              </div>
-
-              <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check In")}</p>
-                <DatePicker
-                  onChange={(d) => setStartDate(d)}
-                  placeholder="Select date"
-                  disabledDate={disabledDate}
-                  variant="borderless"
-                  className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
-                  value={startDate}
-                  format="DD MMM, YYYY"
-                  suffixIcon={null}
-                  dateRender={dateRender}
-                />
-              </div>
-
-              <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check Out")}</p>
-                <div className="flex items-center justify-between">
-                  <DatePicker
-                    onChange={(d) => setEndDate(d)}
-                    placeholder="Select date"
-                    disabledDate={disabledDate}
-                    variant="borderless"
-                    className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
-                    value={endDate}
-                    format="DD MMM, YYYY"
-                    suffixIcon={null}
-                    dateRender={dateRender}
-                  />
-                  <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
+        {/* ✅ Multi City layout */}
+        {tab === "flight" && tripType === "Multi City" ? (
+          renderMultiCity()
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-0 border rounded-xl overflow-hidden">
+            {tab === "hotel" ? (
+              <>
+                <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+                  <Popover
+                    open={openPopover === "hotel-dest"}
+                    onOpenChange={(v) => setOpenPopover(v ? "hotel-dest" : null)}
+                    content={<SelectionList options={["Dhaka, Bangladesh", "Chittagong", "Sylhet", "Cox's Bazar"]} onSelect={(v) => handleSelect(setDestination, v)} />}
+                    trigger="click" placement="bottomLeft"
+                  >
+                    <div>
+                      <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Destination")}</p>
+                      <div className="mt-1 font-bold text-gray-500 text-lg leading-tight truncate">{destination}</div>
+                    </div>
+                  </Popover>
                 </div>
-              </div>
-
-              <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <Popover
-                  open={openPopover === 'hotel-guests'}
-                  onOpenChange={(v) => setOpenPopover(v ? 'hotel-guests' : null)}
-                  content={hotelGuestContent}
-                  trigger="click"
-                  placement="bottomRight"
-                >
-                  <div className="cursor-pointer">
-                    <p className="text-[11px] text-gray-400 font-bold leading-none">{i18n.t("Rooms & Guests")}</p>
-                    <h4 className="font-bold text-[17px] leading-tight mt-1 whitespace-nowrap text-gray-800">
-                      {rooms} Room, {adults} Adults, {children} Child
-                    </h4>
-                  </div>
-                </Popover>
-              </div>
-            </>
-          ) : tab === "visa" ? (
-            <>
-              <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover
-                  open={openPopover === 'visa-cit'}
-                  onOpenChange={(v) => setOpenPopover(v ? 'visa-cit' : null)}
-                  content={<SelectionList options={["Bangladesh", "India", "USA"]} onSelect={(v) => handleSelect(setCitizenOf, v)} />}
-                  trigger="click" placement="bottomLeft"
-                >
-                  <div>
-                    <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Citizen of")}</p>
-                    <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{citizenOf}</div>
-                  </div>
-                </Popover>
-              </div>
-              <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover
-                  open={openPopover === 'visa-to'}
-                  onOpenChange={(v) => setOpenPopover(v ? 'visa-to' : null)}
-                  content={<SelectionList options={["Thailand", "Malaysia", "Saudi Arabia"]} onSelect={(v) => handleSelect(setTravellingTo, v)} />}
-                  trigger="click" placement="bottomLeft"
-                >
-                  <div>
-                    <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Travelling to")}</p>
-                    <div className={`mt-1 font-bold text-lg leading-tight ${travellingTo.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{travellingTo}</div>
-                  </div>
-                </Popover>
-              </div>
-              <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover
-                  open={openPopover === 'visa-cat'}
-                  onOpenChange={(v) => setOpenPopover(v ? 'visa-cat' : null)}
-                  content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa"]} onSelect={(v) => handleSelect(setVisaCategory, v)} />}
-                  trigger="click" placement="bottomLeft"
-                >
-                  <div>
-                    <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Visa Category")}</p>
-                    <div className={`mt-1 font-bold text-lg leading-tight ${visaCategory.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{visaCategory}</div>
-                  </div>
-                </Popover>
-              </div>
-            </>
-          ) : tab === "tour" ? (
-            <>
-              <div className="md:col-span-6 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover
-                  open={openPopover === 'tour-dest'}
-                  onOpenChange={(v) => setOpenPopover(v ? 'tour-dest' : null)}
-                  content={<SelectionList options={["Dubai", "Maldives", "Bhutan"]} onSelect={(v) => handleSelect(setDestination, v)} />}
-                  trigger="click" placement="bottomLeft"
-                >
-                  <div>
-                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Destination")}</p>
-                    <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{destination}</div>
-                  </div>
-                </Popover>
-              </div>
-              <div className="md:col-span-5 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Prefered Date")}</p>
-                <DatePicker
-                  onChange={(d) => setStartDate(d)}
-                  placeholder="Select date"
-                  disabledDate={disabledDate}
-                  variant="borderless"
-                  className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
-                  value={startDate}
-                  format="DD MMM, YYYY"
-                  suffixIcon={null}
-                  dateRender={dateRender}
-                />
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 relative cursor-pointer">
-                <Popover
-                  open={openPopover === 'flight-from'}
-                  onOpenChange={(v) => setOpenPopover(v ? 'flight-from' : null)}
-                  content={<SelectionList options={["Dhaka", "Chittagong", "Sylhet"]} onSelect={(v) => handleSelect(setFromLocation, v)} />}
-                  trigger="click" placement="bottomLeft"
-                >
-                  <div>
-                    <p className="text-[11px] text-gray-400 font-bold">From</p>
-                    <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{fromLocation}</h4>
-                    <p className="text-[10px] text-gray-400 truncate">DAC, Hazrat Shahjalal Int....</p>
-                  </div>
-                </Popover>
-                <div
-                  onClick={handleSwapLocations}
-                  className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
-                >
-                  <FaExchangeAlt size={10} className="rotate-90 md:rotate-0" />
+                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                  <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check In")}</p>
+                  <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
                 </div>
-              </div>
-              <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-                <Popover
-                  open={openPopover === 'flight-to'}
-                  onOpenChange={(v) => setOpenPopover(v ? 'flight-to' : null)}
-                  content={<SelectionList options={["Cox's Bazar", "Bangkok", "Dubai"]} onSelect={(v) => handleSelect(setToLocation, v)} />}
-                  trigger="click" placement="bottomLeft"
-                >
-                  <div>
-                    <p className="text-[11px] text-gray-400 font-bold">To</p>
-                    <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{toLocation}</h4>
-                    <p className="text-[10px] text-gray-400">CXB, Cox's Bazar</p>
+                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                  <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Check Out")}</p>
+                  <div className="flex items-center justify-between">
+                    <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
+                    <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
                   </div>
-                </Popover>
-              </div>
-              <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <p className="text-[11px] text-gray-400 font-bold">Departure</p>
-                <DatePicker
-                  onChange={(d) => setStartDate(d)}
-                  placeholder="Select date"
-                  disabledDate={disabledDate}
-                  variant="borderless"
-                  className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
-                  value={startDate}
-                  format="DD MMM, YYYY"
-                  suffixIcon={null}
-                  dateRender={dateRender}
-                />
-                <p className="text-[10px] text-gray-400">{startDate ? startDate.format('dddd') : ""}</p>
-              </div>
-              <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
-                <p className="text-[11px] text-gray-400 font-bold">Return</p>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <DatePicker
-                      onChange={(d) => setEndDate(d)}
-                      placeholder="Select date"
-                      disabledDate={disabledDate}
-                      variant="borderless"
-                      className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
-                      value={endDate}
-                      format="DD MMM, YYYY"
-                      suffixIcon={null}
-                      dateRender={dateRender}
-                    />
-                    <p className="text-[10px] text-gray-400">{endDate ? endDate.format('dddd') : ""}</p>
-                  </div>
-                  <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
                 </div>
-              </div>
-              <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                <Popover
-                  open={openPopover === 'flight-guests'}
-                  onOpenChange={(v) => setOpenPopover(v ? 'flight-guests' : null)}
-                  content={guestContent} trigger="click" placement="bottomRight"
-                >
-                  <div className="cursor-pointer">
-                    <p className="text-[11px] text-gray-400 font-bold">Traveller, Class</p>
-                    <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{adults + children + infants} Traveller</h4>
-                    <p className="text-[10px] text-gray-400">{bookingClass}</p>
+                <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                  <Popover open={openPopover === "hotel-guests"} onOpenChange={(v) => setOpenPopover(v ? "hotel-guests" : null)} content={hotelGuestContent} trigger="click" placement="bottomRight">
+                    <div className="cursor-pointer">
+                      <p className="text-[11px] text-gray-400 font-bold leading-none">{i18n.t("Rooms & Guests")}</p>
+                      <h4 className="font-bold text-[17px] leading-tight mt-1 whitespace-nowrap text-gray-800">{rooms} Room, {adults} Adults, {children} Child</h4>
+                    </div>
+                  </Popover>
+                </div>
+              </>
+            ) : tab === "visa" ? (
+              <>
+                <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+                  <Popover open={openPopover === "visa-cit"} onOpenChange={(v) => setOpenPopover(v ? "visa-cit" : null)} content={<SelectionList options={["Bangladesh", "India", "USA"]} onSelect={(v) => handleSelect(setCitizenOf, v)} />} trigger="click" placement="bottomLeft">
+                    <div>
+                      <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Citizen of")}</p>
+                      <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{citizenOf}</div>
+                    </div>
+                  </Popover>
+                </div>
+                <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+                  <Popover open={openPopover === "visa-to"} onOpenChange={(v) => setOpenPopover(v ? "visa-to" : null)} content={<SelectionList options={["Thailand", "Malaysia", "Saudi Arabia"]} onSelect={(v) => handleSelect(setTravellingTo, v)} />} trigger="click" placement="bottomLeft">
+                    <div>
+                      <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Travelling to")}</p>
+                      <div className={`mt-1 font-bold text-lg leading-tight ${travellingTo.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{travellingTo}</div>
+                    </div>
+                  </Popover>
+                </div>
+                <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+                  <Popover open={openPopover === "visa-cat"} onOpenChange={(v) => setOpenPopover(v ? "visa-cat" : null)} content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa"]} onSelect={(v) => handleSelect(setVisaCategory, v)} />} trigger="click" placement="bottomLeft">
+                    <div>
+                      <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Visa Category")}</p>
+                      <div className={`mt-1 font-bold text-lg leading-tight ${visaCategory.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{visaCategory}</div>
+                    </div>
+                  </Popover>
+                </div>
+              </>
+            ) : tab === "tour" ? (
+              <>
+                <div className="md:col-span-6 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+                  <Popover open={openPopover === "tour-dest"} onOpenChange={(v) => setOpenPopover(v ? "tour-dest" : null)} content={<SelectionList options={["Dubai", "Maldives", "Bhutan"]} onSelect={(v) => handleSelect(setDestination, v)} />} trigger="click" placement="bottomLeft">
+                    <div>
+                      <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Destination")}</p>
+                      <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{destination}</div>
+                    </div>
+                  </Popover>
+                </div>
+                <div className="md:col-span-5 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                  <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Prefered Date")}</p>
+                  <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
+                </div>
+              </>
+            ) : (
+              // ✅ Flight - One Way & Round Trip
+              <>
+                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 relative cursor-pointer">
+                  <Popover open={openPopover === "flight-from"} onOpenChange={(v) => setOpenPopover(v ? "flight-from" : null)} content={<SelectionList options={["Dhaka", "Chittagong", "Sylhet"]} onSelect={(v) => handleSelect(setFromLocation, v)} />} trigger="click" placement="bottomLeft">
+                    <div>
+                      <p className="text-[11px] text-gray-400 font-bold">From</p>
+                      <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{fromLocation}</h4>
+                      <p className="text-[10px] text-gray-400 truncate">DAC, Hazrat Shahjalal Int....</p>
+                    </div>
+                  </Popover>
+                  <div onClick={handleSwapLocations} className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors">
+                    <FaExchangeAlt size={20} className="rotate-90 md:rotate-0" />
                   </div>
-                </Popover>
-              </div>
-            </>
-          )}
+                </div>
 
-          <div className="md:col-span-1 flex items-center justify-center p-4 md:p-2 bg-white">
-            <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-14 rounded-lg flex items-center justify-center shadow-lg transition-transform active:scale-95">
-              <FaSearch size={20} />
-            </button>
+                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+                  <Popover open={openPopover === "flight-to"} onOpenChange={(v) => setOpenPopover(v ? "flight-to" : null)} content={<SelectionList options={["Cox's Bazar", "Bangkok", "Dubai"]} onSelect={(v) => handleSelect(setToLocation, v)} />} trigger="click" placement="bottomLeft">
+                    <div>
+                      <p className="text-[11px] text-gray-400 font-bold">To</p>
+                      <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{toLocation}</h4>
+                      <p className="text-[10px] text-gray-400">CXB, Cox's Bazar</p>
+                    </div>
+                  </Popover>
+                </div>
+
+                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                  <p className="text-[11px] text-gray-400 font-bold">Departure</p>
+                  <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
+                  <p className="text-[10px] text-gray-400">{startDate ? startDate.format("dddd") : ""}</p>
+                </div>
+
+                {/* ✅ Return - disabled/grayed out for One Way */}
+                <div className={`md:col-span-2 border-b md:border-b-0 md:border-r p-4 group ${tripType === "One Way" ? "bg-gray-50 opacity-50 cursor-not-allowed pointer-events-none" : "hover:bg-gray-50"}`}>
+                  <p className="text-[11px] text-gray-400 font-bold">Return</p>
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <DatePicker
+                        onChange={(d) => setEndDate(d)}
+                        placeholder={tripType === "One Way" ? "Not available" : "Select date"}
+                        disabledDate={disabledDate}
+                        variant="borderless"
+                        disabled={tripType === "One Way"}
+                        className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
+                        value={tripType === "One Way" ? null : endDate}
+                        format="DD MMM, YYYY"
+                        suffixIcon={null}
+                        dateRender={dateRender}
+                      />
+                      <p className="text-[10px] text-gray-400">{endDate && tripType !== "One Way" ? endDate.format("dddd") : ""}</p>
+                    </div>
+                    {tripType !== "One Way" && (
+                      <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
+                    )}
+                  </div>
+                </div>
+
+                <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                  <Popover open={openPopover === "flight-guests"} onOpenChange={(v) => setOpenPopover(v ? "flight-guests" : null)} content={guestContent} trigger="click" placement="bottomRight">
+                    <div className="cursor-pointer">
+                      <p className="text-[11px] text-gray-400 font-bold">Traveller, Class</p>
+                      <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{adults + children + infants} Traveller</h4>
+                      <p className="text-[10px] text-gray-400">{bookingClass}</p>
+                    </div>
+                  </Popover>
+                </div>
+              </>
+            )}
+
+            <div className="md:col-span-1 flex items-center justify-center p-4 md:p-2 bg-white">
+              <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-14 rounded-lg flex items-center justify-center shadow-lg transition-transform active:scale-95">
+                <FaSearch size={20} />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

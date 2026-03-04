@@ -71,31 +71,10 @@ const HotelFilters = ({ getData }) => {
   return (
     <div className="flex flex-col gap-1">
       {/* Search Hotel */}
-      <div className={sectionStyle}>
-        <h4 className={titleStyle}>{i18n.t("Search Hotel")}</h4>
-        <Form layout="vertical" form={form}>
-          <FormInput
-            placeholder={i18n.t("Type Hotel Name")}
-            type="text"
-            onChange={(e) => getData({ search: e.target.value })}
-            className="focus:outline-primary w-full border border-[#E8EAE8] rounded-[10px] lg:rounded-[20px] xl:p-5 lg:p-4 p-3"
-          />
-        </Form>
-      </div>
+
 
       {/* Price per Night - Image Mockup style */}
-      <div className={sectionStyle}>
-        <h4 className={titleStyle}>{i18n.t("Price per Night")} <span className="text-[10px]">▲</span></h4>
-        <div className="flex justify-between items-center mb-4">
-            <span className="text-sm text-[#05073C]">Set your own budget</span>
-            <input type="checkbox" className="toggle-checkbox" />
-        </div>
-        <div className="flex flex-col gap-3">
-          {["2,147 - 4,389", "4,390 - 6,631", "6,632 - 8,873", "8,874 - 11,115", "11,116 - 13,356"].map((range) => (
-            <Checkbox key={range} className="text-[#05073C] font-medium">{currency_symbol} {range}</Checkbox>
-          ))}
-        </div>
-      </div>
+
 
       {/* Existing Dynamic Price Filter */}
       <div className={sectionStyle}>
@@ -130,18 +109,84 @@ const HotelFilters = ({ getData }) => {
         </div>
       </div>
 
-      {/* Meal Plans - Image Mockup */}
+      {/* Meal Plans - Updated */}
       <div className={sectionStyle}>
         <h4 className={titleStyle}>{i18n.t("Meal Plans")} <span className="text-[10px]">▲</span></h4>
         <div className="flex flex-col gap-3">
+
+          {/* Bed & Breakfast (BB) */}
           <div className="flex justify-between w-full">
-            <Checkbox className="text-[#05073C] font-medium">Breakfast Included</Checkbox>
+            <Checkbox className="text-[#05073C] font-medium">{i18n.t("Bed & Breakfast (BB)")}</Checkbox>
             <span className="text-gray-400 text-xs">(11)</span>
           </div>
+
+          {/* Half Board (HB) */}
           <div className="flex justify-between w-full">
-            <Checkbox className="text-[#05073C] font-medium">Room Only</Checkbox>
+            <Checkbox className="text-[#05073C] font-medium">{i18n.t("Half Board (HB)")}</Checkbox>
+            <span className="text-gray-400 text-xs">(8)</span>
+          </div>
+
+          {/* Room Only / Only Bed */}
+          <div className="flex justify-between w-full">
+            <Checkbox className="text-[#05073C] font-medium">{i18n.t("Room Only (RO)")}</Checkbox>
             <span className="text-gray-400 text-xs">(4)</span>
           </div>
+
+        </div>
+      </div>
+
+      {/* Neighborhood / Area Section */}
+      <div className={sectionStyle}>
+        <div className="flex items-center justify-between mb-3">
+          <h4 className={titleStyle}>{i18n.t("Neighborhood")}</h4>
+          {/* Optional: Add Arrow icon here if needed */}
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {[
+            { label: "Sukhumvit", count: 1085 },
+            { label: "Guests' favorite area", count: 856 },
+            { label: "Downtown Bangkok", count: 570 },
+            { label: "Bangkok Old Town", count: 558 },
+            { label: "Wattana", count: 552 },
+            { label: "Best areas outside center", count: 411 },
+            { label: "Khlong Toei", count: 403 },
+            { label: "Khaosan", count: 308 },
+            { label: "Embassy District", count: 284 },
+            { label: "Nana", count: 257 },
+          ].map((item, index) => (
+            <div key={index} className="flex justify-between items-center w-full">
+              <Checkbox className="text-[#05073C] font-normal text-sm">
+                {i18n.t(item.label)}
+              </Checkbox>
+              <span className="text-gray-500 text-xs">{item.count}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Show All Button */}
+        <button className="flex items-center gap-1 text-blue-600 text-sm mt-4 hover:underline">
+          {i18n.t("Show all 25")}
+          <span className="text-[10px]">▼</span>
+        </button>
+      </div>
+
+      {/* Reservation Policy Section */}
+      <div className={sectionStyle}>
+        <h4 className={titleStyle}>{i18n.t("Reservation policy")}</h4>
+        <div className="flex flex-col gap-3">
+          {[
+            { label: "Free cancellation", count: 331 },
+            { label: "Book without credit card", count: 260 },
+            { label: "No prepayment", count: 307 },
+          ].map((item, index) => (
+            <div key={index} className="flex justify-between items-center w-full">
+              <Checkbox className="text-[#05073C] font-normal text-sm">
+                {i18n.t(item.label)}
+              </Checkbox>
+              <span className="text-gray-500 text-xs">{item.count}</span>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -149,8 +194,8 @@ const HotelFilters = ({ getData }) => {
       <div className={sectionStyle}>
         <h4 className={titleStyle}>{i18n.t("Refundability")} <span className="text-[10px]">▲</span></h4>
         <div className="flex justify-between w-full">
-            <Radio className="text-[#05073C] font-medium">Non Refundable</Radio>
-            <span className="text-gray-400 text-xs">(15)</span>
+          <Radio className="text-[#05073C] font-medium">Non Refundable</Radio>
+          <span className="text-gray-400 text-xs">(15)</span>
         </div>
       </div>
 
@@ -159,17 +204,17 @@ const HotelFilters = ({ getData }) => {
         <h4 className={titleStyle}>{i18n.t("Hotel Type")}</h4>
         <div className="flex flex-col gap-2">
           <Radio.Group onChange={(e) => getData({ hotel_type: e.target.value === "all" ? null : e.target.value })} defaultValue="all" className="w-full">
-             <div className="flex justify-between items-center mb-3">
-                <Radio value="all" className="text-sm font-medium text-[#05073C]">All</Radio>
-             </div>
-             {hotelTypes?.map((item, index) => (
-                <div key={index} className="flex justify-between items-center mb-3">
-                    <Radio value={item.name} className="text-sm font-medium text-[#05073C] capitalize">{item.name}</Radio>
-                    <div className="w-6 h-6 flex justify-center items-center rounded-full bg-[#E8EAE8]">
-                        <p className="text-[#05073C] text-[12px] font-medium">{item.count}</p>
-                    </div>
+            <div className="flex justify-between items-center mb-3">
+              <Radio value="all" className="text-sm font-medium text-[#05073C]">All</Radio>
+            </div>
+            {hotelTypes?.map((item, index) => (
+              <div key={index} className="flex justify-between items-center mb-3">
+                <Radio value={item.name} className="text-sm font-medium text-[#05073C] capitalize">{item.name}</Radio>
+                <div className="w-6 h-6 flex justify-center items-center rounded-full bg-[#E8EAE8]">
+                  <p className="text-[#05073C] text-[12px] font-medium">{item.count}</p>
                 </div>
-             ))}
+              </div>
+            ))}
           </Radio.Group>
         </div>
       </div>
@@ -189,15 +234,15 @@ const HotelFilters = ({ getData }) => {
       <div className={sectionStyle}>
         <h4 className={titleStyle}>{i18n.t("Hotel Location")}</h4>
         <Radio.Group onChange={(e) => getData({ destination: e.target.value === "all" ? null : e.target.value })} defaultValue="all" className="w-full">
-            <div className="mb-3"><Radio value="all">All</Radio></div>
-            {destinations.map((item, index) => (
-                <div key={index} className="flex justify-between items-center mb-3">
-                    <Radio value={item._id} className="text-sm font-medium text-[#05073C]">{item.name}</Radio>
-                    <div className="w-6 h-6 flex justify-center items-center rounded-full bg-[#E8EAE8]">
-                        <p className="text-[#05073C] text-[12px] font-medium">{item.count}</p>
-                    </div>
-                </div>
-            ))}
+          <div className="mb-3"><Radio value="all">All</Radio></div>
+          {destinations.map((item, index) => (
+            <div key={index} className="flex justify-between items-center mb-3">
+              <Radio value={item._id} className="text-sm font-medium text-[#05073C]">{item.name}</Radio>
+              <div className="w-6 h-6 flex justify-center items-center rounded-full bg-[#E8EAE8]">
+                <p className="text-[#05073C] text-[12px] font-medium">{item.count}</p>
+              </div>
+            </div>
+          ))}
         </Radio.Group>
       </div>
 
@@ -205,20 +250,20 @@ const HotelFilters = ({ getData }) => {
       <div className={sectionStyle}>
         <h4 className={titleStyle}>{i18n.t("Reviews")}</h4>
         <Radio.Group value={selectedReview} onChange={(e) => { setSelectedReview(e.target.value); getData({ review: e.target.value === "all" ? null : e.target.value }); }} className="w-full">
-            <div className="flex justify-between items-center mb-3">
-                <Radio value="all">All</Radio>
-                <div className="w-10 h-6 flex justify-center items-center rounded-full bg-[#E8EAE8]">
-                    <p className="text-[#05073C] text-[12px] font-medium">All</p>
-                </div>
+          <div className="flex justify-between items-center mb-3">
+            <Radio value="all">All</Radio>
+            <div className="w-10 h-6 flex justify-center items-center rounded-full bg-[#E8EAE8]">
+              <p className="text-[#05073C] text-[12px] font-medium">All</p>
             </div>
-            {Reviews.map((item, index) => (
-                <div key={index} className="flex justify-between items-center mb-3">
-                    <Radio value={item.rating}>{item.rate}</Radio>
-                    <div className="w-6 h-6 flex justify-center items-center rounded-full bg-[#E8EAE8]">
-                        <p className="text-[#05073C] text-[12px] font-medium">{item.count}</p>
-                    </div>
-                </div>
-            ))}
+          </div>
+          {Reviews.map((item, index) => (
+            <div key={index} className="flex justify-between items-center mb-3">
+              <Radio value={item.rating}>{item.rate}</Radio>
+              <div className="w-6 h-6 flex justify-center items-center rounded-full bg-[#E8EAE8]">
+                <p className="text-[#05073C] text-[12px] font-medium">{item.count}</p>
+              </div>
+            </div>
+          ))}
         </Radio.Group>
       </div>
     </div>
