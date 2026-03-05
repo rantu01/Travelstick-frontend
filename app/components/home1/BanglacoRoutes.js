@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plane } from 'lucide-react';
+import Link from 'next/link';
 
 const BanglacoRoutes = () => {
     const [activeTab, setActiveTab] = useState('domestic');
@@ -51,42 +52,49 @@ const BanglacoRoutes = () => {
                 {/* Routes Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {currentRoutes.map((route, index) => (
-                        <div
-                            key={index}
-                            className="group bg-[#fafbfd] p-5 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between hover:shadow-md hover:border-black transition-all duration-300 cursor-pointer overflow-hidden"
-                        >
-                            {/* Departure */}
-                            <div className="text-left">
-                                <h4 className="font-bold text-gray-800 text-lg group-hover:text-black">{route.from}</h4>
-                                <p className="text-xs text-gray-400 mt-1">{route.fromAir}</p>
-                            </div>
 
-                            {/* Icon & Line Section */}
-                            <div className="flex-grow flex items-center justify-center px-4 relative h-10 overflow-hidden">
-                                {/* Dashed Line */}
-                                <div className="h-[1px] bg-gray-200 w-full absolute top-1/2 transform -translate-y-1/2 border-dashed border-t"></div>
-                                
-                                {/* Plane Animation Container */}
-                                <div className="relative h-full w-10 flex items-center justify-center bg-[#fafbfd] z-10">
-                                    {/* Existing Plane (Fly Out) */}
-                                    <Plane 
-                                        className="w-5 h-5 text-[#1a73e8] absolute transition-all duration-500 ease-in-out transform 
-                                        group-hover:-translate-y-10 group-hover:translate-x-10 opacity-100 group-hover:opacity-0" 
-                                    />
-                                    {/* New Plane (Fly In) */}
-                                    <Plane 
-                                        className="w-5 h-5 text-[#1a73e8] absolute transition-all duration-500 ease-in-out transform 
-                                        translate-y-10 -translate-x-10 opacity-0 group-hover:translate-y-0 group-hover:translate-x-0 group-hover:opacity-100" 
-                                    />
+                        <Link
+                            href={`/banglaco-routes/${route.to.toLowerCase().replace(/\s+/g, '-')}`}
+                            key={index}
+                            className="block" // block যাতে পুরো কার্ড ক্লিক হয়
+                        >
+                            <div
+                                key={index}
+                                className="group bg-[#fafbfd] p-5 rounded-lg border border-gray-100 shadow-sm flex items-center justify-between hover:shadow-md hover:border-black transition-all duration-300 cursor-pointer overflow-hidden"
+                            >
+                                {/* Departure */}
+                                <div className="text-left">
+                                    <h4 className="font-bold text-gray-800 text-lg group-hover:text-black">{route.from}</h4>
+                                    <p className="text-xs text-gray-400 mt-1">{route.fromAir}</p>
+                                </div>
+
+                                {/* Icon & Line Section */}
+                                <div className="flex-grow flex items-center justify-center px-4 relative h-10 overflow-hidden">
+                                    {/* Dashed Line */}
+                                    <div className="h-[1px] bg-gray-200 w-full absolute top-1/2 transform -translate-y-1/2 border-dashed border-t"></div>
+
+                                    {/* Plane Animation Container */}
+                                    <div className="relative h-full w-10 flex items-center justify-center bg-[#fafbfd] z-10">
+                                        {/* Existing Plane (Fly Out) */}
+                                        <Plane
+                                            className="w-5 h-5 text-[#1a73e8] absolute transition-all duration-500 ease-in-out transform 
+                                        group-hover:-translate-y-10 group-hover:translate-x-10 opacity-100 group-hover:opacity-0"
+                                        />
+                                        {/* New Plane (Fly In) */}
+                                        <Plane
+                                            className="w-5 h-5 text-[#1a73e8] absolute transition-all duration-500 ease-in-out transform 
+                                        translate-y-10 -translate-x-10 opacity-0 group-hover:translate-y-0 group-hover:translate-x-0 group-hover:opacity-100"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Arrival */}
+                                <div className="text-right">
+                                    <h4 className="font-bold text-gray-800 text-lg group-hover:text-black">{route.to}</h4>
+                                    <p className="text-xs text-gray-400 mt-1">{route.toAir}</p>
                                 </div>
                             </div>
-
-                            {/* Arrival */}
-                            <div className="text-right">
-                                <h4 className="font-bold text-gray-800 text-lg group-hover:text-black">{route.to}</h4>
-                                <p className="text-xs text-gray-400 mt-1">{route.toAir}</p>
-                            </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

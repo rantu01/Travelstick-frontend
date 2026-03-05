@@ -25,9 +25,6 @@ const Banner = ({ title = 'Home' }) => {
             playsInline
          />
 
-         {/* Overlay */}
-         <div className='bg-black bg-opacity-40 absolute inset-0'></div>
-
          {/* Content - Banner2 এর মতো এলাইনমেন্ট */}
          <div className="flex flex-col justify-center items-center z-10 relative h-full text-center px-4">
             <h1 className="heading-1 text-white">{i18n.t(title)}</h1>
