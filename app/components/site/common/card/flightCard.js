@@ -9,6 +9,7 @@ import { HiOutlineCurrencyBangladeshi } from "react-icons/hi";
 const FlightCard = ({ data }) => {
   const [showDetail, setShowDetail] = useState(false);
   const [activeTab, setActiveTab] = useState(0); // For Details Tab (DAC-CXB or CXB-DAC)
+  const [viewMode, setViewMode] = useState('flight');
 
   return (
     <div className="w-full bg-white border border-[#E8EAE8] rounded-[15px] overflow-hidden shadow-sm hover:shadow-md transition-all mb-4">
@@ -51,14 +52,14 @@ const FlightCard = ({ data }) => {
         <div className="w-full md:w-[180px] bg-[#F2F6FF] p-5 flex flex-col items-end justify-center border-l border-[#E8EAE8] gap-2">
           <div className="flex items-center gap-1 self-end mb-2">
             <span className="w-4 h-4 bg-green-600 rounded-sm flex items-center justify-center">
-               <div className="w-1 h-2 border-r-2 border-b-2 border-white rotate-45 mb-0.5"></div>
+              <div className="w-1 h-2 border-r-2 border-b-2 border-white rotate-45 mb-0.5"></div>
             </span>
             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">{data.flight_code}</span>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center text-[22px] font-bold text-[#1A1A1A]">
-               <span className="text-[18px] mr-0.5">৳</span>
-               {data.current_price.toLocaleString()}
+              <span className="text-[18px] mr-0.5">৳</span>
+              {data.current_price.toLocaleString()}
             </div>
             <p className="text-[12px] text-gray-400 line-through">৳ {data.regular_price.toLocaleString()}</p>
           </div>
@@ -81,12 +82,12 @@ const FlightCard = ({ data }) => {
             <AiOutlineClockCircle className="text-[12px]" /> Pay Later
           </div>
         </div>
-        
-        <button 
+
+        <button
           onClick={() => setShowDetail(!showDetail)}
           className="text-[13px] font-bold text-[#1882FF] flex items-center gap-1 hover:underline"
         >
-          {showDetail ? "Hide Detail" : "View Detail"} 
+          {showDetail ? "Hide Detail" : "View Detail"}
           {showDetail ? <MdKeyboardArrowUp className="text-lg" /> : <MdKeyboardArrowDown className="text-lg" />}
         </button>
       </div>
@@ -95,13 +96,13 @@ const FlightCard = ({ data }) => {
       {showDetail && (
         <div className="p-5 border-t border-[#F5F5F5] bg-[#F9FBFF] animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex flex-col lg:flex-row gap-6">
-            
-            {/* Left Column: Flight Details Tab */}
+
+            {/* Left Column: Details Section */}
             <div className="flex-grow">
-              {/* Tab Header */}
+              {/* Main Tab Header (Segments) */}
               <div className="flex border-b border-gray-200 mb-4 overflow-x-auto">
                 {data.segments.map((seg, i) => (
-                  <button 
+                  <button
                     key={i}
                     onClick={() => setActiveTab(i)}
                     className={`px-6 py-2 text-[13px] font-bold whitespace-nowrap transition-all border-b-2 ${activeTab === i ? 'bg-[#1882FF] text-white border-[#1882FF] rounded-t-md' : 'text-gray-500 border-transparent hover:text-[#1882FF]'}`}
@@ -111,47 +112,89 @@ const FlightCard = ({ data }) => {
                 ))}
               </div>
 
-              {/* Journey Timeline UI */}
-              <div className="bg-white p-6 rounded-lg border border-[#E8EAE8]">
-                <div className="flex items-center gap-3 mb-6">
-                   <MdLocationOn className="text-gray-400 text-xl" />
-                   <p className="text-[13px] font-medium text-gray-700">Departure from <span className="font-bold text-[#1A1A1A]">{data.segments[activeTab].departure_airport}</span></p>
-                </div>
-
-                <div className="flex items-start gap-6 ml-2 relative">
-                  {/* Vertical Line */}
-                  <div className="absolute left-[7px] top-2 bottom-2 w-[1px] border-l-2 border-dashed border-gray-200"></div>
-                  
-                  <div className="z-10 bg-white">
-                    <Image src={data.segments[activeTab].logo} alt="airline" width={30} height={30} className="object-contain" />
-                  </div>
-
-                  <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <p className="text-[15px] font-bold text-[#1A1A1A]">{data.segments[activeTab].from} - {data.segments[activeTab].to}</p>
-                      <p className="text-[11px] text-gray-400 uppercase">{data.segments[activeTab].duration}</p>
-                      <p className="text-[12px] font-bold text-gray-600 mt-2 uppercase">{data.segments[activeTab].airline}</p>
-                      <p className="text-[11px] text-gray-400">Flight no: <span className="text-gray-600 font-medium">VQ921</span></p>
-                    </div>
-
-                    <div>
-                      <p className="text-[15px] font-bold text-[#1A1A1A]">{data.segments[activeTab].departure_time}</p>
-                      <p className="text-[12px] text-gray-500 font-medium">{data.segments[activeTab].departure_date}</p>
-                      <p className="text-[11px] text-gray-400 mt-2">Class: <span className="text-gray-600 font-medium uppercase">ECONOMY-I (I)</span></p>
-                    </div>
-
-                    <div>
-                      <p className="text-[15px] font-bold text-[#1A1A1A]">{data.segments[activeTab].arrival_time}</p>
-                      <p className="text-[12px] text-gray-500 font-medium">{data.segments[activeTab].arrival_date}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 mt-6">
-                   <MdLocationOn className="text-[#1882FF] text-xl" />
-                   <p className="text-[13px] font-medium text-gray-700">Destination at <span className="font-bold text-[#1A1A1A]">{data.segments[activeTab].arrival_airport}</span></p>
-                </div>
+              {/* Sub-tabs for Flight vs Fare Details */}
+              <div className="flex gap-4 mb-4">
+                <button
+                  onClick={() => setViewMode('flight')}
+                  className={`text-[13px] font-bold ${viewMode === 'flight' ? 'text-[#1882FF] border-b-2 border-[#1882FF]' : 'text-gray-400'}`}
+                >
+                  Flight Details
+                </button>
+                <button
+                  onClick={() => setViewMode('fare')}
+                  className={`text-[13px] font-bold ${viewMode === 'fare' ? 'text-[#1882FF] border-b-2 border-[#1882FF]' : 'text-gray-400'}`}
+                >
+                  Fare Details
+                </button>
               </div>
+
+              {viewMode === 'flight' ? (
+                /* Journey Timeline UI */
+                <div className="bg-white p-6 rounded-lg border border-[#E8EAE8]">
+                  <div className="flex items-center gap-3 mb-6">
+                    <MdLocationOn className="text-gray-400 text-xl" />
+                    <p className="text-[13px] font-medium text-gray-700">Departure from <span className="font-bold text-[#1A1A1A]">{data.segments[activeTab].departure_airport}</span></p>
+                  </div>
+
+                  <div className="flex items-start gap-6 ml-2 relative">
+                    <div className="absolute left-[7px] top-2 bottom-2 w-[1px] border-l-2 border-dashed border-gray-200"></div>
+                    <div className="z-10 bg-white">
+                      <Image src={data.segments[activeTab].logo} alt="airline" width={30} height={30} className="object-contain" />
+                    </div>
+
+                    <div className="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-[15px] font-bold text-[#1A1A1A]">{data.segments[activeTab].from} - {data.segments[activeTab].to}</p>
+                        <p className="text-[11px] text-gray-400 uppercase">{data.segments[activeTab].duration}</p>
+                        <p className="text-[12px] font-bold text-gray-600 mt-2 uppercase">{data.segments[activeTab].airline}</p>
+                        <p className="text-[11px] text-gray-400">Flight no: <span className="text-gray-600 font-medium">VQ921</span></p>
+                      </div>
+
+                      <div>
+                        <p className="text-[15px] font-bold text-[#1A1A1A]">{data.segments[activeTab].departure_time}</p>
+                        <p className="text-[12px] text-gray-500 font-medium">{data.segments[activeTab].departure_date}</p>
+                        <p className="text-[11px] text-gray-400 mt-2">Class: <span className="text-gray-600 font-medium uppercase">ECONOMY-I (I)</span></p>
+                      </div>
+
+                      <div>
+                        <p className="text-[15px] font-bold text-[#1A1A1A]">{data.segments[activeTab].arrival_time}</p>
+                        <p className="text-[12px] text-gray-500 font-medium">{data.segments[activeTab].arrival_date}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 mt-6">
+                    <MdLocationOn className="text-[#1882FF] text-xl" />
+                    <p className="text-[13px] font-medium text-gray-700">Destination at <span className="font-bold text-[#1A1A1A]">{data.segments[activeTab].arrival_airport}</span></p>
+                  </div>
+                </div>
+              ) : (
+                /* Fare Details Table */
+                <div className="bg-white rounded-lg border border-[#E8EAE8] overflow-hidden">
+                  <table className="w-full text-left text-[13px]">
+                    <thead>
+                      <tr className="bg-gray-50 border-b border-gray-200">
+                        <th className="px-6 py-3 font-bold text-[#1A1A1A]">Fare Summary</th>
+                        <th className="px-6 py-3 font-bold text-[#1A1A1A]">Base Fare</th>
+                        <th className="px-6 py-3 font-bold text-[#1A1A1A]">Tax</th>
+                        <th className="px-6 py-3 font-bold text-[#1A1A1A]">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      <tr>
+                        <td className="px-6 py-4 text-gray-700 font-medium">Adult (x1)</td>
+                        <td className="px-6 py-4 text-gray-600">BDT 14,500</td>
+                        <td className="px-6 py-4 text-gray-600">BDT 2,300</td>
+                        <td className="px-6 py-4 font-bold text-[#1A1A1A]">BDT 16,800</td>
+                      </tr>
+                      <tr className="bg-blue-50/30">
+                        <td className="px-6 py-4 font-bold text-[#1A1A1A]">Total Payable</td>
+                        <td colSpan="3" className="px-6 py-4 text-right font-bold text-[#1882FF] text-lg">BDT 16,800</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
             {/* Right Column: Baggage & Policy */}
@@ -165,10 +208,10 @@ const FlightCard = ({ data }) => {
                 <p className="mb-4">Refunds and Date Changes are done as per the following policies.</p>
                 <p className="mb-4">Refund is calculated by deducting Airline's fee and ST fee from the paid amount.</p>
                 <p className="mb-4">Date Change fee is calculated by adding Airline's fee, fare difference and ST fee.</p>
-                
+
                 <p className="font-bold text-[#1A1A1A] mt-4 mb-2">*Fees are shown for all traveler</p>
                 <p className="text-[11px] opacity-70 italic">*ST Convenience fee is non-refundable. We cannot guarantee the accuracy of airline refund/date change fees as they are subject to change without prior notice.</p>
-                
+
                 <button className="text-[#1882FF] font-bold mt-4 hover:underline">Show More Information</button>
               </div>
             </div>
