@@ -106,7 +106,7 @@ export default function Home() {
           {/* <ProductSection visible={hasProduct} theme={theme} /> */}
           {/* <Blog1 theme={theme} /> */}
 
-          <Newsletter theme={theme} />
+          {/* <Newsletter theme={theme} /> */}
         </div>
       </div>
     </main>

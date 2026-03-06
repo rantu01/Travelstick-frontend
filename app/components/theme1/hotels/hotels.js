@@ -174,11 +174,11 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
 
   return (
     <div className="w-full">
-      {theme === 'one' ? <Banner title="Hotels" /> : <Banner2 title="Hotels" />}
+      {/* {theme === 'one' ? <Banner title="Hotels" /> : <Banner2 title="Hotels" />} */}
 
       {/* --- Search Section --- */}
-      <div className="travel-container -mt-10 relative z-20 sticky top-20">
-        <div className="bg-white rounded-xl shadow-xl flex flex-col md:flex-row items-stretch border border-gray-200 overflow-hidden">
+      <div className="travel-container -mt-10 relative z-20 sticky top-[92px]">
+        <div className="bg-white rounded-xl shadow-sm flex flex-col md:flex-row items-stretch border border-gray-200 overflow-hidden">
           
           {/* Destination */}
           <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">

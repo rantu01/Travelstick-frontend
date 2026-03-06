@@ -4,7 +4,6 @@ import { fetchPublicSettings } from "@/app/helper/backend";
 import { useFetch } from "@/app/helper/hooks";
 import Image from "next/image";
 import React, { useEffect } from "react";
-import BlurText from "../ui/blurText";
 import SkeletonLoading from "../common/skeletonLoading";
 
 const Partner = () => {
@@ -15,21 +14,21 @@ const Partner = () => {
     false
   );
 
-  const partnerImages = setting?.partner || [];
+  // ডাটা স্ট্রাকচার আপডেট: এখন partner এর ভেতর অবজেক্ট আছে
+  const partnerData = setting?.partner || [];
 
   useEffect(() => {
     getSettings();
   }, []);
 
-  // Upore scroll korar logic
   const handleScrollTop = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth", // Smoothly upore jabe
+      behavior: "smooth",
     });
   };
 
-  const isLoading = loading && partnerImages.length === 0;
+  const isLoading = loading && partnerData.length === 0;
 
   return (
     <>
@@ -42,25 +41,36 @@ const Partner = () => {
               <h2 className="text-center text-[#1d2c71] text-3xl font-bold">
                 Save Big with Limited-Time Travel Offers
               </h2>
-              <p className="text-center text-[#4b5687] max-w-4xl  mx-auto mb-8 leading-relaxed">
+              <p className="text-center text-[#4b5687] max-w-4xl mx-auto mb-8 leading-relaxed">
                 With Banglaco, your journey begins With the best names in the sky
               </p>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 bg-white py-6">
-              {partnerImages.map((image, index) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 bg-white py-6">
+              {partnerData.map((partner, index) => (
                 <div
                   key={index}
-                  onClick={handleScrollTop} // Ekhane click handle kora hoyeche
-                  className="group flex items-center justify-between p-4 rounded-xl transition-all duration-300 border border-transparent hover:border-gray-100 hover:bg-white hover:shadow-xl cursor-pointer"
+                  onClick={handleScrollTop}
+                  className="group flex items-center justify-between p-4 rounded-xl transition-all duration-300 border border-gray-100 bg-white hover:shadow-xl cursor-pointer"
                 >
-                  <Image
-                    className="w-[120px] h-[60px] md:w-[150px] md:h-[70px] object-contain"
-                    src={image}
-                    width={200}
-                    height={100}
-                    alt={`partner-image-${index}`}
-                  />
+                  <div className="flex items-center gap-3">
+                    {/* ইমেজ শো করা */}
+                    <div className="relative w-[60px] h-[40px] md:w-[80px] md:h-[50px]">
+                      <Image
+                        className="object-contain"
+                        src={partner?.url || ""} // আগে ছিল src={image}
+                        fill
+                        alt={partner?.text || `partner-${index}`}
+                      />
+                    </div>
+                    
+                    {/* ইমেজের পাশে টেক্সট শো করা */}
+                    <div className="flex flex-col">
+                        <span className="text-sm font-semibold text-[#1d2c71] group-hover:text-blue-600 transition-colors">
+                            {partner?.text || "Partner Name"}
+                        </span>
+                    </div>
+                  </div>
 
                   <svg
                     width="16"

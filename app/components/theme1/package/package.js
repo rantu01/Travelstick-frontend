@@ -13,6 +13,7 @@ import Banner2 from "../../site/common/component/Banner2";
 import PackageCard2 from "../../site/common/card/packageCard2";
 import dayjs from "dayjs";
 import { FaSearch, FaTimesCircle } from "react-icons/fa";
+import CustomTourCard from "./CustomTourCard";
 
 const PackagePage = ({ discount, discount_type, destination: initialDest, startDate: initialDate, endDate, tourType, theme }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -76,15 +77,15 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
 
   return (
     <div className="">
-      {
+      {/* {
         theme === 'one' ?
           <Banner title="Tour Packages" /> :
           <Banner2 title="Tour Packages" />
-      }
+      } */}
 
       {/* --- Search Section --- */}
-      <div className="travel-container -mt-10 relative z-20 sticky top-20">
-        <div className="bg-white rounded-xl shadow-xl flex flex-col md:flex-row items-stretch border border-gray-200 overflow-hidden">
+      <div className="travel-container -mt-10 relative z-20 sticky top-[92px]">
+        <div className="bg-white rounded-xl shadow-sm flex flex-col md:flex-row items-stretch border border-gray-200 overflow-hidden">
 
           {/* Destination */}
           <div className="flex-[2] border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
@@ -172,6 +173,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
           </div>
           {/* Package Card */}
           <div className="w-full md:w-[70%] xl:w-[75%]">
+            <CustomTourCard></CustomTourCard>
             {
               data?.docs?.length > 0 ? (
                 <>

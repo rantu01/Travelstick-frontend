@@ -66,15 +66,15 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
 
   return (
     <div className="">
-      {
+      {/* {
         theme === 'one' ?
           <Banner title="Visa" /> :
           <Banner2 title="Visa" />
-      }
+      } */}
 
       {/* --- Visa Search Bar --- */}
-      <div className="travel-container -mt-10 relative z-30 sticky top-20">
-        <div className="bg-white rounded-xl shadow-2xl flex flex-col md:grid md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
+      <div className="travel-container -mt-10 relative z-30 sticky top-[92px]">
+        <div className="bg-white rounded-xl shadow-sm flex flex-col md:grid md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
 
           {/* Citizen Of */}
           <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer transition-colors">

@@ -4,6 +4,7 @@ import {
     Check, Info, Wifi, Car, ChevronDown, Clock,
     CigaretteOff, Cigarette, Bed, Gift, Wind
 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function BookingDetailsPage() {
     return (
@@ -110,7 +111,7 @@ export default function BookingDetailsPage() {
                         <div className="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4 flex items-start gap-3">
                             <Check size={18} className="text-green-700 mt-0.5" />
                             <p className="text-xs font-medium text-[#1a1a1a]">
-                                Your room will be ready for check-in at <span className="font-bold">02:00 PM</span>. 
+                                Your room will be ready for check-in at <span className="font-bold">02:00 PM</span>.
                                 If you arrive early, you can drop off your luggage.
                             </p>
                         </div>
@@ -184,7 +185,7 @@ export default function BookingDetailsPage() {
                     {/* BUTTON SECTION WITH HOVER DETAILS */}
                     <div className="text-right pt-4 relative group">
                         <p className="text-orange-600 text-[11px] font-bold italic mb-2">Hurry! Our last room for your dates at this price</p>
-                        
+
                         {/* Hover Tooltip/Card */}
                         <div className="absolute bottom-full right-0 mb-4 w-72 bg-white border border-gray-200 shadow-xl rounded-xl p-4 text-left hidden group-hover:block z-50 transition-all">
                             <h4 className="font-bold text-sm border-b pb-2 mb-2">Booking Summary</h4>
@@ -210,9 +211,9 @@ export default function BookingDetailsPage() {
                             <div className="absolute -bottom-2 right-10 w-4 h-4 bg-white border-b border-r border-gray-200 rotate-45"></div>
                         </div>
 
-                        <button className="w-full bg-[#003580] text-white font-black py-4 rounded-lg text-lg uppercase tracking-wider hover:bg-blue-900 transition-colors">
-                            Next: Final Step
-                        </button>
+                        <Link href={`/hotel/1/booking/final`}>
+                            <button className="w-full bg-[#003580] text-white font-black py-4 rounded-lg text-lg uppercase tracking-wider hover:bg-blue-900 transition-colors">Next: Final Step</button>
+                        </Link>
                         <p className="text-green-600 text-xs font-bold mt-2">You will pay USD0 today</p>
                     </div>
                 </div>

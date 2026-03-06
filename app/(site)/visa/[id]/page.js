@@ -9,8 +9,7 @@ import Image from "next/image";
 import VisaForm from "@/app/components/common/visaForm";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import CommonContact from "@/app/components/common/commonConatc";
-import { FiHeart, FiShare2, FiMapPin, FiCheckCircle } from "react-icons/fi";
-
+import { FiHeart, FiShare2, FiMapPin, FiCheckCircle, FiInfo } from "react-icons/fi";
 
 const countryToCode = {
   "usa": "us",
@@ -22,7 +21,6 @@ const countryToCode = {
   "uk": "gb",
   "united kingdom": "gb",
   "turkey": "tr",
-  // আপনার প্রোজেক্টে থাকা অন্য দেশের নামগুলো এখানে যোগ করুন
 };
 
 const VisaDetails = () => {
@@ -32,16 +30,15 @@ const VisaDetails = () => {
   const params = useParams();
   const { id } = params;
 
-  // data ডিক্লেয়ার করার পর এখন এটি ব্যবহার করা নিরাপদ
   const countryName = data?.country?.toLowerCase() || "";
   const countryCode = countryToCode[countryName] || "bd";
 
   const [activePanel, setActivePanel] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
 
-  // Refs for Scroll to Section
   const overviewRef = useRef(null);
   const infoRef = useRef(null);
+  const otherInfoRef = useRef(null); // নতুন Ref যুক্ত করা হয়েছে
   const faqRef = useRef(null);
   const reviewRef = useRef(null);
 
@@ -50,10 +47,12 @@ const VisaDetails = () => {
   }, [id]);
 
   const scrollToSection = (ref) => {
-    window.scrollTo({
-      top: ref.current.offsetTop - 100,
-      behavior: "smooth",
-    });
+    if (ref.current) {
+      window.scrollTo({
+        top: ref.current.offsetTop - 100,
+        behavior: "smooth",
+      });
+    }
   };
 
   const visaStats = [
@@ -65,9 +64,25 @@ const VisaDetails = () => {
     { label: "Country", value: data?.country, img: "/theme1/visa/globe.png" },
   ];
 
+  const otherInfoDetails = [
+    { label: "Continent", value: "Asia" },
+    { label: "Capital", value: "Ankara" },
+    { label: "Official Language", value: "Turkish" },
+    { label: "Currency", value: "Turkish lira" },
+    { label: "Local Time", value: "GMT +2" },
+    { label: "Exchange Rate", value: "2.83 BDT" },
+    { label: "Dialing Code", value: "+90" },
+    { label: "Weekend Days", value: "Friday & Saturday" },
+    { label: "Population", value: "78.67 million" },
+    { label: "Area", value: "302,535 mi²" },
+    { label: "Education", value: "95%" },
+    { label: "Religion", value: "Islam" },
+    { label: "Embassy Address", value: "6 Felani Ave, Dhaka 1212" },
+    { label: "Processing Time", value: "30-45 Working Days" },
+  ];
+
   return (
     <div className="min-h-screen pb-20 ">
-      {/* 1. Header Section (Title & Breadcrumb) */}
       <div className="bg-white">
         <div className="travel-container py-8">
           <Breadcrumb className="mb-3 text-sm"
@@ -112,10 +127,8 @@ const VisaDetails = () => {
           </div>
         </div>
 
-        {/* 2. Gallery Grid */}
         <div className="travel-container pb-10">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3 h-[250px] md:h-[420px] overflow-hidden rounded-2xl mb-6">
-
             <div className="md:col-span-3 md:row-span-2 h-full relative group overflow-hidden">
               <Image
                 src={data?.banner_image || "/placeholder.jpg"}
@@ -125,29 +138,20 @@ const VisaDetails = () => {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
             </div>
-
             <div className="hidden md:block h-full relative group overflow-hidden rounded-xl">
-              <Image
-                src={data?.banner_image || "/placeholder.jpg"}
-                alt="sub-1"
-                fill
-                className="object-cover"
-              />
+              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-1" fill className="object-cover" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/10">
                 <div className="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 cursor-pointer hover:scale-110 transition-transform">
                   <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1"></div>
                 </div>
               </div>
             </div>
-
             <div className="hidden md:block h-full relative overflow-hidden rounded-xl">
               <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-2" fill className="object-cover" />
             </div>
-
             <div className="hidden md:block h-full relative overflow-hidden rounded-xl">
               <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-3" fill className="object-cover" />
             </div>
-
             <div className="hidden md:block h-full relative overflow-hidden rounded-xl group cursor-pointer">
               <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-4" fill className="object-cover" />
               <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white transition-all group-hover:bg-black/60">
@@ -161,47 +165,29 @@ const VisaDetails = () => {
           
           <div className="bg-white rounded-3xl border border-gray-100 p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.07)] transition-shadow duration-500">
             <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-8">
-
               <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 flex-grow">
                 {visaStats.map((item, idx) => (
                   <div key={idx} className="group flex items-center gap-4 border-r-0 md:border-r border-gray-50 last:border-0">
                     <div className="relative w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-2xl bg-gray-50 group-hover:bg-blue-50 transition-colors duration-300">
-                      {idx === 0 && (
-                        <div className="absolute inset-0 bg-blue-400/10 rounded-2xl animate-pulse"></div>
-                      )}
-                      <Image
-                        src={item.img}
-                        alt={item.label}
-                        width={28}
-                        height={28}
-                        className="object-contain z-10 group-hover:scale-110 transition-transform duration-300"
-                      />
+                      {idx === 0 && <div className="absolute inset-0 bg-blue-400/10 rounded-2xl animate-pulse"></div>}
+                      <Image src={item.img} alt={item.label} width={28} height={28} className="object-contain z-10 group-hover:scale-110 transition-transform duration-300" />
                     </div>
-
                     <div className="flex flex-col">
-                      <span className="text-[12px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
-                        {t(item.label)}
-                      </span>
-                      <span className="text-[17px] font-bold text-[#1e293b] leading-tight">
-                        {item.value || "N/A"}
-                      </span>
+                      <span className="text-[12px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">{t(item.label)}</span>
+                      <span className="text-[17px] font-bold text-[#1e293b] leading-tight">{item.value || "N/A"}</span>
                     </div>
                   </div>
                 ))}
               </div>
-
               <div className="w-full lg:w-auto flex items-center justify-center lg:justify-end lg:border-l lg:border-dashed lg:border-gray-200 lg:pl-12">
                 <div className="bg-[#f8fafc] px-6 py-4 rounded-2xl border border-gray-100 flex flex-col items-center lg:items-end">
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">
-                    Processing Fee
-                  </span>
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Processing Fee</span>
                   <div className="flex items-baseline gap-1">
                     <span className="text-[#0ea5e9] text-3xl font-black">৳ 9,000</span>
                     <span className="text-gray-400 text-sm font-medium">/ person</span>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -209,13 +195,12 @@ const VisaDetails = () => {
 
       <div className="travel-container mt-8">
         <div className="flex flex-col lg:flex-row gap-8">
-
           <div className="w-full lg:w-[68%]">
-
             <div className="sticky top-[90px] z-50 bg-white border-b flex gap-8 mb-8 overflow-x-auto no-scrollbar px-4 shadow-sm">
               {[
                 { label: "Details", ref: overviewRef },
-                { label: "Other Information", ref: infoRef },
+                { label: "Required Documents", ref: infoRef },
+                { label: "Other Information", ref: otherInfoRef }, // Ref updated to otherInfoRef
                 { label: "FAQs", ref: faqRef },
                 { label: "Reviews", ref: reviewRef },
               ].map((tab, idx) => (
@@ -240,7 +225,8 @@ const VisaDetails = () => {
             <div ref={infoRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
               <h2 className="text-2xl font-bold text-[#05073C] mb-4">Required Documents</h2>
               <p className="text-[#717171] mb-6">{data?.document_about?.[langCode]}</p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Grid changed to grid-cols-1 for vertical layout */}
+              <div className="grid grid-cols-1 gap-4">
                 {data?.documents?.map((doc, index) => (
                   <div key={index} className="flex items-start gap-3 p-4 rounded-xl bg-[#F9FAFF] border border-blue-50">
                     <FiCheckCircle className="text-primary mt-1 flex-shrink-0" />
@@ -251,6 +237,32 @@ const VisaDetails = () => {
                   </div>
                 ))}
               </div>
+
+              {/* --- NEW SECTION: Other Information Table Start --- */}
+              <div ref={otherInfoRef} className="mt-12"> {/* Ref added here */}
+                <h2 className="text-2xl font-bold text-[#05073C] mb-6">Other Information</h2>
+                <div className="text-[#717171] text-[15px] leading-relaxed mb-6">
+                  Applying for a <span className="font-bold">{data?.country} tourist visa from Bangladesh</span> is simple and hassle-free with a trusted visa processing agency in Bangladesh. We provide professional assistance with document preparation, application submission, and compliance with {data?.country} immigration requirements.
+                </div>
+                
+                <div className="overflow-hidden border border-gray-200 rounded-xl">
+                  <table className="w-full text-left border-collapse">
+                    <tbody>
+                      {otherInfoDetails.map((info, index) => (
+                        <tr key={index} className="border-b border-gray-200 last:border-0 hover:bg-gray-50 transition-colors">
+                          <td className="py-4 px-6 font-bold text-[#05073C] text-[15px] w-1/3 border-r border-gray-200 bg-gray-50/50">
+                            {info.label}
+                          </td>
+                          <td className="py-4 px-6 text-gray-600 text-[15px]">
+                            {info.value}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {/* --- NEW SECTION: Other Information Table End --- */}
             </div>
 
             <div ref={faqRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
@@ -283,7 +295,6 @@ const VisaDetails = () => {
                 <p>No reviews yet. Be the first to share your experience!</p>
               </div>
             </div>
-
           </div>
 
           <div className="w-full lg:w-[32%]">
@@ -296,54 +307,32 @@ const VisaDetails = () => {
                     <span className="text-sm opacity-80">/ Per Person</span>
                   </div>
                 </div>
-                <div className="">
+                <div>
                   <VisaForm id={data?._id} />
                 </div>
               </div>
 
-              <div className="space-y-6 mb-6 ">
+              <div className="space-y-6 mb-6">
                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-5">
                     <h3 className="text-[#05073C] font-bold text-sm uppercase tracking-wide whitespace-nowrap">You May Like Tour</h3>
                     <div className="h-[1px] bg-gray-100 w-full"></div>
                   </div>
-
                   <div className="space-y-5">
                     {[
-                      {
-                        title: "Urban & Island Escape: Manila to Boracay",
-                        price: "59,900",
-                        days: "6 Days",
-                        img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80"
-                      },
-                      {
-                        title: "Turkey Tour Package: Istanbul & Cappadocia",
-                        price: "2,50,900",
-                        days: "6 Days",
-                        img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80"
-                      },
-                      {
-                        title: "The Best of Sri Lanka & Malaysia Colombo",
-                        price: "35,900",
-                        days: "6 Days",
-                        img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80"
-                      },
+                      { title: "Urban & Island Escape: Manila to Boracay", price: "59,900", days: "6 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
+                      { title: "Turkey Tour Package: Istanbul & Cappadocia", price: "2,50,900", days: "6 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
+                      { title: "The Best of Sri Lanka & Malaysia Colombo", price: "35,900", days: "6 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
                     ].map((item, idx) => (
                       <div key={idx} className="flex gap-3 group cursor-pointer">
                         <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-xl">
                           <Image src={item.img} alt="tour" fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
                         </div>
                         <div className="flex flex-col justify-between py-0.5">
-                          <h4 className="text-[#05073C] font-bold text-[13px] leading-snug line-clamp-2 group-hover:text-[#28b6ea] transition-colors">
-                            {item.title}
-                          </h4>
+                          <h4 className="text-[#05073C] font-bold text-[13px] leading-snug line-clamp-2 group-hover:text-[#28b6ea] transition-colors">{item.title}</h4>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">
-                              ৳ {item.price}
-                            </span>
-                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">
-                              {item.days}
-                            </span>
+                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">৳ {item.price}</span>
+                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">{item.days}</span>
                           </div>
                         </div>
                       </div>
@@ -356,37 +345,20 @@ const VisaDetails = () => {
                     <h3 className="text-[#05073C] font-bold text-sm uppercase tracking-wide whitespace-nowrap">You May Like Hajj Umrah</h3>
                     <div className="h-[1px] bg-gray-100 w-full"></div>
                   </div>
-
                   <div className="space-y-5">
                     {[
-                      {
-                        title: "Noor-e-Haram Journey 10 Nights & 11 Days Umrah",
-                        price: "1,95,000",
-                        days: "11 Days",
-                        img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80"
-                      },
-                      {
-                        title: "40 Days Cheap Hajj Package from Bangladesh",
-                        price: "6,00,000",
-                        days: "41 Days",
-                        img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80"
-                      },
+                      { title: "Noor-e-Haram Journey 10 Nights & 11 Days Umrah", price: "1,95,000", days: "11 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
+                      { title: "40 Days Cheap Hajj Package from Bangladesh", price: "6,00,000", days: "41 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
                     ].map((item, idx) => (
                       <div key={idx} className="flex gap-3 group cursor-pointer">
                         <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-xl">
                           <Image src={item.img} alt="hajj" fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
                         </div>
                         <div className="flex flex-col justify-between py-0.5">
-                          <h4 className="text-[#05073C] font-bold text-[13px] leading-snug line-clamp-2 group-hover:text-[#28b6ea] transition-colors">
-                            {item.title}
-                          </h4>
+                          <h4 className="text-[#05073C] font-bold text-[13px] leading-snug line-clamp-2 group-hover:text-[#28b6ea] transition-colors">{item.title}</h4>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">
-                              ৳ {item.price}
-                            </span>
-                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">
-                              {item.days}
-                            </span>
+                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">৳ {item.price}</span>
+                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">{item.days}</span>
                           </div>
                         </div>
                       </div>
@@ -396,7 +368,6 @@ const VisaDetails = () => {
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
