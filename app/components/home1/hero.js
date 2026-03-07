@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useFetch } from "@/app/helper/hooks";
 import { fetchPageContentTheme1 } from "@/app/helper/backend";
 import { useI18n } from "@/app/contexts/i18n";
-import HeroFilters from "../common/heroFilters";
+import HeroFilters from "../common/heroFiltersComponent/heroFilters";
 
 const Hero = () => {
   const i18n = useI18n();

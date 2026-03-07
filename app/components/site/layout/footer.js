@@ -89,7 +89,7 @@ const Footer = () => {
             <div className="text-base space-y-4 opacity-90">
 
               <a
-                href="https://maps.google.com" 
+                href="https://maps.google.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block hover:text-blue-300 transition-colors cursor-pointer"
@@ -114,20 +114,45 @@ const Footer = () => {
         </div>
 
         {/* Footer Bottom Section */}
-        <div className="mt-16 pt-8 border-t border-blue-800/50 flex flex-col items-center space-y-6">
+        <div className="mt-16 pt-8 border-t border-blue-800/50 flex flex-col items-center space-y-8 text-white">
 
-          {/* Payment Partners */}
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            <span className="text-lg font-semibold">We Accept</span>
-            <div className="bg-white rounded-lg px-6 py-3 flex items-center gap-5">
-              <img src="https://freelogopng.com/images/all_img/1656227518bkash-logo-png.png" className="h-5" alt="bkash" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-7" alt="mastercard" />
-              <img src="https://www.logo.wine/a/logo/Nagad/Nagad-Logo.wine.svg" className="h-6" alt="nagad" />
+          {/* Partner & Payment Section */}
+          <div className="flex flex-wrap items-start justify-center gap-10 md:gap-16">
+
+          
+
+            {/* Vertical Divider for desktop */}
+            <div className="hidden md:block h-20 w-px bg-white/20 self-end"></div>
+
+            {/* Verified by */}
+            <div className="flex flex-col space-y-4">
+              <span className="text-lg font-semibold">Verified by</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://basis.org.bd/public/img/relatedlink/5e1132b3570c8Pr-8.jpg" className="h-6" alt="BASIS" /></div>
+                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROXxbbVTvM8UeXF7Spw1PsqQTvMgilDo7eXA&s" className="h-6" alt="e-CAB" /></div>
+                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://dbid.gov.bd/assets/front/ubid/images/logo-bid.png" className="h-6" alt="DBID" /></div>
+                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVnPXpYZcjG6UIHyUmx0SXfskZWOgQdfESPA&s" className="h-6" alt="PCI" /></div>
+              </div>
             </div>
+
+            {/* Payment Method */}
+            <div className="flex flex-col space-y-4">
+              <span className="text-lg font-semibold">Payment Method</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-5 w-8 object-contain" alt="Mastercard" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Dutch-bangla-bank-ltd.svg/960px-Dutch-bangla-bank-ltd.svg.png" className="h-5 w-8 object-contain" alt="DBBL" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg/3840px-Visa_Inc._logo_%282005%E2%80%932014%29.svg.png" className="h-5 w-8 object-contain" alt="Visa" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://www.logo.wine/a/logo/Nagad/Nagad-Logo.wine.svg" className="h-5 w-8 object-contain" alt="Nagad" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://static.vecteezy.com/system/resources/thumbnails/068/764/291/small_2x/upay-logo-mobile-banking-app-icon-transparent-background-free-png.png" className="h-5 w-8 object-contain" alt="Upay" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" className="h-5 w-8 object-contain" alt="Amex" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://freelogopng.com/images/all_img/1656227518bkash-logo-png.png" className="h-5 w-8 object-contain" alt="bkash" /></div>
+              </div>
+            </div>
+
           </div>
 
           {/* Copyright */}
-          <div className="text-base opacity-80 text-center">
+          <div className="text-base opacity-60 text-center pt-4">
             © {currentYear || 2026} <span className="font-bold">{setting?.site_name || "Banglaco Ltd."}</span> All Rights Reserved
           </div>
         </div>

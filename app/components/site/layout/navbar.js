@@ -44,6 +44,11 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
   const langFromLocalStorage = typeof localStorage !== "undefined" ? localStorage.getItem("lang") : null;
   const defaultLang = i18n?.languages?.find((lang) => lang?.default)?.code;
 
+  // currency state (stored in localStorage so selection persists)
+  const [currency, setCurrency] = useState(
+    typeof localStorage !== "undefined" ? localStorage.getItem("currency") || "BDT" : "BDT"
+  );
+
   useEffect(() => {
     getCurrentUser();
   }, []);
@@ -176,25 +181,21 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
             </Link>
           )} */}
 
-          {/* Language Select */}
+          {/* Currency Select */}
           <div className="hidden sm:block">
             <Select
-              labelInValue
-              value={{ value: langFromLocalStorage || defaultLang }}
+              value={currency}
               variant="borderless"
               onChange={(selected) => {
-                i18n?.changeLanguage(selected.value);
-                localStorage.setItem("lang", selected.value);
+                setCurrency(selected);
+                localStorage.setItem("currency", selected);
               }}
-              options={i18n?.languages?.map((lang) => ({
-                value: lang._id,
-                label: (
-                  <div className="flex items-center gap-2">
-                    <Image width={16} height={12} src={lang?.flag || "/eng.png"} alt="flag" className="rounded-sm" />
-                    <span className="text-xs font-bold text-[#1A2B6D] uppercase">{lang.code}</span>
-                  </div>
-                ),
-              }))}
+              options={[
+                { value: "BDT", label: <span className="text-[#1A2B6D] font-bold">BDT</span> },
+                { value: "USD", label: <span className="text-[#1A2B6D] font-bold">USD</span> },
+              ]}
+              // এখানে style প্রপ যোগ করুন টেক্সট কালার গাঢ় করার জন্য
+              style={{ color: "#1A2B6D", fontWeight: "bold" }}
               className="min-w-[70px]"
             />
           </div>

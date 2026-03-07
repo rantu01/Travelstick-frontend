@@ -43,7 +43,7 @@ const HotelDetails = () => {
 
   return (
     <div className="bg-white min-h-screen pb-20 font-sans text-[#1a1a1a] isolate">
-      <Banner title="Hotel Details" />
+      {/* <Banner title="Hotel Details" /> */}
 
       <div className="max-w-6xl mx-auto mt-6">
 
