@@ -133,14 +133,12 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
           </div>
 
           {/* Search Button Section */}
-          <div className="md:col-span-1 p-3 bg-white flex items-center justify-center">
+          <div className="md:col-span-1 flex items-center justify-center">
             <button
               onClick={handleSearch}
-              className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-12 md:h-14 rounded-lg flex items-center justify-center shadow-lg transition-all active:scale-95 group"
+              className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95"
             >
-              <FaSearch size={20} className="md:hidden mr-2" />
-              <span className="md:hidden font-bold">Search Visa</span>
-              <FaSearch size={22} className="hidden md:block group-hover:scale-110 transition-transform" />
+              <FaSearch size={20} />
             </button>
           </div>
 

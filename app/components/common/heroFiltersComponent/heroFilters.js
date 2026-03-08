@@ -393,7 +393,7 @@ const HeroFilters = () => {
                     </div>
                   </Popover>
                 </div>
-                <div className="md:col-span-4 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
+                <div className="md:col-span-3 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
                   <Popover open={openPopover === "visa-cat"} onOpenChange={(v) => setOpenPopover(v ? "visa-cat" : null)} content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa"]} onSelect={(v) => handleSelect(setVisaCategory, v)} />} trigger="click" placement="bottomLeft">
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Visa Category")}</p>
@@ -412,7 +412,7 @@ const HeroFilters = () => {
                     </div>
                   </Popover>
                 </div>
-                <div className="md:col-span-6 border rounded-xl p-4 hover:bg-gray-50 bg-white">
+                <div className="md:col-span-5 border rounded-xl p-4 hover:bg-gray-50 bg-white">
                   <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Prefered Date")}</p>
                   <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
                 </div>
@@ -490,14 +490,15 @@ const HeroFilters = () => {
                     </div>
                   </Popover>
                 </div>
-
-                <div className="md:col-span-1 flex items-center justify-center">
-                  <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full  rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95">
-                    <FaSearch size={20} />
-                  </button>
-                </div>
               </>
             )}
+            
+            {/* ✅ কমন সার্চ বাটন - সব ট্যাবে দেখাবে */}
+            <div className="md:col-span-1 flex items-center justify-center">
+              <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95">
+                <FaSearch size={20} />
+              </button>
+            </div>
           </div>
         )}
       </div>

@@ -416,10 +416,10 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
 
             {/* --- Flight Search Bar --- */}
             <div className="travel-container -mt-10 relative z-30 sticky top-[92px] z-50">
-                <div className="bg-white rounded-xl shadow-sm flex flex-col md:flex-row items-stretch border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
 
                     {/* From */}
-                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer relative group">
+                    <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer relative group">
                         <Popover
                             open={openPopover === 'flight-from'}
                             onOpenChange={(v) => setOpenPopover(v ? 'flight-from' : null)}
@@ -445,7 +445,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                     </div>
 
                     {/* To */}
-                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+                    <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
                         <Popover
                             open={openPopover === 'flight-to'}
                             onOpenChange={(v) => setOpenPopover(v ? 'flight-to' : null)}
@@ -463,7 +463,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                     </div>
 
                     {/* Departure Date */}
-                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                    <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                         <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Departure</p>
                         <div className="flex flex-col">
                             <DatePicker
@@ -481,7 +481,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                     </div>
 
                     {/* Return Date */}
-                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
+                    <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
                         <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Return</p>
                         <div className="flex items-center justify-between">
                             <div className="flex-1">
@@ -507,7 +507,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                     </div>
 
                     {/* Travellers & Class */}
-                    <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                    <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
                         <Popover
                             open={openPopover === 'flight-guests'}
                             onOpenChange={(v) => setOpenPopover(v ? 'flight-guests' : null)}
@@ -525,17 +525,14 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                         </Popover>
                     </div>
 
-                    {/* Search Button */}
-                    <div className="p-3 bg-white flex items-center justify-center">
-                        <button
-                            onClick={handleSearch}
-                            className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full md:w-16 h-12 md:h-14 rounded-lg flex items-center justify-center shadow-lg transition-all active:scale-95"
-                        >
-                            <FaSearch size={20} />
-                        </button>
-                    </div>
-                </div>
+            {/* Search Button */}
+            <div className="md:col-span-1 flex items-center justify-center">
+              <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95">
+                <FaSearch size={20} />
+              </button>
             </div>
+          </div>
+        </div>
 
             <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">
 

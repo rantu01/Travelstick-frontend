@@ -85,10 +85,10 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
 
       {/* --- Search Section --- */}
       <div className="travel-container -mt-10 relative z-20 sticky top-[92px]">
-        <div className="bg-white rounded-xl shadow-sm flex flex-col md:flex-row items-stretch border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
 
           {/* Destination */}
-          <div className="flex-[2] border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+          <div className="md:col-span-6 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
             <div className="flex justify-between items-center">
               <Popover
                 open={openPopover === 'tour-dest'}
@@ -115,7 +115,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
           </div>
 
           {/* Preferred Date */}
-          <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+          <div className="md:col-span-5 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
             <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Preferred Date</p>
             <div className="flex items-center justify-between">
               <DatePicker
@@ -131,14 +131,12 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
           </div>
 
           {/* Search Button */}
-          <div className="p-3 bg-white flex items-center justify-center">
+          <div className="md:col-span-1 flex items-center justify-center">
             <button
               onClick={handleSearch}
-              className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full md:w-20 h-12 md:h-14 rounded-lg flex items-center justify-center shadow-lg transition-all active:scale-95"
+              className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95"
             >
-              <FaSearch size={20} className="md:hidden mr-2" />
-              <span className="md:hidden font-bold">Search Packages</span>
-              <FaSearch size={20} className="hidden md:block" />
+              <FaSearch size={20} />
             </button>
           </div>
         </div>

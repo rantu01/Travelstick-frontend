@@ -178,10 +178,10 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
 
       {/* --- Search Section --- */}
       <div className="travel-container -mt-10 relative z-20 sticky top-[92px]">
-        <div className="bg-white rounded-xl shadow-sm flex flex-col md:flex-row items-stretch border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
           
           {/* Destination */}
-          <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+          <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
             <div className="flex justify-between items-center">
               <Popover
                 open={openPopover === 'dest'}
@@ -209,7 +209,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
           </div>
 
           {/* Check In */}
-          <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+          <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
             <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Check In</p>
             <DatePicker
               onChange={(d) => setStartDate(d)}
@@ -222,7 +222,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
           </div>
 
           {/* Check Out */}
-          <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+          <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
             <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Check Out</p>
             <div className="flex items-center justify-between">
               <DatePicker
@@ -238,7 +238,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
           </div>
 
           {/* Room & Guests */}
-          <div className="flex-1 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+          <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
             <Popover
               open={openPopover === 'guests'}
               onOpenChange={(v) => setOpenPopover(v ? 'guests' : null)}
@@ -254,10 +254,10 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
           </div>
 
           {/* Search Button */}
-          <div className="p-3 bg-white flex items-center justify-center">
+          <div className="md:col-span-1 flex items-center justify-center">
             <button
               onClick={handleSearch}
-              className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full md:w-16 h-12 md:h-14 rounded-lg flex items-center justify-center shadow-lg transition-all active:scale-95"
+              className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95"
             >
               <FaSearch size={20} />
             </button>
