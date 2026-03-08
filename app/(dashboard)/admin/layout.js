@@ -197,6 +197,11 @@ const menu = [
         icon: <FaHotel />,
       },
       {
+        label: "Rooms",
+        href: "/admin/hotelManagement/room",
+        icon: <BsFillHouseGearFill />,
+      },
+      {
         label: "Bookings",
         href: "/admin/hotelManagement/hotelBooking",
         icon: <BsCalendar2Check />,

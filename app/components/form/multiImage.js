@@ -61,11 +61,11 @@ const Input = ({ value, onChange, listType, max, noWebp, pdf, video }) => {
     try {
       const payload = { file: file.url };
 
-     await useActionConfirm(() => deleteImage(payload));
-      
+      await useActionConfirm(() => deleteImage(payload));
+
     } catch (error) {
       message.error("Failed to delete file.");
-      return false; 
+      return false;
     }
   };
 
@@ -79,6 +79,7 @@ const Input = ({ value, onChange, listType, max, noWebp, pdf, video }) => {
         onChange={handleChange}
         onRemove={handleRemove}
         maxCount={max}
+        beforeUpload={() => false}
       >
         {(value?.length || 0) < max && "+ upload"}
       </Upload>

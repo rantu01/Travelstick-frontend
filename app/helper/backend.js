@@ -146,6 +146,14 @@ export const getAllHotelServices = (data) => get('/services?module=room', data)
 export const updateHotelServices = (data) => put('/services', data)
 export const getAllPublicHotelServices = (data) => get('/services/site?module=room', data)
 
+//Room Management
+export const createRoom = (data) => post('/rooms', data)
+export const updateRoom = (data) => patch('/rooms/:id', data)
+export const getAllRooms = (data) => get('/rooms', data)
+export const getRoomsByHotel = (data) => get(`/rooms/hotel/${data.hotelId}`, data)
+export const getRoomById = (data) => get(`/rooms/:id`, data)
+export const deleteRoom = (data) => del(`/rooms/:id`, data)
+
 //create Hotel booking payment and calculation
 export const createHotelBookingPayment = (data) => post('/hotels/booking', data)
 export const hotelBookingCalculation = (data) => post('/hotels/booking/calculate', data)
