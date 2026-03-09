@@ -8,7 +8,7 @@ import { useCurrency } from "@/app/contexts/site";
 import { useI18n } from "@/app/contexts/i18n";
 
 const HotelCard = ({ data }) => {
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const { langCode } = useI18n();
 
   const safeDestination =
@@ -77,10 +77,10 @@ const HotelCard = ({ data }) => {
         <p className="text-[12px] text-[#717171]">Starts From</p>
         <div className="flex flex-col">
           <span className="text-[22px] font-bold text-[#1A1A1A]">
-            {currency_symbol}{data?.current_price?.toLocaleString()}
+            {formatPrice(data?.current_price)}
           </span>
           <span className="text-[14px] text-[#717171] line-through">
-            {currency_symbol}{data?.regular_price?.toLocaleString()}
+            {formatPrice(data?.regular_price)}
           </span>
         </div>
         <p className="text-[11px] text-[#717171] mb-2">Per Night/Room</p>

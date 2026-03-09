@@ -200,7 +200,7 @@ const HeroFilters = () => {
       query.append("destination", destination);
       router.push(`/package?${query.toString()}`);
     } else if (tab === "visa") {
-      query.append("citizen", citizenOf);
+      query.append("country", citizenOf);
       router.push(`/visa?${query.toString()}`);
     }
   };
@@ -266,6 +266,8 @@ const HeroFilters = () => {
           disabledDate={disabledDate}
           dateRender={dateRender}
           guestContent={guestContent}
+          filterData={filterData}
+          langCode={i18n.langCode}
         />
       ))}
 
@@ -302,9 +304,8 @@ const HeroFilters = () => {
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-3 md:py-4 text-[12px] md:text-sm font-semibold transition-all ${
-                tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"
-              }`}
+              className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-2 px-2 md:px-8 py-3 md:py-4 text-[12px] md:text-sm font-semibold transition-all ${tab === t.id ? "bg-[#E8F3FF] text-[#1A4FA0]" : "text-[#4A4A4A] hover:bg-gray-50"
+                }`}
             >
               <span className="flex items-center justify-center">{t.icon}</span>
               <span className="text-center">{i18n.t(t.label)}</span>
@@ -320,11 +321,10 @@ const HeroFilters = () => {
               <button
                 key={type}
                 onClick={() => setTripType(type)}
-                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 border ${
-                  tripType === type
-                    ? "bg-[#00BCE4] border-[#00BCE4] text-white"
-                    : "bg-[#F2F4F7] border-transparent text-gray-500"
-                }`}
+                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 border ${tripType === type
+                  ? "bg-[#00BCE4] border-[#00BCE4] text-white"
+                  : "bg-[#F2F4F7] border-transparent text-gray-500"
+                  }`}
               >
                 <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${tripType === type ? "border-white" : "border-gray-400"}`}>
                   {tripType === type && <div className="w-1.5 h-1.5 bg-white rounded-full"></div>}
@@ -346,7 +346,7 @@ const HeroFilters = () => {
                   <Popover
                     open={openPopover === "hotel-dest"}
                     onOpenChange={(v) => setOpenPopover(v ? "hotel-dest" : null)}
-                    content={<SelectionList options={["Dhaka, Bangladesh", "Chittagong", "Sylhet", "Cox's Bazar"]} onSelect={(v) => handleSelect(setDestination, v)} />}
+                    content={<SelectionList options={filterData?.find(f => f.key === 'hotel_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setDestination, v)} />}
                     trigger="click" placement="bottomLeft"
                   >
                     <div>
@@ -378,7 +378,7 @@ const HeroFilters = () => {
             ) : tab === "visa" ? (
               <>
                 <div className="md:col-span-4 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
-                  <Popover open={openPopover === "visa-cit"} onOpenChange={(v) => setOpenPopover(v ? "visa-cit" : null)} content={<SelectionList options={["Bangladesh", "India", "USA"]} onSelect={(v) => handleSelect(setCitizenOf, v)} />} trigger="click" placement="bottomLeft">
+                  <Popover open={openPopover === "visa-cit"} onOpenChange={(v) => setOpenPopover(v ? "visa-cit" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'visa_country')?.values?.map(v => v.name) || []} onSelect={(v) => handleSelect(setCitizenOf, v)} />} trigger="click" placement="bottomLeft">
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Citizen of")}</p>
                       <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{citizenOf}</div>
@@ -386,7 +386,7 @@ const HeroFilters = () => {
                   </Popover>
                 </div>
                 <div className="md:col-span-4 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
-                  <Popover open={openPopover === "visa-to"} onOpenChange={(v) => setOpenPopover(v ? "visa-to" : null)} content={<SelectionList options={["Thailand", "Malaysia", "Saudi Arabia"]} onSelect={(v) => handleSelect(setTravellingTo, v)} />} trigger="click" placement="bottomLeft">
+                  <Popover open={openPopover === "visa-to"} onOpenChange={(v) => setOpenPopover(v ? "visa-to" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'visa_country')?.values?.map(v => v.name) || []} onSelect={(v) => handleSelect(setTravellingTo, v)} />} trigger="click" placement="bottomLeft">
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Travelling to")}</p>
                       <div className={`mt-1 font-bold text-lg leading-tight ${travellingTo.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{travellingTo}</div>
@@ -394,7 +394,7 @@ const HeroFilters = () => {
                   </Popover>
                 </div>
                 <div className="md:col-span-3 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
-                  <Popover open={openPopover === "visa-cat"} onOpenChange={(v) => setOpenPopover(v ? "visa-cat" : null)} content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa"]} onSelect={(v) => handleSelect(setVisaCategory, v)} />} trigger="click" placement="bottomLeft">
+                  <Popover open={openPopover === "visa-cat"} onOpenChange={(v) => setOpenPopover(v ? "visa-cat" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'visa_type')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setVisaCategory, v)} />} trigger="click" placement="bottomLeft">
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Visa Category")}</p>
                       <div className={`mt-1 font-bold text-lg leading-tight ${visaCategory.includes("Select") ? "text-gray-400" : "text-gray-700"}`}>{visaCategory}</div>
@@ -405,7 +405,7 @@ const HeroFilters = () => {
             ) : tab === "tour" ? (
               <>
                 <div className="md:col-span-6 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
-                  <Popover open={openPopover === "tour-dest"} onOpenChange={(v) => setOpenPopover(v ? "tour-dest" : null)} content={<SelectionList options={["Dubai", "Maldives", "Bhutan"]} onSelect={(v) => handleSelect(setDestination, v)} />} trigger="click" placement="bottomLeft">
+                  <Popover open={openPopover === "tour-dest"} onOpenChange={(v) => setOpenPopover(v ? "tour-dest" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setDestination, v)} />} trigger="click" placement="bottomLeft">
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Destination")}</p>
                       <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{destination}</div>
@@ -421,7 +421,7 @@ const HeroFilters = () => {
               // ✅ Flight - One Way & Round Trip
               <>
                 <div className="md:col-span-2 border rounded-xl p-4 hover:bg-gray-50 relative cursor-pointer bg-white">
-                  <Popover open={openPopover === "flight-from"} onOpenChange={(v) => setOpenPopover(v ? "flight-from" : null)} content={<SelectionList options={["Dhaka", "Chittagong", "Sylhet"]} onSelect={(v) => handleSelect(setFromLocation, v)} />} trigger="click" placement="bottomLeft">
+                  <Popover open={openPopover === "flight-from"} onOpenChange={(v) => setOpenPopover(v ? "flight-from" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setFromLocation, v)} />} trigger="click" placement="bottomLeft">
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold">From</p>
                       <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{fromLocation}</h4>
@@ -434,7 +434,7 @@ const HeroFilters = () => {
                 </div>
 
                 <div className="md:col-span-2 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
-                  <Popover open={openPopover === "flight-to"} onOpenChange={(v) => setOpenPopover(v ? "flight-to" : null)} content={<SelectionList options={["Cox's Bazar", "Bangkok", "Dubai"]} onSelect={(v) => handleSelect(setToLocation, v)} />} trigger="click" placement="bottomLeft">
+                  <Popover open={openPopover === "flight-to"} onOpenChange={(v) => setOpenPopover(v ? "flight-to" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setToLocation, v)} />} trigger="click" placement="bottomLeft">
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold">To</p>
                       <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">{toLocation}</h4>
@@ -492,7 +492,7 @@ const HeroFilters = () => {
                 </div>
               </>
             )}
-            
+
             {/* ✅ কমন সার্চ বাটন - সব ট্যাবে দেখাবে */}
             <div className="md:col-span-1 flex items-center justify-center">
               <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95">

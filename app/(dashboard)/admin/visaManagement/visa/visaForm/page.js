@@ -38,35 +38,35 @@ const VisaForm = ({ isEdit = false, data }) => {
         // 1. Banner Image
         banner_image: data?.banner_image
           ? [
-              {
-                uid: "-1",
-                name: "image",
-                status: "done",
-                url: data.banner_image,
-              },
-            ]
+            {
+              uid: "-1",
+              name: "image",
+              status: "done",
+              url: data.banner_image,
+            },
+          ]
           : [],
 
         // 2. Card Image
         card_image: data?.card_image
           ? [
-              {
-                uid: "-2",
-                name: "card.png",
-                status: "done",
-                url: data.card_image,
-              },
-            ]
+            {
+              uid: "-2",
+              name: "card.png",
+              status: "done",
+              url: data.card_image,
+            },
+          ]
           : [],
 
         // 3. Multiple Images
         images: Array.isArray(data?.images)
           ? data.images.map((url, index) => ({
-              uid: String(index),
-              name: `image-${index}.png`,
-              status: "done",
-              url,
-            }))
+            uid: String(index),
+            name: `image-${index}.png`,
+            status: "done",
+            url,
+          }))
           : [],
 
         // 4. Title (multilingual)
@@ -95,37 +95,55 @@ const VisaForm = ({ isEdit = false, data }) => {
         // 9. Document About (multilingual)
         document_about: data?.document_about || {},
 
+        // New Metadata (multilingual)
+        continent: data?.continent || {},
+        capital: data?.capital || {},
+        official_language: data?.official_language || {},
+        currency: data?.currency || {},
+        local_time: data?.local_time || {},
+        exchange_rate: data?.exchange_rate || {},
+        weekend_days: data?.weekend_days || {},
+        population: data?.population || {},
+        area: data?.area || {},
+        education: data?.education || {},
+        religion: data?.religion || {},
+        embassy_address: data?.embassy_address || {},
+
+        // New Metadata (single)
+        dialing_code: data?.dialing_code,
+        apply_fee: data?.apply_fee,
+
         // 10. Documents (multi-language key-value)
         documents: Array.isArray(data?.documents)
           ? data.documents.map((item) => ({
-              key: item.key,
-              value: item.value,
-            }))
+            key: item.key,
+            value: item.value,
+          }))
           : [],
 
         // 11. Features (called `feathers` in your data)
         feathers: Array.isArray(data?.feathers)
           ? data.feathers.map((item, index) => ({
-              ...item,
-              logo: item?.logo
-                ? [
-                    {
-                      uid: `${index}`,
-                      name: `feather-logo-${index}.png`,
-                      status: "done",
-                      url: item.logo,
-                    },
-                  ]
-                : [],
-            }))
+            ...item,
+            logo: item?.logo
+              ? [
+                {
+                  uid: `${index}`,
+                  name: `feather-logo-${index}.png`,
+                  status: "done",
+                  url: item.logo,
+                },
+              ]
+              : [],
+          }))
           : [],
 
         // 12. FAQs
         faqs: Array.isArray(data?.faqs)
           ? data.faqs.map((item) => ({
-              heading: item.heading,
-              description: item.description,
-            }))
+            heading: item.heading,
+            description: item.description,
+          }))
           : [],
       });
     }
@@ -137,11 +155,10 @@ const VisaForm = ({ isEdit = false, data }) => {
           <button
             key={l.code}
             onClick={() => setSelectedLang(l.code)}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
-              l.code === selectedLang
-                ? "bg-primary text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${l.code === selectedLang
+              ? "bg-primary text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
           >
             {l.name}
           </button>
@@ -271,9 +288,9 @@ const VisaForm = ({ isEdit = false, data }) => {
               label={i18n?.t("Visa Overview")}
               className="w-full rounded bg-transparent p-3 dashinput"
               required
-              value={form.getFieldValue("overview") || ""}
+              value={form.getFieldValue(["overview", l.code]) || ""}
               onChange={(newDescription) =>
-                form.setFieldValue("overview", newDescription)
+                form.setFieldValue(["overview", l.code], newDescription)
               }
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
@@ -370,8 +387,108 @@ const VisaForm = ({ isEdit = false, data }) => {
               className="!w-full rounded bg-transparent p-3 dashinput"
               placeholder={i18n.t("Document about")}
             />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <FormInput
+                label="Continent"
+                name={["continent", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Continent")}
+              />
+              <FormInput
+                label="Capital"
+                name={["capital", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Capital")}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <FormInput
+                label="Official Language"
+                name={["official_language", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Official Language")}
+              />
+              <FormInput
+                label="Currency"
+                name={["currency", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Currency")}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <FormInput
+                label="Local Time"
+                name={["local_time", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Local Time")}
+              />
+              <FormInput
+                label="Exchange Rate"
+                name={["exchange_rate", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Exchange Rate")}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <FormInput
+                label="Weekend Days"
+                name={["weekend_days", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Weekend Days")}
+              />
+              <FormInput
+                label="Population"
+                name={["population", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Population")}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <FormInput
+                label="Area"
+                name={["area", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Area")}
+              />
+              <FormInput
+                label="Education"
+                name={["education", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Education")}
+              />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <FormInput
+                label="Religion"
+                name={["religion", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Religion")}
+              />
+              <FormInput
+                label="Embassy Address"
+                name={["embassy_address", l.code]}
+                className="!w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Embassy Address")}
+              />
+            </div>
           </div>
         ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormInput
+            label="Dialing Code"
+            name="dialing_code"
+            className="!w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("Dialing Code")}
+          />
+          <FormInput
+            label="Apply Online Fee"
+            name="apply_fee"
+            type="number"
+            getValueFromEvent={(e) => +e.target.value}
+            className="!w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("Apply Online Fee")}
+          />
+        </div>
         <div className="mt-6 border rounded-md p-3">
           <h3 className="description-2 mb-2">Features</h3>
           <Form.List name="feathers" initialValue={[{ text: {} }]}>

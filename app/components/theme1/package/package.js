@@ -8,7 +8,7 @@ import Filters from "../../common/filters";
 import { useI18n } from "@/app/contexts/i18n";
 import Image from "next/image";
 import { useFetch } from "@/app/helper/hooks";
-import { getAllPublicPackages } from "@/app/helper/backend";
+import { getAllPublicPackages, getHeroFilterData } from "@/app/helper/backend";
 import Banner2 from "../../site/common/component/Banner2";
 import PackageCard2 from "../../site/common/card/packageCard2";
 import dayjs from "dayjs";
@@ -24,6 +24,8 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
   const [searchDest, setSearchDest] = useState(initialDest || null);
   const [prefDate, setPrefDate] = useState(initialDate ? dayjs(initialDate) : null);
   const [openPopover, setOpenPopover] = useState(null);
+
+  const [filterData] = useFetch(getHeroFilterData);
 
   useEffect(() => {
     getData({
@@ -93,7 +95,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
               <Popover
                 open={openPopover === 'tour-dest'}
                 onOpenChange={(v) => setOpenPopover(v ? 'tour-dest' : null)}
-                content={<SelectionList options={["Dubai", "Maldives", "Bhutan", "Thailand", "Cox's Bazar"]} onSelect={(v) => setSearchDest(v)} />}
+                content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => setSearchDest(v)} />}
                 trigger="click" placement="bottomLeft"
               >
                 <div className="flex-1">

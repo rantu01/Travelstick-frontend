@@ -8,7 +8,7 @@ import Image from "next/image";
 import HotelFilters from "../../common/hotelFilters";
 import HotelCard from "../../site/common/card/hotelCard";
 import { useFetch } from "@/app/helper/hooks";
-import { getAllPublicHotel } from "@/app/helper/backend";
+import { getAllPublicHotel, getHeroFilterData } from "@/app/helper/backend";
 import Banner2 from "../../site/common/component/Banner2";
 import dayjs from "dayjs";
 import { FaMinus, FaPlus, FaTimesCircle, FaSearch } from "react-icons/fa";
@@ -19,7 +19,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
   const i18n = useI18n();
 
   // --- Form States ---
-  const [searchDest, setSearchDest] = useState(initialDest || undefined);
+  const [searchDest, setSearchDest] = useState(initialDest || null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [adults, setAdults] = useState(2);
@@ -27,6 +27,8 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
   const [rooms, setRooms] = useState(1);
   const [withPets, setWithPets] = useState(false); // Fixed: Added missing state
   const [openPopover, setOpenPopover] = useState(null);
+
+  const [filterData] = useFetch(getHeroFilterData);
 
   useEffect(() => {
     getData({
@@ -179,14 +181,14 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
       {/* --- Search Section --- */}
       <div className="travel-container -mt-10 relative z-20 sticky top-[92px]">
         <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
-          
+
           {/* Destination */}
           <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
             <div className="flex justify-between items-center">
               <Popover
                 open={openPopover === 'dest'}
                 onOpenChange={(v) => setOpenPopover(v ? 'dest' : null)}
-                content={<SelectionList options={["Dhaka, Bangladesh", "Chittagong", "Sylhet", "Cox's Bazar"]} onSelect={(v) => setSearchDest(v)} />}
+                content={<SelectionList options={filterData?.find(f => f.key === 'hotel_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => setSearchDest(v)} />}
                 trigger="click"
                 placement="bottomLeft"
               >
@@ -199,7 +201,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
               </Popover>
               {searchDest && (
                 <button
-                  onClick={(e) => { e.stopPropagation(); setSearchDest(undefined); }}
+                  onClick={(e) => { e.stopPropagation(); setSearchDest(null); }}
                   className="text-gray-300 hover:text-red-500 transition-colors p-1"
                 >
                   <FaTimesCircle size={16} />

@@ -1,15 +1,15 @@
 "use client";
 import { useI18n } from "@/app/contexts/i18n";
-import { getAllPublicVisa } from "@/app/helper/backend";
+import { getAllPublicVisa, getAllPublicPackages } from "@/app/helper/backend";
 import { useFetch } from "@/app/helper/hooks";
-import { useParams } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import { Drawer, Breadcrumb, Rate, Collapse } from "antd";
 import Image from "next/image";
 import VisaForm from "@/app/components/common/visaForm";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import CommonContact from "@/app/components/common/commonConatc";
-import { FiHeart, FiShare2, FiMapPin, FiCheckCircle, FiInfo } from "react-icons/fi";
+import { FiHeart, FiShare2, FiCheckCircle, FiX, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { motion, AnimatePresence } from "framer-motion";
 
 const countryToCode = {
   "usa": "us",
@@ -21,30 +21,64 @@ const countryToCode = {
   "uk": "gb",
   "united kingdom": "gb",
   "turkey": "tr",
+  "costa rica": "cr",
 };
 
 const VisaDetails = () => {
-  const i18n = useI18n();
   const { langCode, t } = useI18n();
   const [data, getData] = useFetch(getAllPublicVisa, {}, false);
   const params = useParams();
+  const router = useRouter();
   const { id } = params;
+  const [packages, getPackages] = useFetch(getAllPublicPackages, { limit: 3 }, false);
+  const [currentIndex, setCurrentIndex] = useState(null);
 
   const countryName = data?.country?.toLowerCase() || "";
   const countryCode = countryToCode[countryName] || "bd";
-
-  const [activePanel, setActivePanel] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
 
   const overviewRef = useRef(null);
   const infoRef = useRef(null);
-  const otherInfoRef = useRef(null); // নতুন Ref যুক্ত করা হয়েছে
+  const otherInfoRef = useRef(null);
   const faqRef = useRef(null);
   const reviewRef = useRef(null);
 
   useEffect(() => {
     getData({ _id: id });
+    getPackages();
   }, [id]);
+
+  // Image list for preview
+  const allImages = useMemo(() => {
+    const images = [];
+    if (data?.banner_image) images.push(data.banner_image);
+    if (data?.images && Array.isArray(data.images)) {
+      images.push(...data.images);
+    }
+    return images;
+  }, [data]);
+
+  const nextImage = useCallback((e) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev + 1) % allImages.length);
+  }, [allImages.length]);
+
+  const prevImage = useCallback((e) => {
+    e?.stopPropagation();
+    setCurrentIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  }, [allImages.length]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (currentIndex === null) return;
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "ArrowLeft") prevImage();
+      if (e.key === "Escape") setCurrentIndex(null);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentIndex, nextImage, prevImage]);
 
   const scrollToSection = (ref) => {
     if (ref.current) {
@@ -56,7 +90,7 @@ const VisaDetails = () => {
   };
 
   const visaStats = [
-    { label: "Visa Type", value: data?.visa_type?.name?.[langCode], img: "/theme1/visa/student.png" },
+    { label: "Visa Type", value: data?.title?.[langCode], img: "/theme1/visa/student.png" },
     { label: "Language", value: data?.language, img: "/theme1/visa/lan.png" },
     { label: "Validity", value: data?.validity, img: "/theme1/blog/watch.png" },
     { label: "Processing", value: data?.processing_type, img: "/theme1/visa/process.png" },
@@ -64,25 +98,63 @@ const VisaDetails = () => {
     { label: "Country", value: data?.country, img: "/theme1/visa/globe.png" },
   ];
 
+  const totalPrice = data?.price?.amount || 0;
+  const discountAmount = data?.price?.discount_type === "flat"
+    ? data?.price?.discount
+    : (totalPrice * data?.price?.discount) / 100;
+  const processingFee = totalPrice - (discountAmount || 0);
+
   const otherInfoDetails = [
-    { label: "Continent", value: "Asia" },
-    { label: "Capital", value: "Ankara" },
-    { label: "Official Language", value: "Turkish" },
-    { label: "Currency", value: "Turkish lira" },
-    { label: "Local Time", value: "GMT +2" },
-    { label: "Exchange Rate", value: "2.83 BDT" },
-    { label: "Dialing Code", value: "+90" },
-    { label: "Weekend Days", value: "Friday & Saturday" },
-    { label: "Population", value: "78.67 million" },
-    { label: "Area", value: "302,535 mi²" },
-    { label: "Education", value: "95%" },
-    { label: "Religion", value: "Islam" },
-    { label: "Embassy Address", value: "6 Felani Ave, Dhaka 1212" },
-    { label: "Processing Time", value: "30-45 Working Days" },
+    { label: "Processing Time", value: data?.processing_type },
+    { label: "Visa Mode", value: data?.visa_mode },
+    { label: "Validity", value: data?.validity },
+    { label: "Country", value: data?.country },
   ];
 
   return (
-    <div className="min-h-screen pb-20 ">
+    <div className="min-h-screen pb-20 isolate">
+      {/* Image Preview Overlay (Like HotelDetails) */}
+      <AnimatePresence>
+        {currentIndex !== null && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setCurrentIndex(null)}
+            className="fixed inset-0 z-[999] bg-black/95 flex items-center justify-center p-4"
+          >
+            <button 
+              className="absolute top-5 right-5 z-[1000] text-white bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all"
+              onClick={() => setCurrentIndex(null)}
+            >
+              <FiX size={30} />
+            </button>
+
+            <button onClick={prevImage} className="absolute left-4 z-[1000] text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all">
+              <FiChevronLeft size={40} />
+            </button>
+
+            <button onClick={nextImage} className="absolute right-4 z-[1000] text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all">
+              <FiChevronRight size={40} />
+            </button>
+
+            <motion.img 
+              key={currentIndex}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              src={allImages[currentIndex]} 
+              className="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain pointer-events-none"
+              alt="Preview"
+            />
+
+            <div className="absolute bottom-10 text-white bg-black/50 px-4 py-2 rounded-full text-sm">
+              {currentIndex + 1} / {allImages.length}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="bg-white">
         <div className="travel-container py-8">
           <Breadcrumb className="mb-3 text-sm"
@@ -95,7 +167,7 @@ const VisaDetails = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-[#05073C] font-bold text-2xl md:text-3xl lg:text-4xl">
-                {data?.country} {data?.visa_type?.name?.[langCode]} Visa From Bangladesh
+                {data?.title?.[langCode] || `${data?.country} Visa`} From Bangladesh
               </h1>
               <div className="flex items-center gap-4 mt-3">
                 <div className="flex items-center gap-2 text-[#717171] text-sm">
@@ -107,7 +179,7 @@ const VisaDetails = () => {
                       height={14}
                       className="object-contain rounded-sm shadow-sm"
                     />
-                    <span className="font-medium">{data?.country}</span>
+                    <span className="font-medium uppercase">{data?.country}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 border-l pl-4">
@@ -127,42 +199,36 @@ const VisaDetails = () => {
           </div>
         </div>
 
+        {/* Dynamic Image Gallery */}
         <div className="travel-container pb-10">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3 h-[250px] md:h-[420px] overflow-hidden rounded-2xl mb-6">
-            <div className="md:col-span-3 md:row-span-2 h-full relative group overflow-hidden">
-              <Image
+            <div className="md:col-span-3 md:row-span-2 h-full relative group overflow-hidden cursor-zoom-in" onClick={() => setCurrentIndex(0)}>
+              <img
                 src={data?.banner_image || "/placeholder.jpg"}
-                alt="Main"
-                fill
-                sizes="(max-width: 768px) 100vw, 60vw"
+                alt="Main Banner"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
             </div>
-            <div className="hidden md:block h-full relative group overflow-hidden rounded-xl">
-              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-1" fill className="object-cover" />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-                <div className="w-10 h-10 bg-white/30 backdrop-blur-md rounded-full flex items-center justify-center border border-white/50 cursor-pointer hover:scale-110 transition-transform">
-                  <div className="w-0 h-0 border-t-[6px] border-t-transparent border-l-[10px] border-l-white border-b-[6px] border-b-transparent ml-1"></div>
-                </div>
+            {/* Sub Images */}
+            {[0, 1, 2, 3].map((index) => (
+              <div key={index} className="hidden md:block h-full relative group overflow-hidden rounded-xl cursor-zoom-in" onClick={() => setCurrentIndex(index + 1)}>
+                <img 
+                  src={data?.images?.[index] || data?.card_image || "/placeholder.jpg"} 
+                  alt={`Gallery Image ${index + 1}`} 
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                />
+                {index === 3 && data?.images?.length > 4 && (
+                  <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white transition-all group-hover:bg-black/60">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-xs font-bold">See all {data?.images?.length} photos</span>
+                  </div>
+                )}
               </div>
-            </div>
-            <div className="hidden md:block h-full relative overflow-hidden rounded-xl">
-              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-2" fill className="object-cover" />
-            </div>
-            <div className="hidden md:block h-full relative overflow-hidden rounded-xl">
-              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-3" fill className="object-cover" />
-            </div>
-            <div className="hidden md:block h-full relative overflow-hidden rounded-xl group cursor-pointer">
-              <Image src={data?.banner_image || "/placeholder.jpg"} alt="sub-4" fill className="object-cover" />
-              <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white transition-all group-hover:bg-black/60">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="text-xs font-bold">See all 9 photos</span>
-              </div>
-            </div>
+            ))}
           </div>
-          
+
           <div className="bg-white rounded-3xl border border-gray-100 p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.07)] transition-shadow duration-500">
             <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-8">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 flex-grow">
@@ -183,7 +249,7 @@ const VisaDetails = () => {
                 <div className="bg-[#f8fafc] px-6 py-4 rounded-2xl border border-gray-100 flex flex-col items-center lg:items-end">
                   <span className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Processing Fee</span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-[#0ea5e9] text-3xl font-black">৳ 9,000</span>
+                    <span className="text-[#0ea5e9] text-3xl font-black">৳ {processingFee.toLocaleString()}</span>
                     <span className="text-gray-400 text-sm font-medium">/ person</span>
                   </div>
                 </div>
@@ -200,7 +266,7 @@ const VisaDetails = () => {
               {[
                 { label: "Details", ref: overviewRef },
                 { label: "Required Documents", ref: infoRef },
-                { label: "Other Information", ref: otherInfoRef }, // Ref updated to otherInfoRef
+                { label: "Other Information", ref: otherInfoRef },
                 { label: "FAQs", ref: faqRef },
                 { label: "Reviews", ref: reviewRef },
               ].map((tab, idx) => (
@@ -225,7 +291,6 @@ const VisaDetails = () => {
             <div ref={infoRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
               <h2 className="text-2xl font-bold text-[#05073C] mb-4">Required Documents</h2>
               <p className="text-[#717171] mb-6">{data?.document_about?.[langCode]}</p>
-              {/* Grid changed to grid-cols-1 for vertical layout */}
               <div className="grid grid-cols-1 gap-4">
                 {data?.documents?.map((doc, index) => (
                   <div key={index} className="flex items-start gap-3 p-4 rounded-xl bg-[#F9FAFF] border border-blue-50">
@@ -238,17 +303,16 @@ const VisaDetails = () => {
                 ))}
               </div>
 
-              {/* --- NEW SECTION: Other Information Table Start --- */}
-              <div ref={otherInfoRef} className="mt-12"> {/* Ref added here */}
+              <div ref={otherInfoRef} className="mt-12">
                 <h2 className="text-2xl font-bold text-[#05073C] mb-6">Other Information</h2>
                 <div className="text-[#717171] text-[15px] leading-relaxed mb-6">
-                  Applying for a <span className="font-bold">{data?.country} tourist visa from Bangladesh</span> is simple and hassle-free with a trusted visa processing agency in Bangladesh. We provide professional assistance with document preparation, application submission, and compliance with {data?.country} immigration requirements.
+                  Applying for a <span className="font-bold">{data?.country} {data?.title?.[langCode]}</span> is simple and hassle-free with a trusted visa processing agency in Bangladesh. We provide professional assistance with document preparation.
                 </div>
-                
+
                 <div className="overflow-hidden border border-gray-200 rounded-xl">
                   <table className="w-full text-left border-collapse">
                     <tbody>
-                      {otherInfoDetails.map((info, index) => (
+                      {otherInfoDetails.filter(info => info.value).map((info, index) => (
                         <tr key={index} className="border-b border-gray-200 last:border-0 hover:bg-gray-50 transition-colors">
                           <td className="py-4 px-6 font-bold text-[#05073C] text-[15px] w-1/3 border-r border-gray-200 bg-gray-50/50">
                             {info.label}
@@ -262,7 +326,6 @@ const VisaDetails = () => {
                   </table>
                 </div>
               </div>
-              {/* --- NEW SECTION: Other Information Table End --- */}
             </div>
 
             <div ref={faqRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
@@ -303,7 +366,7 @@ const VisaDetails = () => {
                 <div className="bg-primary p-6 text-white">
                   <p className="text-xs uppercase font-bold opacity-80 mb-1 tracking-widest">Apply Online</p>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black">৳ 4,000</span>
+                    <span className="text-3xl font-black">৳ {processingFee.toLocaleString()}</span>
                     <span className="text-sm opacity-80">/ Per Person</span>
                   </div>
                 </div>
@@ -312,6 +375,7 @@ const VisaDetails = () => {
                 </div>
               </div>
 
+              {/* Suggestions Section */}
               <div className="space-y-6 mb-6">
                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-5">
@@ -319,46 +383,16 @@ const VisaDetails = () => {
                     <div className="h-[1px] bg-gray-100 w-full"></div>
                   </div>
                   <div className="space-y-5">
-                    {[
-                      { title: "Urban & Island Escape: Manila to Boracay", price: "59,900", days: "6 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
-                      { title: "Turkey Tour Package: Istanbul & Cappadocia", price: "2,50,900", days: "6 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
-                      { title: "The Best of Sri Lanka & Malaysia Colombo", price: "35,900", days: "6 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex gap-3 group cursor-pointer">
+                    {packages?.docs?.map((item, idx) => (
+                      <div key={idx} className="flex gap-3 group cursor-pointer" onClick={() => router.push(`/package/${item._id}`)}>
                         <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-xl">
-                          <Image src={item.img} alt="tour" fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <Image src={item.card_image || "/placeholder.jpg"} alt="tour" fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
                         </div>
                         <div className="flex flex-col justify-between py-0.5">
-                          <h4 className="text-[#05073C] font-bold text-[13px] leading-snug line-clamp-2 group-hover:text-[#28b6ea] transition-colors">{item.title}</h4>
+                          <h4 className="text-[#05073C] font-bold text-[13px] leading-snug line-clamp-2 group-hover:text-[#28b6ea] transition-colors">{item.name?.[langCode]}</h4>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">৳ {item.price}</span>
-                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">{item.days}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
-                  <div className="flex items-center gap-2 mb-5">
-                    <h3 className="text-[#05073C] font-bold text-sm uppercase tracking-wide whitespace-nowrap">You May Like Hajj Umrah</h3>
-                    <div className="h-[1px] bg-gray-100 w-full"></div>
-                  </div>
-                  <div className="space-y-5">
-                    {[
-                      { title: "Noor-e-Haram Journey 10 Nights & 11 Days Umrah", price: "1,95,000", days: "11 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
-                      { title: "40 Days Cheap Hajj Package from Bangladesh", price: "6,00,000", days: "41 Days", img: "https://img.freepik.com/free-psd/travel-tourism-socila-media-template-with-photo-frame_47987-20749.jpg?semt=ais_user_personalization&w=740&q=80" },
-                    ].map((item, idx) => (
-                      <div key={idx} className="flex gap-3 group cursor-pointer">
-                        <div className="relative w-20 h-20 flex-shrink-0 overflow-hidden rounded-xl">
-                          <Image src={item.img} alt="hajj" fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
-                        </div>
-                        <div className="flex flex-col justify-between py-0.5">
-                          <h4 className="text-[#05073C] font-bold text-[13px] leading-snug line-clamp-2 group-hover:text-[#28b6ea] transition-colors">{item.title}</h4>
-                          <div className="flex items-center gap-2 mt-2">
-                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">৳ {item.price}</span>
-                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">{item.days}</span>
+                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">৳ {item.price?.amount?.toLocaleString()}</span>
+                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">{item.tour_type}</span>
                           </div>
                         </div>
                       </div>
@@ -371,10 +405,11 @@ const VisaDetails = () => {
         </div>
       </div>
 
+      {/* Mobile Sticky Footer */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white p-4 border-t z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
         <div>
           <p className="text-xs text-gray-400 font-bold uppercase">Price Starts From</p>
-          <p className="text-xl font-black text-primary">৳ 4,000</p>
+          <p className="text-xl font-black text-primary">৳ {processingFee.toLocaleString()}</p>
         </div>
         <button
           onClick={() => setOpenDrawer(true)}

@@ -17,7 +17,7 @@ const BookTour = ({ data, user }) => {
   const [paymentMethod, setPaymentMethod] = useState("stripe");
   const [initialPrice, setInitialPrice] = useState(0)
   const [count, setCount] = useState(1);
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const [packageService] = useFetch(getAllPublicPackageServices);
   const i18n = useI18n();
   const { langCode } = useI18n();
@@ -121,7 +121,7 @@ const BookTour = ({ data, user }) => {
             </div>
           </div>
           <div className="xl:mt-6 lg:mt-5 md:mt-4 mt-4 xl:p-6 lg:p-5 md:p-4 p-3">
-            
+
             <div className="xl:mt-8 lg:mt-7 md:mt-6 mt-4">
               <h3 className="description-3 !font-semibold !font-montserrat">{i18n.t("Extra Services")}</h3>
               {
@@ -133,7 +133,7 @@ const BookTour = ({ data, user }) => {
                         label={item?.title?.[langCode]}
                         onChange={handlePackageServicePrice(item?._id)}
                       />
-                      <p className="description-1 text-[#05073C] !font-bold">{currency_symbol}{item?.price}</p>
+                      <p className="description-1 text-[#05073C] !font-bold">{formatPrice(item?.price)}</p>
                     </div>
                   );
                 })
@@ -141,7 +141,7 @@ const BookTour = ({ data, user }) => {
             </div>
             <div className="flex justify-center items-center xl:mt-6 lg:mt-5 md:mt-4 mt-4 gap-1">
               <p className="description-1 text-[#05073C] !font-bold">{i18n.t("Total Price")}: </p>
-              <p className="heading-3 text-primary">{currency_symbol}{initialPrice.toFixed(2)}</p>
+              <p className="heading-3 text-primary">{formatPrice(initialPrice)}</p>
             </div>
             <div className="xl:mt-14 lg:mt-10 md:mt-8 mt-6">
               <button onClick={() => {

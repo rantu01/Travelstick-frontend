@@ -23,8 +23,9 @@ import NotificationDropdown from "../../common/notification";
 
 // Icons for Menu
 import { FaPlane, FaHotel, FaPassport, FaUmbrellaBeach, FaGlobeAsia, FaShoppingCart } from "react-icons/fa";
-import { RiMoonClearLine } from "react-icons/ri"; // Umrah/Islamic Icon suggestion
+import { RiMoonClearLine } from "react-icons/ri";
 import { FaGift } from "react-icons/fa6";
+import { useCurrency } from "@/app/contexts/site";
 
 const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
   const [setting] = useFetch(fetchPublicSettings);
@@ -44,14 +45,18 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
   const langFromLocalStorage = typeof localStorage !== "undefined" ? localStorage.getItem("lang") : null;
   const defaultLang = i18n?.languages?.find((lang) => lang?.default)?.code;
 
-  // currency state (stored in localStorage so selection persists)
-  const [currency, setCurrency] = useState(
-    typeof localStorage !== "undefined" ? localStorage.getItem("currency") || "BDT" : "BDT"
-  );
+  // Global currency from context — drives price conversion site-wide
+  const { selectedCurrency, setCurrency, currencies, ratesLoading } = useCurrency();
 
   useEffect(() => {
     getCurrentUser();
   }, []);
+
+  // Build dropdown options from context's currency list
+  const currencyOptions = currencies?.map(c => ({
+    value: c.code,
+    label: <span className="text-[#1A2B6D] font-bold">{c.label}</span>,
+  })) || [];
 
   // Updated Menu items with Custom Icons from /Header Icon/
   const menuItems = [
@@ -170,33 +175,16 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
         {/* 3. Right Side - Actions & Auth */}
         <div className="flex items-center gap-4">
 
-          {/* {isProduct && (
-            <Link href={user ? "/cart" : "#"} onClick={() => !user && setAuthModalOpen(true)} className="relative">
-              <MdOutlineShoppingCart className="text-2xl text-[#1A2B6D]" />
-              {cart?.docs?.length > 0 && (
-                <span className="absolute -top-2 -right-2 text-[10px] bg-[#00B7EB] text-white w-4 h-4 flex items-center justify-center rounded-full">
-                  {cart?.docs?.length}
-                </span>
-              )}
-            </Link>
-          )} */}
-
-          {/* Currency Select */}
+          {/* Currency Selector — live rates, 4 currencies */}
           <div className="hidden sm:block">
             <Select
-              value={currency}
+              value={selectedCurrency}
               variant="borderless"
-              onChange={(selected) => {
-                setCurrency(selected);
-                localStorage.setItem("currency", selected);
-              }}
-              options={[
-                { value: "BDT", label: <span className="text-[#1A2B6D] font-bold">BDT</span> },
-                { value: "USD", label: <span className="text-[#1A2B6D] font-bold">USD</span> },
-              ]}
-              // এখানে style প্রপ যোগ করুন টেক্সট কালার গাঢ় করার জন্য
+              onChange={(selected) => setCurrency(selected)}
+              options={currencyOptions}
               style={{ color: "#1A2B6D", fontWeight: "bold" }}
-              className="min-w-[70px]"
+              className="min-w-[90px]"
+              loading={ratesLoading}
             />
           </div>
 
@@ -252,6 +240,25 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
               <span className="text-blue-400">{item.icon}</span> {item.label}
             </Link>
           ))}
+          <hr />
+          {/* Currency selector in mobile drawer too */}
+          <div>
+            <p className="text-xs text-gray-400 mb-2 font-bold uppercase tracking-wider">Currency</p>
+            <div className="flex flex-wrap gap-2">
+              {currencies?.map(c => (
+                <button
+                  key={c.code}
+                  onClick={() => setCurrency(c.code)}
+                  className={`px-3 py-1.5 rounded-md text-sm font-bold border transition-all ${selectedCurrency === c.code
+                    ? "bg-[#1A2B6D] text-white border-[#1A2B6D]"
+                    : "text-[#1A2B6D] border-gray-200 hover:border-[#1A2B6D]"
+                    }`}
+                >
+                  {c.label}
+                </button>
+              ))}
+            </div>
+          </div>
           <hr />
           {!user?._id && (
             <div className="flex flex-col gap-3">

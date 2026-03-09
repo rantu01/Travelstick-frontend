@@ -8,7 +8,7 @@ import { getAllSidePublicHotel } from "@/app/helper/backend";
 import { useEffect, useState } from "react";
 
 const HotelFilters = ({ getData }) => {
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const [packageSideData, getPackageSideData] = useFetch(getAllSidePublicHotel);
   const [destinations, setDestinations] = useState([]);
   const [roomTypes, setRoomTypes] = useState([]);
@@ -49,8 +49,8 @@ const HotelFilters = ({ getData }) => {
   }, [packageSideData]);
 
   const marks = {
-    [minPrice]: { style: { color: "#05073C" }, label: <strong>{currency_symbol}{minPrice}</strong> },
-    [maxPrice]: { style: { color: "#05073C" }, label: <strong>{currency_symbol}{maxPrice}</strong> },
+    [minPrice]: { style: { color: "#05073C" }, label: <strong>{formatPrice(minPrice)}</strong> },
+    [maxPrice]: { style: { color: "#05073C" }, label: <strong>{formatPrice(maxPrice)}</strong> },
   };
 
   const handleSliderChange = (value) => {

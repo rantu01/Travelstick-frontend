@@ -4,13 +4,13 @@ import { useCurrency } from "@/app/contexts/site";
 import Image from "next/image";
 const AboutDetails = ({ data, slug }) => {
   const i18n = useI18n();
-  const {langCode} = useI18n();
-  const { currency_symbol } = useCurrency();
+  const { langCode } = useI18n();
+  const { formatPrice } = useCurrency();
   const packageInfo = [
     {
       id: 1,
       title: "Price",
-      value: `${currency_symbol}${data?.current_price}`,
+      value: formatPrice(data?.current_price),
       icon: "/theme1/package/price.png",
       bgColor: "#F2FFF0",
     },

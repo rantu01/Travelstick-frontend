@@ -20,6 +20,8 @@ const MultiCityRow = ({
   disabledDate,
   dateRender,
   guestContent,
+  filterData,
+  langCode,
 }) => (
   <div className="grid grid-cols-1 md:grid-cols-12 gap-0 border rounded-xl overflow-hidden relative">
     {/* From */}
@@ -29,14 +31,7 @@ const MultiCityRow = ({
         onOpenChange={(v) => setOpenPopover(v ? `mc-from-${index}` : null)}
         content={
           <SelectionList
-            options={[
-              "Dhaka",
-              "Chittagong",
-              "Sylhet",
-              "Cox's Bazar",
-              "Bangkok",
-              "Dubai",
-            ]}
+            options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[langCode] || v.name?.en || v.name) || []}
             onSelect={(v) => {
               handleMultiCityChange(index, "from", v);
               setOpenPopover(null);
@@ -69,14 +64,7 @@ const MultiCityRow = ({
         onOpenChange={(v) => setOpenPopover(v ? `mc-to-${index}` : null)}
         content={
           <SelectionList
-            options={[
-              "Cox's Bazar",
-              "Bangkok",
-              "Dubai",
-              "Dhaka",
-              "Chittagong",
-              "Sylhet",
-            ]}
+            options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[langCode] || v.name?.en || v.name) || []}
             onSelect={(v) => {
               handleMultiCityChange(index, "to", v);
               setOpenPopover(null);
@@ -103,9 +91,8 @@ const MultiCityRow = ({
         placeholder="Select date"
         disabledDate={disabledDate}
         variant="borderless"
-        className={`p-0 font-bold text-lg w-full mt-1 ${
-          flight.date ? "text-gray-700" : "text-gray-400"
-        }`}
+        className={`p-0 font-bold text-lg w-full mt-1 ${flight.date ? "text-gray-700" : "text-gray-400"
+          }`}
         value={flight.date}
         format="DD MMM, YYYY"
         suffixIcon={null}

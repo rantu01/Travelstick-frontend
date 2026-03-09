@@ -148,11 +148,11 @@ export const getAllPublicHotelServices = (data) => get('/services/site?module=ro
 
 //Room Management
 export const createRoom = (data) => post('/rooms', data)
-export const updateRoom = (data) => patch('/rooms/:id', data)
+export const updateRoom = (data) => patch(`/rooms/${data.id || data._id || data.body?._id}`, data)
 export const getAllRooms = (data) => get('/rooms', data)
 export const getRoomsByHotel = (data) => get(`/rooms/hotel/${data.hotelId}`, data)
-export const getRoomById = (data) => get(`/rooms/:id`, data)
-export const deleteRoom = (data) => del(`/rooms/:id`, data)
+export const getRoomById = (data) => get(`/rooms/${data.id || data._id}`, data)
+export const deleteRoom = (data) => del(`/rooms/${data.id || data._id}`, data)
 
 //create Hotel booking payment and calculation
 export const createHotelBookingPayment = (data) => post('/hotels/booking', data)
@@ -180,7 +180,9 @@ export const createVisa = (data) => post('/visas', data)
 export const updateVisa = (data) => put('/visas', data)
 export const getAllVisa = (data) => get('/visas', data)
 export const getAllPublicVisa = (data) => get('/visas/site', data)
-export const deleteVisa = (data) => del(`/visas/${data._id}`, data)
+export const getVisaById = (data) => get(`/visas/${data.id || data._id}`, data)
+export const deleteVisa = (data) => del(`/visas/${data.id || data._id}`, data)
+
 export const getAllSidePublicVisa = (data) => get('/visas/sidebar', data)
 export const getAllVisaQuery = (data) => get('/visas/inquiries', data)
 export const deleteVisaQuery = (data) => del(`/visas/inquiries/${data._id}`, data)

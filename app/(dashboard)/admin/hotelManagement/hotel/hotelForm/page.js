@@ -39,6 +39,7 @@ const HotelForm = ({ isEdit = false, data }) => {
         banner_video_url: data?.banner_video_url,
         about: data?.about || {},
         destination: data?.destination?._id,
+        mapLink: data?.mapLink,
 
         banner_image: data?.banner_image
           ? [
@@ -250,6 +251,15 @@ const HotelForm = ({ isEdit = false, data }) => {
                 type={"url"}
                 className="w-full rounded bg-transparent p-3 dashinput"
                 placeholder={i18n.t("Banner Video URL")}
+              />
+            </div>
+            <div className="mt-5">
+              <FormInput
+                label="Map Link"
+                name="mapLink"
+                type={"url"}
+                className="w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("Enter Google Maps or similar map link")}
               />
             </div>
           </div>

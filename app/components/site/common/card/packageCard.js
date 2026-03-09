@@ -10,14 +10,14 @@ import TextWithTooltip from "@/app/helper/utils";
 import AnimatedContent from "@/app/components/ui/animatedContent";
 
 const PackageCard = ({ data, index }) => {
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const { langCode } = useI18n();
   const i18n = useI18n();
 
   return (
     <AnimatedContent direction="vertical" reverse={false}>
       <div className="group relative w-full max-w-[380px] bg-white rounded-[20px] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
-        
+
         {/* Top Image Section with Overlay */}
         <div className="relative h-[280px] w-full overflow-hidden">
           {data?.card_image && (
@@ -29,7 +29,7 @@ const PackageCard = ({ data, index }) => {
               alt="package image"
             />
           )}
-          
+
           {/* Duration Badge (Top Left) */}
           <div className="absolute top-4 left-4 bg-white/20 backdrop-blur-md border border-white/30 text-white text-[12px] font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5">
             <LuCalendarDays className="text-[14px]" />
@@ -42,7 +42,7 @@ const PackageCard = ({ data, index }) => {
               <TextWithTooltip limit={45} text={data?.name?.[langCode]} />
             </h3>
             <p className="text-white/90 text-[13px]">
-              Starts From (per person) <span className="font-bold">{currency_symbol}{data?.current_price?.toLocaleString()}</span>
+              Starts From (per person) <span className="font-bold">{formatPrice(data?.current_price)}</span>
             </p>
           </div>
         </div>
@@ -56,7 +56,7 @@ const PackageCard = ({ data, index }) => {
                 {data?.destination?.name}
               </p>
               <p className="text-gray-400 text-[12px]">
-                 {data?.destination?.name}, Thailand
+                {data?.destination?.name}, Thailand
               </p>
             </div>
           </div>

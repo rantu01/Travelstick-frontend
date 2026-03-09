@@ -11,7 +11,7 @@ import { SearchOutlined } from "@ant-design/icons";
 
 const Filters = ({ getData }) => {
   const [priceRange, setPriceRange] = useState([0, 1000]);
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const [packageSideData, getPackageSideData] = useFetch(getAllSidePublicPackages);
   const [destinations, setDestinations] = useState([]);
   const [activities, setActivities] = useState([]);
@@ -98,10 +98,10 @@ const Filters = ({ getData }) => {
         <h4 className="text-[#05073C] font-bold text-lg mb-4">{i18n.t("Price Range")}</h4>
         <div className="flex justify-between items-center mb-2">
           <span className="text-[#1a4fa0] font-semibold text-sm">
-            {currency_symbol} {priceRange[0].toLocaleString()}
+            {formatPrice(priceRange[0])}
           </span>
           <span className="text-[#1a4fa0] font-semibold text-sm">
-            {currency_symbol} {priceRange[1].toLocaleString()}
+            {formatPrice(priceRange[1])}
           </span>
         </div>
         <div className="package-slider px-1">
@@ -220,7 +220,7 @@ const Filters = ({ getData }) => {
         <h4 className="description-2 text-[#05073C] !font-bold border-b border-[#E8EAE8] pb-2 mb-4">
           {i18n.t("Reviews")}
         </h4>
-        <Radio.Group 
+        <Radio.Group
           className="w-full flex flex-col gap-3"
           value={selectedReview}
           onChange={(e) => {
@@ -245,7 +245,7 @@ const Filters = ({ getData }) => {
 
       {/* Reset Button - Image UI Match */}
       <div className="mt-4">
-        <Button 
+        <Button
           onClick={handleReset}
           className="w-full py-6 rounded-xl border-[#E8EAE8] text-gray-500 font-bold text-base hover:bg-gray-50"
         >

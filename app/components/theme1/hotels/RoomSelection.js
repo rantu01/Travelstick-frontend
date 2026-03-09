@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { useFetch } from "@/app/helper/hooks";
 import { getRoomsByHotel } from "@/app/helper/backend";
 import { useI18n } from "@/app/contexts/i18n";
+import { useCurrency } from "@/app/contexts/site"; // Import useCurrency
 
 const AmenityIcon = ({ amenity, size = 20 }) => {
   const iconMap = {
@@ -26,6 +27,7 @@ const AmenityIcon = ({ amenity, size = 20 }) => {
 
 const RoomSelection = () => {
   const { langCode } = useI18n();
+  const { formatPrice } = useCurrency(); // Use formatPrice from context
   const params = useParams();
   const hotelId = params?.id;
 
@@ -36,10 +38,8 @@ const RoomSelection = () => {
     const url = typeof image === 'string' ? image : image?.url;
     if (!url) return "/placeholder-room.jpg";
 
-    // If it's already an absolute URL, return as is
     if (url.startsWith('http')) return url;
 
-    // Otherwise, append backend URL (handling potential double slashes)
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
     return `${baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl}/${url.startsWith('/') ? url.slice(1) : url}`;
   };
@@ -68,7 +68,7 @@ const RoomSelection = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen flex flex-col items-center gap-6">
+    <div className="p-6 bg-gray-50  flex flex-col items-center gap-6 rounded-xl">
       <h2 className="text-2xl font-bold self-start max-w-6xl w-full mx-auto">Select your room</h2>
 
       {rooms.map((room) => {
@@ -105,7 +105,10 @@ const RoomSelection = () => {
                 <div className="flex items-center gap-6 self-end md:self-start">
                   <div className="text-right">
                     <div className="flex items-center justify-end gap-1">
-                      <span className="text-[22px] font-bold text-gray-800">{room.price?.amount || 0} ৳</span>
+                      {/* formatPrice used here */}
+                      <span className="text-[22px] font-bold text-gray-800">
+                        {formatPrice(room.price?.amount || 0)}
+                      </span>
                     </div>
                     <p className="text-[10px] text-gray-500 -mt-1 whitespace-nowrap">Per night before taxes</p>
                   </div>

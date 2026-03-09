@@ -5,8 +5,13 @@ import {
     CigaretteOff, Cigarette, Bed, Gift, Wind
 } from 'lucide-react';
 import Link from 'next/link';
+import { useCurrency } from '@/app/contexts/site';
+// useCurrency ইমপোর্ট করা হলো
 
 export default function BookingDetailsPage() {
+    // কারেন্সি কনটেক্সট থেকে প্রয়োজনীয় মেথড নেওয়া হলো
+    const { formatPrice, exchangeRate, currency } = useCurrency();
+
     return (
         <div className="bg-[#f2f2f2] min-h-screen p-4 md:p-8 font-sans text-[#1a1a1a]">
             <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-6">
@@ -204,7 +209,8 @@ export default function BookingDetailsPage() {
                                 </div>
                                 <div className="flex justify-between border-t pt-2 mt-2">
                                     <span className="text-gray-500">Total Price:</span>
-                                    <span className="font-bold text-[#003580]">154.96</span>
+                                    {/* formatPrice ব্যবহার করা হলো */}
+                                    <span className="font-bold text-[#003580]">{formatPrice(154.96)}</span>
                                 </div>
                             </div>
                             {/* Triangle Arrow */}
@@ -214,7 +220,8 @@ export default function BookingDetailsPage() {
                         <Link href={`/hotel/1/booking/final`}>
                             <button className="w-full bg-[#003580] text-white font-black py-4 rounded-lg text-lg uppercase tracking-wider hover:bg-blue-900 transition-colors">Next: Final Step</button>
                         </Link>
-                        <p className="text-green-600 text-xs font-bold mt-2">You will pay 0 today</p>
+                        {/* formatPrice ব্যবহার করা হলো */}
+                        <p className="text-green-600 text-xs font-bold mt-2">You will pay {formatPrice(0)} today</p>
                     </div>
                 </div>
 
@@ -358,7 +365,8 @@ export default function BookingDetailsPage() {
                                 <div className="flex items-center gap-3">
                                     <img src="https://cdn-icons-png.flaticon.com/512/726/726448.png" className="w-8 h-8" alt="Gift" />
                                     <div>
-                                        <p className="font-bold text-[14px] text-[#1a1a1a]">18 off</p>
+                                        {/* formatPrice ব্যবহার করা হলো */}
+                                        <p className="font-bold text-[14px] text-[#1a1a1a]">{formatPrice(18)} off</p>
                                         <p className="text-[10px] text-gray-500 italic">Instant discount</p>
                                     </div>
                                 </div>
@@ -374,7 +382,8 @@ export default function BookingDetailsPage() {
                         <p className="text-[11px] text-gray-700">
                             <span className="font-bold text-[#008009]">We price match.</span> Find it for less, and we'll match it! <Info size={12} className="inline ml-1 text-gray-400" />
                         </p>
-                        <p className="text-[11px] text-[#008009] font-bold mt-1">You saved 17.76 on this booking!</p>
+                        {/* formatPrice ব্যবহার করা হলো */}
+                        <p className="text-[11px] text-[#008009] font-bold mt-1">You saved {formatPrice(17.76)} on this booking!</p>
                     </div>
 
                     {/* 6. Pricing Breakdown */}
@@ -386,23 +395,28 @@ export default function BookingDetailsPage() {
                         <div className="space-y-2.5 text-[13px]">
                             <div className="flex justify-between text-gray-500">
                                 <span>Original price (1 room x 2 nights)</span>
-                                <span className="line-through">180.78</span>
+                                {/* formatPrice ব্যবহার করা হলো */}
+                                <span className="line-through">{formatPrice(180.78)}</span>
                             </div>
                             <div className="flex justify-between text-[#003580] font-bold">
                                 <span>Our price</span>
-                                <span className="underline decoration-[#cc0000] decoration-2 underline-offset-4">160.78</span>
+                                {/* formatPrice ব্যবহার করা হলো */}
+                                <span className="underline decoration-[#cc0000] decoration-2 underline-offset-4">{formatPrice(160.78)}</span>
                             </div>
                             <div className="flex justify-between text-[#008009] font-bold">
                                 <span>Instant discount</span>
-                                <span>- 17.76</span>
+                                {/* formatPrice ব্যবহার করা হলো */}
+                                <span>- {formatPrice(17.76)}</span>
                             </div>
                             <div className="flex justify-between font-bold text-[#1a1a1a] pt-1">
                                 <span>Room price (1 room x 2 nights)</span>
-                                <span>133.02</span>
+                                {/* formatPrice ব্যবহার করা হলো */}
+                                <span>{formatPrice(133.02)}</span>
                             </div>
                             <div className="flex justify-between text-gray-600">
                                 <span>Taxes and fees</span>
-                                <span>21.94</span>
+                                {/* formatPrice ব্যবহার করা হলো */}
+                                <span>{formatPrice(21.94)}</span>
                             </div>
                             <div className="flex justify-between text-[#008009] font-bold">
                                 <span>Booking fees</span>
@@ -422,7 +436,8 @@ export default function BookingDetailsPage() {
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-[26px] font-black text-[#1a1a1a] leading-none tracking-tighter">154.96</p>
+                                    {/* formatPrice ব্যবহার করা হলো */}
+                                    <p className="text-[26px] font-black text-[#1a1a1a] leading-none tracking-tighter">{formatPrice(154.96)}</p>
                                 </div>
                             </div>
                             <div className="mt-4 text-[10px] text-gray-400 leading-relaxed">

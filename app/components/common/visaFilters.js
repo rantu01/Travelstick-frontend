@@ -7,7 +7,7 @@ import { useFetch } from "@/app/helper/hooks";
 import { getAllSidePublicVisa } from "@/app/helper/backend";
 import { useEffect, useState } from "react";
 const VisaFilters = ({ getData }) => {
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const [packageSideData, getPackageSideData] = useFetch(
     getAllSidePublicVisa
   );
@@ -15,7 +15,7 @@ const VisaFilters = ({ getData }) => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const i18n = useI18n();
-  const {langCode} = useI18n();
+  const { langCode } = useI18n();
   const form = Form.useFormInstance();
   const [priceRange, setPriceRange] = useState([0, 1000]);
   useEffect(() => {
@@ -45,34 +45,24 @@ const VisaFilters = ({ getData }) => {
   const marks = {
     [minPrice]: {
       style: { color: "#05073C" },
-      label: (
-        <strong>
-          {currency_symbol}
-          {minPrice}
-        </strong>
-      ),
+      label: <strong>{formatPrice(minPrice)}</strong>,
     },
     [maxPrice]: {
       style: { color: "#05073C" },
-      label: (
-        <strong>
-          {currency_symbol}
-          {maxPrice}
-        </strong>
-      ),
+      label: <strong>{formatPrice(maxPrice)}</strong>,
     },
   };
 
   const handleSliderChange = (value) => {
     const [min, max] = value;
-    setPriceRange(value); 
+    setPriceRange(value);
     getData({ maxPrice: max, minPrice: min });
   };
 
   return (
     <div>
       {/* Search */}
-      
+
 
       {/* Price Range */}
       <div className="xl:mt-6 lg:mt-5 mt-4 border border-[#E8EAE8] rounded-[10px] lg:rounded-[20px] xl:p-6 lg:p-5 md:p-4 p-3">

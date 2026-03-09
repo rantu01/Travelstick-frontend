@@ -6,7 +6,7 @@ import React from "react";
 import { useI18n } from "@/app/contexts/i18n";
 import Image from "next/image";
 import VisaFilters from "../../common/visaFilters";
-import { getAllPublicVisa } from "@/app/helper/backend";
+import { getAllPublicVisa, getHeroFilterData } from "@/app/helper/backend";
 import { useFetch } from "@/app/helper/hooks";
 import VisaCard1 from "../../site/common/card/visaCard1";
 import VisaCard2 from "../../site/common/card/visaCard2";
@@ -22,10 +22,12 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
   const [searchCountry, setSearchCountry] = useState(initialCountry || null);
   const [searchType, setSearchType] = useState(initialType || null);
   const [openPopover, setOpenPopover] = useState(null);
-  
+
+  const [filterData] = useFetch(getHeroFilterData);
+
   // Added missing state variables used in JSX
   const [citizenOf, setCitizenOf] = useState("Bangladesh");
-  const [travellingTo, setTravellingTo] = useState("Select Country");
+  const [travellingTo, setTravellingTo] = useState(initialCountry || "Select Country");
   const [visaCategory, setVisaCategory] = useState("Select Category");
 
   // Helper function to handle selection from Popover
@@ -81,7 +83,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
             <Popover
               open={openPopover === 'visa-cit'}
               onOpenChange={(v) => setOpenPopover(v ? 'visa-cit' : null)}
-              content={<SelectionList options={["Bangladesh", "India", "USA"]} onSelect={(v) => handleSelect(setCitizenOf, v)} />}
+              content={<SelectionList options={filterData?.find(f => f.key === 'visa_country')?.values?.map(v => v.name) || []} onSelect={(v) => handleSelect(setCitizenOf, v)} />}
               trigger="click" placement="bottomLeft"
             >
               <div className="w-full">
@@ -99,7 +101,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
               <Popover
                 open={openPopover === 'visa-to'}
                 onOpenChange={(v) => setOpenPopover(v ? 'visa-to' : null)}
-                content={<SelectionList options={["Thailand", "Malaysia", "Saudi Arabia", "Singapore", "UK"]} onSelect={(v) => handleSelect(setTravellingTo, v)} />}
+                content={<SelectionList options={filterData?.find(f => f.key === 'visa_country')?.values?.map(v => v.name) || []} onSelect={(v) => handleSelect(setTravellingTo, v)} />}
                 trigger="click" placement="bottomLeft"
               >
                 <div className="flex-1">
@@ -120,7 +122,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
             <Popover
               open={openPopover === 'visa-cat'}
               onOpenChange={(v) => setOpenPopover(v ? 'visa-cat' : null)}
-              content={<SelectionList options={["Tourist Visa", "Business Visa", "Student Visa", "Work Visa"]} onSelect={(v) => handleSelect(setVisaCategory, v)} />}
+              content={<SelectionList options={filterData?.find(f => f.key === 'visa_type')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setVisaCategory, v)} />}
               trigger="click" placement="bottomLeft"
             >
               <div className="w-full">

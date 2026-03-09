@@ -5,10 +5,10 @@ import React from "react";
 import { useCurrency } from "@/app/contexts/site";
 import { useI18n } from "@/app/contexts/i18n";
 import AnimatedContent from "@/app/components/ui/animatedContent";
-import { HiOutlineCube } from "react-icons/hi2"; 
+import { HiOutlineCube } from "react-icons/hi2";
 
 const PackageCard = ({ data, index }) => {
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const { langCode } = useI18n();
 
   return (
@@ -16,7 +16,7 @@ const PackageCard = ({ data, index }) => {
       <Link href={`/package/${data?._id}`}>
         {/* 'isolate' যোগ করা হয়েছে যাতে স্ট্যাকিং কনটেক্সট ঠিক থাকে এবং ওভারফ্লো প্রপারলি কাজ করে */}
         <div className="group relative w-full h-[250px] md:h-[250px] rounded-[20px] overflow-hidden isolate cursor-pointer shadow-md transition-all duration-300">
-          
+
           {/* Main Background Image */}
           {data?.card_image && (
             <Image
@@ -40,7 +40,7 @@ const PackageCard = ({ data, index }) => {
 
           {/* Red Overlay Gradient - এখানে 'rounded-[20px]' যোগ করা হয়েছে কোণার সমস্যা দূর করতে */}
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a4fa0] via-[#1a4fa0]/40 to-transparent opacity-80 z-10 rounded-[20px]"></div>
-          
+
           {/* Hover Maroon Tint - এখানেও 'rounded-[20px]' যোগ করা হয়েছে */}
           <div className="absolute inset-0 bg-[#1a4fa0]/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-15 rounded-[20px]"></div>
 
@@ -52,7 +52,7 @@ const PackageCard = ({ data, index }) => {
             <div className="flex items-center gap-1.5 opacity-90">
               <span className="text-[13px] font-normal">Starts From</span>
               <span className="text-[13px] font-bold">
-                {currency_symbol} {data?.current_price?.toLocaleString() || data?.price?.toLocaleString()}
+                {formatPrice(data?.current_price || data?.price)}
               </span>
             </div>
           </div>

@@ -7,7 +7,7 @@ import { LuAlarmClockCheck } from "react-icons/lu";
 import { useCurrency } from "@/app/contexts/site";
 import { useI18n } from "@/app/contexts/i18n";
 const DashboardPackageCard = ({ data, index }) => {
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const { langCode } = useI18n();
   return (
     <div className="group w-full rounded-[10px] lg:rounded-t-[20px] border border-[#E8EAE8]">
@@ -38,8 +38,8 @@ const DashboardPackageCard = ({ data, index }) => {
         </h3>
         <div className="flex justify-between items-center xl:mt-4 lg:mt-3 mt-2">
           <p className="heading-4 text-[#EB662B] ">
-            {currency_symbol}{data?.current_price}
-            <span className="description-4 text-[#717171]"> {currency_symbol}{data?.regular_price}</span> <br />
+            {formatPrice(data?.current_price)}
+            <span className="description-4 text-[#717171]"> {formatPrice(data?.regular_price)}</span> <br />
             <span className="description-4 text-[#717171]">per person</span>
           </p>
           <Link href={`/package/${data?._id}`} className="view-button">

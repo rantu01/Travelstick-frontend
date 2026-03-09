@@ -19,7 +19,7 @@ const HotelBooking = ({ data, user }) => {
   const [paymentMethod, setPaymentMethod] = useState("stripe");
   const [initialPrice, setInitialPrice] = useState(0)
   const [count, setCount] = useState(1);
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const [hotelService] = useFetch(getAllPublicHotelServices);
   const i18n = useI18n();
   const { langCode } = useI18n();
@@ -171,7 +171,7 @@ const HotelBooking = ({ data, user }) => {
                     Adult (18+ years)
                     {
                       initialPrice > 0 && (
-                        <span className="text-[#05073C] !font-bold pl-2">{currency_symbol}{initialPrice}</span>
+                        <span className="text-[#05073C] !font-bold pl-2">{formatPrice(initialPrice)}</span>
                       )
                     }
                   </p>
@@ -203,7 +203,7 @@ const HotelBooking = ({ data, user }) => {
                               label={item?.title?.[langCode]}
                               onChange={handleHotelServicePrice(item?._id)}
                             />
-                            <p className="description-1 text-[#05073C] !font-bold">{currency_symbol}{item?.price}</p>
+                            <p className="description-1 text-[#05073C] !font-bold">{formatPrice(item?.price)}</p>
                           </div>
                         );
                       })
@@ -215,7 +215,7 @@ const HotelBooking = ({ data, user }) => {
                     initialPrice > 0 && (
                       <>
                         <p className="description-1 text-[#05073C] !font-bold">{i18n.t("Total Price")}: </p>
-                        <p className="heading-3 text-primary">{currency_symbol}{initialPrice.toFixed(2)}</p>
+                        <p className="heading-3 text-primary">{formatPrice(initialPrice)}</p>
                       </>
                     )
                   }

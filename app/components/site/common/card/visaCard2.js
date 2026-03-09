@@ -10,7 +10,7 @@ import AnimatedContent from "@/app/components/ui/animatedContent";
 const VisaCard2 = ({ data, slug }) => {
   const i18n = useI18n();
   const { langCode } = useI18n();
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
 
   return (
     <AnimatedContent direction="horizontal" distance={50} reverse={true}>
@@ -59,7 +59,7 @@ const VisaCard2 = ({ data, slug }) => {
               {i18n.t("View Details")}
             </Link>
             <p className="heading-4 text-[#EB662B] whitespace-pre">
-              {currency_symbol} {data?.current_price?.toFixed(1)}
+              {formatPrice(data?.current_price)}
               <span className="description-4 text-[#717171]">/per person</span>
             </p>
           </div>
