@@ -57,6 +57,18 @@ const Footer = () => {
                 </Link>
               ))}
             </div>
+
+
+            {/* Verified by */}
+            <div className="flex flex-col space-y-4">
+              <span className="text-lg font-semibold">Verified by</span>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://basis.org.bd/public/img/relatedlink/5e1132b3570c8Pr-8.jpg" className="h-6" alt="BASIS" /></div>
+                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROXxbbVTvM8UeXF7Spw1PsqQTvMgilDo7eXA&s" className="h-6" alt="e-CAB" /></div>
+                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://dbid.gov.bd/assets/front/ubid/images/logo-bid.png" className="h-6" alt="DBID" /></div>
+                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVnPXpYZcjG6UIHyUmx0SXfskZWOgQdfESPA&s" className="h-6" alt="PCI" /></div>
+              </div>
+            </div>
           </div>
 
           {/* Column 2: Explore */}
@@ -119,21 +131,12 @@ const Footer = () => {
           {/* Partner & Payment Section */}
           <div className="flex flex-wrap items-start justify-center gap-10 md:gap-16">
 
-          
+
 
             {/* Vertical Divider for desktop */}
             <div className="hidden md:block h-20 w-px bg-white/20 self-end"></div>
 
-            {/* Verified by */}
-            <div className="flex flex-col space-y-4">
-              <span className="text-lg font-semibold">Verified by</span>
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://basis.org.bd/public/img/relatedlink/5e1132b3570c8Pr-8.jpg" className="h-6" alt="BASIS" /></div>
-                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROXxbbVTvM8UeXF7Spw1PsqQTvMgilDo7eXA&s" className="h-6" alt="e-CAB" /></div>
-                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://dbid.gov.bd/assets/front/ubid/images/logo-bid.png" className="h-6" alt="DBID" /></div>
-                <div className="bg-white/10 rounded-lg p-2 border border-white/5"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVnPXpYZcjG6UIHyUmx0SXfskZWOgQdfESPA&s" className="h-6" alt="PCI" /></div>
-              </div>
-            </div>
+
 
             {/* Payment Method */}
             <div className="flex flex-col space-y-4">

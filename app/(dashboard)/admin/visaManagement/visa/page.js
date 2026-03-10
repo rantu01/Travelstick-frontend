@@ -14,7 +14,6 @@ import { useActionConfirm, useFetch } from "@/app/helper/hooks";
 import { Switch, Tooltip } from "antd";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
-import { use } from "react";
 
 const Visa = () => {
   let { langCode } = useI18n();
@@ -22,14 +21,13 @@ const Visa = () => {
   const i18n = useI18n();
   const { currency_symbol } = useCurrency();
   const router = useRouter();
+
   const columns = [
     {
       text: "Image",
       dataField: "card_image",
       formatter: (value) => (
-        <>
-          <TableImage url={value || "/man.png"} />
-        </>
+        <TableImage url={value || "/man.png"} />
       ),
     },
     {
@@ -39,79 +37,63 @@ const Visa = () => {
         <span>
           <Tooltip
             title={
-              (title?.[langCode])?.length > 40 ? (title?.[langCode]) : undefined
+              title?.[langCode]?.length > 40 ? title?.[langCode] : undefined
             }
           >
             <span className="cursor-help">
               {title?.[langCode]?.length > 40
-                ? (title?.[langCode])?.slice(0, 40) + "..."
-                : (title?.[langCode])}
+                ? title?.[langCode]?.slice(0, 40) + "..."
+                : title?.[langCode]}
             </span>
           </Tooltip>
         </span>
       ),
     },
+    // ✅ Destination → Travelling To
     {
-      text: "Destination",
-      dataField: "country",
+      text: "Travelling To",
+      dataField: "travelling_to",
     },
     {
       text: "Price",
       dataField: "current_price",
       formatter: (current_price) => (
-        <span> {currency_symbol} {current_price.toFixed(2)} </span>
+        <span>{currency_symbol} {current_price.toFixed(2)}</span>
       ),
     },
     {
       text: "Validity",
       dataField: "validity",
-      formatter: (value) => (
-        <span> {value} </span>
-      ),
+      formatter: (value) => <span>{value}</span>,
     },
     {
       text: "Visa Type",
       dataField: "visa_type",
-      formatter: (type) => (
-        <span> {type?.name?.[langCode]} </span>
-      ),
+      formatter: (type) => <span>{type?.name?.[langCode]}</span>,
     },
-        {
+    {
       text: "Visa Mode",
       dataField: "visa_mode",
-      formatter: (type) => (
-        <span> {type} </span>
-      ),
+      formatter: (type) => <span>{type}</span>,
     },
     {
       text: i18n.t("Status"),
       dataField: "is_active",
-      formatter: (_, d) => {
-        return (
-          <Switch
-            checked={d?.status}
-            onChange={() => {
-              const newStatus = !d?.status;
-              useActionConfirm(
-                updateVisa,
-                {
-                  body: {
-                    _id: d?._id,
-                    status: newStatus,
-                  },
-                },
-                getData
-              );
-            }}
-            checkedChildren={
-              <span className="text-white">{i18n.t("Active")}</span>
-            }
-            unCheckedChildren={
-              <span className="text-white">{i18n.t("Inactive")}</span>
-            }
-          />
-        );
-      },
+      formatter: (_, d) => (
+        <Switch
+          checked={d?.status}
+          onChange={() => {
+            const newStatus = !d?.status;
+            useActionConfirm(
+              updateVisa,
+              { body: { _id: d?._id, status: newStatus } },
+              getData
+            );
+          }}
+          checkedChildren={<span className="text-white">{i18n.t("Active")}</span>}
+          unCheckedChildren={<span className="text-white">{i18n.t("Inactive")}</span>}
+        />
+      ),
     },
     {
       text: "Created At",
@@ -136,20 +118,16 @@ const Visa = () => {
             loading={loading}
             onReload={getData}
             action={
-              <Button
-                onClick={() => {  
-                  router.push("/admin/visaManagement/visa/addVisa");
-                }}
-              >
+              <Button onClick={() => router.push("/admin/visaManagement/visa/addVisa")}>
                 {"Add New"}
               </Button>
             }
-            onEdit={(values) => {   
-              router.push(`/admin/visaManagement/visa/editVisa?_id=${values._id}`);
-            }}
-            onView={(values) => {
-              router.push(`/admin/visaManagement/visa/view?_id=${values._id}`);
-            }}
+            onEdit={(values) =>
+              router.push(`/admin/visaManagement/visa/editVisa?_id=${values._id}`)
+            }
+            onView={(values) =>
+              router.push(`/admin/visaManagement/visa/view?_id=${values._id}`)
+            }
             onDelete={deleteVisa}
             indexed
             langCode={langCode}

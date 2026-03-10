@@ -8,7 +8,7 @@ import { Drawer, Breadcrumb, Rate, Collapse } from "antd";
 import Image from "next/image";
 import VisaForm from "@/app/components/common/visaForm";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { FiHeart, FiShare2, FiCheckCircle, FiX, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiShare2, FiX, FiChevronLeft, FiChevronRight, FiCheck } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
 const countryToCode = {
@@ -22,6 +22,16 @@ const countryToCode = {
   "united kingdom": "gb",
   "turkey": "tr",
   "costa rica": "cr",
+  "india": "in",
+  "germany": "de",
+  "france": "fr",
+  "malaysia": "my",
+  "uae": "ae",
+  "united arab emirates": "ae",
+  "italy": "it",
+  "china": "cn",
+  "thailand": "th",
+  "singapore": "sg",
 };
 
 const VisaDetails = () => {
@@ -32,13 +42,14 @@ const VisaDetails = () => {
   const { id } = params;
   const [packages, getPackages] = useFetch(getAllPublicPackages, { limit: 3 }, false);
   const [currentIndex, setCurrentIndex] = useState(null);
+  const [copied, setCopied] = useState(false);
 
-  const countryName = data?.country?.toLowerCase() || "";
-  const countryCode = countryToCode[countryName] || "bd";
+  const countryName = data?.travelling_to?.toLowerCase() || "";
+  const countryCode = countryToCode[countryName] || "un";
+
   const [openDrawer, setOpenDrawer] = useState(false);
 
   const overviewRef = useRef(null);
-  const infoRef = useRef(null);
   const otherInfoRef = useRef(null);
   const faqRef = useRef(null);
   const reviewRef = useRef(null);
@@ -48,7 +59,6 @@ const VisaDetails = () => {
     getPackages();
   }, [id]);
 
-  // Image list for preview
   const allImages = useMemo(() => {
     const images = [];
     if (data?.banner_image) images.push(data.banner_image);
@@ -68,7 +78,6 @@ const VisaDetails = () => {
     setCurrentIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
   }, [allImages.length]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (currentIndex === null) return;
@@ -82,20 +91,25 @@ const VisaDetails = () => {
 
   const scrollToSection = (ref) => {
     if (ref.current) {
-      window.scrollTo({
-        top: ref.current.offsetTop - 100,
-        behavior: "smooth",
-      });
+      window.scrollTo({ top: ref.current.offsetTop - 100, behavior: "smooth" });
     }
   };
 
+  const handleShare = useCallback(() => {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    });
+  }, []);
+
   const visaStats = [
-    { label: "Visa Type", value: data?.title?.[langCode], img: "/theme1/visa/student.png" },
-    { label: "Language", value: data?.language, img: "/theme1/visa/lan.png" },
+    { label: "Visa Type", value: data?.visa_type?.name?.[langCode], img: "/theme1/visa/student.png" },
+    { label: "Travelling To", value: data?.travelling_to, img: "/theme1/visa/globe.png" },
+    { label: "Citizen Of", value: data?.citizen_of, img: "/theme1/visa/lan.png" },
     { label: "Validity", value: data?.validity, img: "/theme1/blog/watch.png" },
     { label: "Processing", value: data?.processing_type, img: "/theme1/visa/process.png" },
-    { label: "Mode", value: data?.visa_mode, img: "/theme1/visa/mode.png" },
-    { label: "Country", value: data?.country, img: "/theme1/visa/globe.png" },
+    // { label: "Mode", value: data?.visa_mode, img: "/theme1/visa/mode.png" },
   ];
 
   const totalPrice = data?.price?.amount || 0;
@@ -105,49 +119,52 @@ const VisaDetails = () => {
   const processingFee = totalPrice - (discountAmount || 0);
 
   const otherInfoDetails = [
+    { label: "Citizen Of", value: data?.citizen_of },
+    { label: "Travelling To", value: data?.travelling_to },
     { label: "Processing Time", value: data?.processing_type },
     { label: "Visa Mode", value: data?.visa_mode },
     { label: "Validity", value: data?.validity },
-    { label: "Country", value: data?.country },
+    ...(data?.documents || [])
+      .filter(doc => doc?.key?.en)
+      .map(doc => ({
+        label: doc.key.en,
+        value: doc.value?.en
+      }))
   ];
 
   return (
     <div className="min-h-screen pb-20 isolate">
-      {/* Image Preview Overlay (Like HotelDetails) */}
+      {/* Image Preview Overlay */}
       <AnimatePresence>
         {currentIndex !== null && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setCurrentIndex(null)}
             className="fixed inset-0 z-[999] bg-black/95 flex items-center justify-center p-4"
           >
-            <button 
+            <button
               className="absolute top-5 right-5 z-[1000] text-white bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all"
               onClick={() => setCurrentIndex(null)}
             >
               <FiX size={30} />
             </button>
-
             <button onClick={prevImage} className="absolute left-4 z-[1000] text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all">
               <FiChevronLeft size={40} />
             </button>
-
             <button onClick={nextImage} className="absolute right-4 z-[1000] text-white bg-white/10 p-3 rounded-full hover:bg-white/20 transition-all">
               <FiChevronRight size={40} />
             </button>
-
-            <motion.img 
+            <motion.img
               key={currentIndex}
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
-              src={allImages[currentIndex]} 
+              src={allImages[currentIndex]}
               className="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain pointer-events-none"
               alt="Preview"
             />
-
             <div className="absolute bottom-10 text-white bg-black/50 px-4 py-2 rounded-full text-sm">
               {currentIndex + 1} / {allImages.length}
             </div>
@@ -167,7 +184,7 @@ const VisaDetails = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-[#05073C] font-bold text-2xl md:text-3xl lg:text-4xl">
-                {data?.title?.[langCode] || `${data?.country} Visa`} From Bangladesh
+                {data?.title?.[langCode] || `${data?.travelling_to} Visa`} From {data?.citizen_of || "Bangladesh"}
               </h1>
               <div className="flex items-center gap-4 mt-3">
                 <div className="flex items-center gap-2 text-[#717171] text-sm">
@@ -179,27 +196,48 @@ const VisaDetails = () => {
                       height={14}
                       className="object-contain rounded-sm shadow-sm"
                     />
-                    <span className="font-medium uppercase">{data?.country}</span>
+                    <span className="font-medium uppercase">{data?.travelling_to}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 border-l pl-4">
-                  <Rate disabled defaultValue={4.5} className="text-xs text-orange-400" />
-                  <span className="text-sm text-gray-500">(120 Reviews)</span>
+                  <Rate disabled defaultValue={data?.rating?.average || 0} className="text-xs text-orange-400" />
+                  <span className="text-sm text-gray-500">
+                    {data?.rating?.count ? `(${data.rating.count} Reviews)` : "No Reviews Yet"}
+                  </span>
                 </div>
               </div>
             </div>
-            <div className="flex gap-3">
-              <button className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-red-50 hover:text-red-500 transition-all">
-                <FiHeart />
-              </button>
-              <button className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-blue-50 hover:text-blue-600 transition-all">
-                <FiShare2 />
-              </button>
+
+            {/* Share Button with Copied Feedback */}
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <button
+                  onClick={handleShare}
+                  title="Copy link"
+                  className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-blue-50 hover:text-blue-600 transition-all"
+                >
+                  {copied ? <FiCheck className="text-green-500" /> : <FiShare2 />}
+                </button>
+
+                <AnimatePresence>
+                  {copied && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 6, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 6, scale: 0.9 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 top-12 bg-gray-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg whitespace-nowrap shadow-lg z-50"
+                    >
+                      ✅ Link Copied!
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Dynamic Image Gallery */}
+        {/* Image Gallery */}
         <div className="travel-container pb-10">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-3 h-[250px] md:h-[420px] overflow-hidden rounded-2xl mb-6">
             <div className="md:col-span-3 md:row-span-2 h-full relative group overflow-hidden cursor-zoom-in" onClick={() => setCurrentIndex(0)}>
@@ -209,13 +247,12 @@ const VisaDetails = () => {
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
             </div>
-            {/* Sub Images */}
             {[0, 1, 2, 3].map((index) => (
               <div key={index} className="hidden md:block h-full relative group overflow-hidden rounded-xl cursor-zoom-in" onClick={() => setCurrentIndex(index + 1)}>
-                <img 
-                  src={data?.images?.[index] || data?.card_image || "/placeholder.jpg"} 
-                  alt={`Gallery Image ${index + 1}`} 
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                <img
+                  src={data?.images?.[index] || data?.card_image || "/placeholder.jpg"}
+                  alt={`Gallery Image ${index + 1}`}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 />
                 {index === 3 && data?.images?.length > 4 && (
                   <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white transition-all group-hover:bg-black/60">
@@ -230,32 +267,58 @@ const VisaDetails = () => {
           </div>
 
           <div className="bg-white rounded-3xl border border-gray-100 p-6 md:p-10 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.07)] transition-shadow duration-500">
-            <div className="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-8">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-y-8 gap-x-6 flex-grow">
+            <div className="flex flex-col lg:flex-row justify-between items-center gap-10">
+
+              {/* Left Side: Stats Grid */}
+              <div className="flex flex-wrap gap-y-8 gap-x-8 w-full lg:flex-1">
                 {visaStats.map((item, idx) => (
-                  <div key={idx} className="group flex items-center gap-4 border-r-0 md:border-r border-gray-50 last:border-0">
+                  <div
+                    key={idx}
+                    className="group flex items-center gap-4 pr-4 border-r-0 xl:border-r border-gray-100"
+                  >
                     <div className="relative w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-2xl bg-gray-50 group-hover:bg-blue-50 transition-colors duration-300">
-                      {idx === 0 && <div className="absolute inset-0 bg-blue-400/10 rounded-2xl animate-pulse"></div>}
-                      <Image src={item.img} alt={item.label} width={28} height={28} className="object-contain z-10 group-hover:scale-110 transition-transform duration-300" />
+                      {idx === 0 && (
+                        <div className="absolute inset-0 bg-blue-400/10 rounded-2xl animate-pulse"></div>
+                      )}
+                      <Image
+                        src={item.img}
+                        alt={item.label}
+                        width={28}
+                        height={28}
+                        className="object-contain z-10 group-hover:scale-110 transition-transform duration-300"
+                      />
                     </div>
+
                     <div className="flex flex-col">
-                      <span className="text-[12px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">{t(item.label)}</span>
-                      <span className="text-[17px] font-bold text-[#1e293b] leading-tight">{item.value || "N/A"}</span>
+                      <span className="text-[11px] md:text-[12px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
+                        {t(item.label)}
+                      </span>
+                      <span className="text-[15px] md:text-[16px] font-bold text-[#1e293b] leading-tight">
+                        {item.value || "N/A"}
+                      </span>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="w-full lg:w-auto flex items-center justify-center lg:justify-end lg:border-l lg:border-dashed lg:border-gray-200 lg:pl-12">
-                <div className="bg-[#f8fafc] px-6 py-4 rounded-2xl border border-gray-100 flex flex-col items-center lg:items-end">
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Processing Fee</span>
+
+              {/* Right Side: Price Section */}
+              <div className="w-full lg:w-auto flex-shrink-0 border-t lg:border-t-0 lg:border-l lg:border-dashed lg:border-gray-200 pt-6 lg:pt-0 lg:pl-10">
+                <div className="bg-[#f8fafc] px-8 py-5 rounded-2xl border border-gray-100 flex flex-col items-center lg:items-end min-w-[200px]">
+                  <span className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">
+                    Processing Fee
+                  </span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-[#0ea5e9] text-3xl font-black">৳ {processingFee.toLocaleString()}</span>
+                    <span className="text-[#0ea5e9] text-3xl font-black">
+                      ৳ {processingFee.toLocaleString()}
+                    </span>
                     <span className="text-gray-400 text-sm font-medium">/ person</span>
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
+
         </div>
       </div>
 
@@ -265,7 +328,6 @@ const VisaDetails = () => {
             <div className="sticky top-[90px] z-50 bg-white border-b flex gap-8 mb-8 overflow-x-auto no-scrollbar px-4 shadow-sm">
               {[
                 { label: "Details", ref: overviewRef },
-                { label: "Required Documents", ref: infoRef },
                 { label: "Other Information", ref: otherInfoRef },
                 { label: "FAQs", ref: faqRef },
                 { label: "Reviews", ref: reviewRef },
@@ -281,50 +343,34 @@ const VisaDetails = () => {
             </div>
 
             <div ref={overviewRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
-              <h2 className="text-2xl font-bold text-[#05073C] mb-5">Visa Overview</h2>
+              <h2 className="text-2xl font-bold text-[#05073C] mb-5">Details</h2>
               <div
                 className="text-[#717171] leading-relaxed text-[15px] space-y-4"
                 dangerouslySetInnerHTML={{ __html: data?.overview?.[langCode] }}
               />
             </div>
 
-            <div ref={infoRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
-              <h2 className="text-2xl font-bold text-[#05073C] mb-4">Required Documents</h2>
-              <p className="text-[#717171] mb-6">{data?.document_about?.[langCode]}</p>
-              <div className="grid grid-cols-1 gap-4">
-                {data?.documents?.map((doc, index) => (
-                  <div key={index} className="flex items-start gap-3 p-4 rounded-xl bg-[#F9FAFF] border border-blue-50">
-                    <FiCheckCircle className="text-primary mt-1 flex-shrink-0" />
-                    <div>
-                      <p className="font-bold text-[#05073C] text-sm mb-1">{doc?.key?.[langCode]}</p>
-                      <p className="text-gray-500 text-xs leading-relaxed">{doc?.value?.[langCode]}</p>
-                    </div>
-                  </div>
-                ))}
+            <div ref={otherInfoRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
+              <h2 className="text-2xl font-bold text-[#05073C] mb-6">Other Information</h2>
+              <div className="text-[#717171] text-[15px] leading-relaxed mb-6">
+                Applying for a <span className="font-bold">{data?.travelling_to} {data?.title?.[langCode]}</span> is simple and hassle-free with a trusted visa processing agency in {data?.citizen_of || "Bangladesh"}. We provide professional assistance with document preparation.
               </div>
 
-              <div ref={otherInfoRef} className="mt-12">
-                <h2 className="text-2xl font-bold text-[#05073C] mb-6">Other Information</h2>
-                <div className="text-[#717171] text-[15px] leading-relaxed mb-6">
-                  Applying for a <span className="font-bold">{data?.country} {data?.title?.[langCode]}</span> is simple and hassle-free with a trusted visa processing agency in Bangladesh. We provide professional assistance with document preparation.
-                </div>
-
-                <div className="overflow-hidden border border-gray-200 rounded-xl">
-                  <table className="w-full text-left border-collapse">
-                    <tbody>
-                      {otherInfoDetails.filter(info => info.value).map((info, index) => (
-                        <tr key={index} className="border-b border-gray-200 last:border-0 hover:bg-gray-50 transition-colors">
-                          <td className="py-4 px-6 font-bold text-[#05073C] text-[15px] w-1/3 border-r border-gray-200 bg-gray-50/50">
-                            {info.label}
-                          </td>
-                          <td className="py-4 px-6 text-gray-600 text-[15px]">
-                            {info.value}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+              <div className="overflow-hidden border border-gray-200 rounded-xl">
+                <table className="w-full text-left border-collapse">
+                  <tbody>
+                    {otherInfoDetails.filter(info => info.value).map((info, index) => (
+                      <tr key={index} className="border-b border-gray-200 last:border-0 hover:bg-gray-50 transition-colors">
+                        <td className="py-4 px-6 font-bold text-[#05073C] text-[15px] w-1/3 border-r border-gray-200 bg-gray-50/50">
+                          {info.label}
+                        </td>
+                        <td className="py-4 px-6 text-gray-600 text-[15px]">
+                          {info.value}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -375,7 +421,6 @@ const VisaDetails = () => {
                 </div>
               </div>
 
-              {/* Suggestions Section */}
               <div className="space-y-6 mb-6">
                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                   <div className="flex items-center gap-2 mb-5">

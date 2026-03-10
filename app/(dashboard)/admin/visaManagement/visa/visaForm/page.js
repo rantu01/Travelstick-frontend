@@ -18,6 +18,29 @@ import Button from "@/app/(dashboard)/components/common/button";
 import { noSelected } from "@/app/helper/utils";
 import { useRouter } from "next/navigation";
 import { FaTrash } from "react-icons/fa6";
+import { countries } from "countries-list";
+
+// ─── Build country options once (sorted A→Z) with flagcdn.com images ──────────
+const countryOptions = Object.entries(countries)
+  .map(([code, country]) => ({
+    value: code.toLowerCase(),
+    label: (
+      <div className="flex items-center gap-2">
+        <img
+          src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`}
+          alt={country.name}
+          width={22}
+          height={15}
+          style={{ objectFit: "cover", borderRadius: 2, flexShrink: 0 }}
+          onError={(e) => { e.target.style.display = "none"; }}
+        />
+        <span>{country.name}</span>
+      </div>
+    ),
+    searchLabel: country.name.toLowerCase(),
+  }))
+  .sort((a, b) => a.searchLabel.localeCompare(b.searchLabel));
+// ──────────────────────────────────────────────────────────────────────────────
 
 const VisaForm = ({ isEdit = false, data }) => {
   const router = useRouter();
@@ -27,143 +50,93 @@ const VisaForm = ({ isEdit = false, data }) => {
   let { languages, langCode } = useI18n();
   const [selectedLang, setSelectedLang] = useState(langCode);
   const [submitLoading, setSubmitLoading] = useState(false);
+
   useEffect(() => {
     setSelectedLang(langCode);
   }, [langCode]);
+
   useEffect(() => {
     if (isEdit && data) {
       form.resetFields();
       form.setFieldsValue({
         ...data,
-        // 1. Banner Image
+        citizen_of: data?.citizen_of || null,
+        travelling_to: data?.travelling_to || null,
         banner_image: data?.banner_image
-          ? [
-            {
-              uid: "-1",
-              name: "image",
-              status: "done",
-              url: data.banner_image,
-            },
-          ]
+          ? [{ uid: "-1", name: "image", status: "done", url: data.banner_image }]
           : [],
-
-        // 2. Card Image
         card_image: data?.card_image
-          ? [
-            {
-              uid: "-2",
-              name: "card.png",
-              status: "done",
-              url: data.card_image,
-            },
-          ]
+          ? [{ uid: "-2", name: "card.png", status: "done", url: data.card_image }]
           : [],
-
-        // 3. Multiple Images
         images: Array.isArray(data?.images)
           ? data.images.map((url, index) => ({
-            uid: String(index),
-            name: `image-${index}.png`,
-            status: "done",
-            url,
-          }))
+              uid: String(index),
+              name: `image-${index}.png`,
+              status: "done",
+              url,
+            }))
           : [],
-
-        // 4. Title (multilingual)
         title: data?.title || {},
-
-        // 5. Visa Type
         visa_type: data?.visa_type?._id || null,
-
-        // 6. Language, Validity, Mode, Country
-        language: data?.language,
         validity: data?.validity,
         processing_type: data?.processing_type,
         visa_mode: data?.visa_mode,
         country: data?.country,
-
-        // 7. Price
         price: {
           amount: data?.price?.amount,
           discount_type: data?.price?.discount_type,
           discount: data?.price?.discount,
         },
-
-        // 8. Overview (multilingual rich text)
         overview: data?.overview || {},
-
-        // 9. Document About (multilingual)
         document_about: data?.document_about || {},
-
-        // New Metadata (multilingual)
-        continent: data?.continent || {},
-        capital: data?.capital || {},
-        official_language: data?.official_language || {},
-        currency: data?.currency || {},
-        local_time: data?.local_time || {},
-        exchange_rate: data?.exchange_rate || {},
-        weekend_days: data?.weekend_days || {},
-        population: data?.population || {},
-        area: data?.area || {},
-        education: data?.education || {},
-        religion: data?.religion || {},
-        embassy_address: data?.embassy_address || {},
-
-        // New Metadata (single)
-        dialing_code: data?.dialing_code,
         apply_fee: data?.apply_fee,
-
-        // 10. Documents (multi-language key-value)
         documents: Array.isArray(data?.documents)
-          ? data.documents.map((item) => ({
-            key: item.key,
-            value: item.value,
-          }))
+          ? data.documents.map((item) => ({ key: item.key, value: item.value }))
           : [],
-
-        // 11. Features (called `feathers` in your data)
         feathers: Array.isArray(data?.feathers)
           ? data.feathers.map((item, index) => ({
-            ...item,
-            logo: item?.logo
-              ? [
-                {
-                  uid: `${index}`,
-                  name: `feather-logo-${index}.png`,
-                  status: "done",
-                  url: item.logo,
-                },
-              ]
-              : [],
-          }))
+              ...item,
+              logo: item?.logo
+                ? [
+                    {
+                      uid: `${index}`,
+                      name: `feather-logo-${index}.png`,
+                      status: "done",
+                      url: item.logo,
+                    },
+                  ]
+                : [],
+            }))
           : [],
-
-        // 12. FAQs
         faqs: Array.isArray(data?.faqs)
           ? data.faqs.map((item) => ({
-            heading: item.heading,
-            description: item.description,
-          }))
+              heading: item.heading,
+              description: item.description,
+            }))
           : [],
       });
     }
   }, [data, form, isEdit]);
+
   return (
     <div className="">
+      {/* ── Language Switcher ── */}
       <div className="flex justify-start flex-wrap gap-3 mt-4">
         {languages?.map((l) => (
           <button
             key={l.code}
             onClick={() => setSelectedLang(l.code)}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${l.code === selectedLang
-              ? "bg-primary text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
+              l.code === selectedLang
+                ? "bg-primary text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+            }`}
           >
             {l.name}
           </button>
         ))}
       </div>
+
       <Form
         form={form}
         layout="vertical"
@@ -190,10 +163,10 @@ const VisaForm = ({ isEdit = false, data }) => {
           } else {
             cardImageUrl = values?.card_image?.[0]?.url || "";
           }
+
           const feathersData = await Promise.all(
             (values?.feathers || []).map(async (feather) => {
               let logo = "";
-
               if (feather?.logo?.[0]?.originFileObj) {
                 const { data } = await singleImageUpload({
                   image: feather.logo[0].originFileObj,
@@ -203,21 +176,15 @@ const VisaForm = ({ isEdit = false, data }) => {
               } else {
                 logo = feather?.logo?.[0]?.url || "";
               }
-
               const text = {};
               languages?.forEach((lang) => {
                 text[lang.code] = feather?.text?.[lang.code] || "";
               });
-
-              return {
-                logo,
-                text,
-              };
+              return { logo, text };
             })
           );
 
           let images = [];
-
           if (values?.images?.length > 0) {
             const uploadPromises = values.images.map(async (file) => {
               if (!file.url) {
@@ -228,7 +195,6 @@ const VisaForm = ({ isEdit = false, data }) => {
               }
               return file.url;
             });
-
             images = await Promise.all(uploadPromises);
           }
 
@@ -255,27 +221,17 @@ const VisaForm = ({ isEdit = false, data }) => {
         className="mt-2"
       >
         {isEdit && <HiddenInput name="_id" />}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5 ">
-          <MultipleImageInput
-            label="Banner Image"
-            name="banner_image"
-            required
-          />
+
+        {/* ── Images ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <MultipleImageInput label="Banner Image" name="banner_image" required />
           <MultipleImageInput label="Card Image" name="card_image" required />
         </div>
-        <MultipleImageInput
-          name="images"
-          label="visa Images"
-          required
-          max={12}
-        />
+        <MultipleImageInput name="images" label="Visa Images" required max={12} />
+
+        {/* ── Language-specific fields ── */}
         {languages?.map((l) => (
-          <div
-            key={l.code}
-            style={{
-              display: l.code === selectedLang ? "block" : "none",
-            }}
-          >
+          <div key={l.code} style={{ display: l.code === selectedLang ? "block" : "none" }}>
             <FormInput
               label="Visa Title"
               name={["title", l.code]}
@@ -293,6 +249,8 @@ const VisaForm = ({ isEdit = false, data }) => {
                 form.setFieldValue(["overview", l.code], newDescription)
               }
             />
+
+            {/* ── Visa Type ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
               <FormSelect
                 label={i18n.t("Visa Type")}
@@ -305,32 +263,43 @@ const VisaForm = ({ isEdit = false, data }) => {
                   value: visa?._id,
                 }))}
               />
+            </div>
+
+            {/* ── Citizen of / Travelling to — World Countries with Flags ── */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
               <FormSelect
-                label="Country"
-                name="country"
+                label={i18n.t("Citizen of")}
+                name="citizen_of"
+                placeholder={i18n.t("Select Citizen Country")}
                 required
-                className="w-full rounded bg-transparent py-6 px-2 dashinput "
-                placeholder={i18n.t("Select Country")}
-                options={[
-                  { value: "usa", label: "United States" },
-                  { value: "uk", label: "United Kingdom" },
-                  { value: "uae", label: "United Arab Emirates" },
-                  { value: "canada", label: "Canada" },
-                  { value: "germany", label: "Germany" },
-                  { value: "australia", label: "Australia" },
-                  { value: "malaysia", label: "Malaysia" },
-                  { value: "turkey", label: "Turkey" },
-                  { value: "italy", label: "Italy" },
-                  { value: "japan", label: "Japan" },
-                ]}
+                showSearch
+                filterOption={(input, option) =>
+                  option?.searchLabel?.includes(input.toLowerCase())
+                }
+                className="!w-full rounded bg-transparent py-6 px-2 dashinput"
+                options={countryOptions}
+              />
+              <FormSelect
+                label={i18n.t("Travelling to")}
+                name="travelling_to"
+                placeholder={i18n.t("Select Destination")}
+                required
+                showSearch
+                filterOption={(input, option) =>
+                  option?.searchLabel?.includes(input.toLowerCase())
+                }
+                className="!w-full rounded bg-transparent py-6 px-2 dashinput"
+                options={countryOptions}
               />
             </div>
+
+            {/* ── Validity & Processing Time ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
               <FormInput
                 label="Validity"
                 name="validity"
                 required
-                type={"text"}
+                type="text"
                 className="w-full rounded bg-transparent p-3 dashinput"
                 placeholder={i18n.t("eg. 6 months")}
               />
@@ -338,47 +307,12 @@ const VisaForm = ({ isEdit = false, data }) => {
                 label="Processing Time"
                 name="processing_type"
                 required
-                type={"text"}
+                type="text"
                 className="w-full rounded bg-transparent p-3 dashinput"
                 placeholder={i18n.t("eg. 6-8 days")}
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-              {/* Popular Languages */}
-              <FormSelect
-                label={i18n.t("Select Language")}
-                name="language"
-                placeholder={i18n.t("Select Language")}
-                required
-                className="w-full rounded bg-transparent py-6 px-2 dashinput "
-                options={[
-                  { value: "english", label: "English" },
-                  { value: "arabic", label: "Arabic" },
-                  { value: "hindi", label: "Hindi" },
-                  { value: "spanish", label: "Spanish" },
-                  { value: "french", label: "French" },
-                  { value: "chinese", label: "Chinese" },
-                  { value: "bengali", label: "Bengali" },
-                  { value: "russian", label: "Russian" },
-                  { value: "portuguese", label: "Portuguese" },
-                  { value: "urdu", label: "Urdu" },
-                ]}
-              />
-
-              {/* Visa Mode */}
-              <FormSelect
-                label={i18n.t("Visa Mode")}
-                name="visa_mode"
-                placeholder={i18n.t("Select Visa Mode")}
-                required
-                className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
-                options={[
-                  { value: "B2B", label: "B2B" },
-                  { value: "B2C", label: "B2C" },
-                ]}
-              />
-            </div>
             <FormInput
               label="Document about"
               name={["document_about", l.code]}
@@ -387,99 +321,11 @@ const VisaForm = ({ isEdit = false, data }) => {
               className="!w-full rounded bg-transparent p-3 dashinput"
               placeholder={i18n.t("Document about")}
             />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-              <FormInput
-                label="Continent"
-                name={["continent", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Continent")}
-              />
-              <FormInput
-                label="Capital"
-                name={["capital", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Capital")}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-              <FormInput
-                label="Official Language"
-                name={["official_language", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Official Language")}
-              />
-              <FormInput
-                label="Currency"
-                name={["currency", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Currency")}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-              <FormInput
-                label="Local Time"
-                name={["local_time", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Local Time")}
-              />
-              <FormInput
-                label="Exchange Rate"
-                name={["exchange_rate", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Exchange Rate")}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-              <FormInput
-                label="Weekend Days"
-                name={["weekend_days", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Weekend Days")}
-              />
-              <FormInput
-                label="Population"
-                name={["population", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Population")}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-              <FormInput
-                label="Area"
-                name={["area", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Area")}
-              />
-              <FormInput
-                label="Education"
-                name={["education", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Education")}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-              <FormInput
-                label="Religion"
-                name={["religion", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Religion")}
-              />
-              <FormInput
-                label="Embassy Address"
-                name={["embassy_address", l.code]}
-                className="!w-full rounded bg-transparent p-3 dashinput"
-                placeholder={i18n.t("Embassy Address")}
-              />
-            </div>
           </div>
         ))}
+
+        {/* ── Apply Fee ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-          <FormInput
-            label="Dialing Code"
-            name="dialing_code"
-            className="!w-full rounded bg-transparent p-3 dashinput"
-            placeholder={i18n.t("Dialing Code")}
-          />
           <FormInput
             label="Apply Online Fee"
             name="apply_fee"
@@ -489,6 +335,8 @@ const VisaForm = ({ isEdit = false, data }) => {
             placeholder={i18n.t("Apply Online Fee")}
           />
         </div>
+
+        {/* ── Features ── */}
         <div className="mt-6 border rounded-md p-3">
           <h3 className="description-2 mb-2">Features</h3>
           <Form.List name="feathers" initialValue={[{ text: {} }]}>
@@ -497,18 +345,14 @@ const VisaForm = ({ isEdit = false, data }) => {
                 <div className="flex flex-wrap gap-4">
                   {fields.map(({ key, name: fieldName }, index) => (
                     <div key={key} className="w-full md:w-[48%] rounded">
-                      {/* Multilingual Texts */}
                       {languages?.map((l) => (
                         <div
                           key={l.code}
-                          style={{
-                            display: l.code === selectedLang ? "block" : "none",
-                          }}
+                          style={{ display: l.code === selectedLang ? "block" : "none" }}
                         >
-                          {/* Single Image Logo */}
                           <MultipleImageInput
                             label="Features Image"
-                            name={[fieldName, "logo"]} // Use the correct field name here {'logo'}
+                            name={[fieldName, "logo"]}
                             required
                           />
                           <FormInput
@@ -521,8 +365,6 @@ const VisaForm = ({ isEdit = false, data }) => {
                           />
                         </div>
                       ))}
-
-                      {/* Remove Button */}
                       <div className="text-right mt-3">
                         {fields.length > 1 && (
                           <button
@@ -537,7 +379,6 @@ const VisaForm = ({ isEdit = false, data }) => {
                     </div>
                   ))}
                 </div>
-
                 <button
                   type="button"
                   onClick={() => add({ text: {}, logo: "" })}
@@ -550,6 +391,7 @@ const VisaForm = ({ isEdit = false, data }) => {
           </Form.List>
         </div>
 
+        {/* ── Price ── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
           <FormInput
             label={i18n.t("Price")}
@@ -581,7 +423,8 @@ const VisaForm = ({ isEdit = false, data }) => {
             placeholder={i18n.t("Discount Amount")}
           />
         </div>
-        {/* Documents */}
+
+        {/* ── Documents ── */}
         <div className="mt-6 border rounded-md p-3">
           <h3 className="description-2 mb-2">Documents</h3>
           <Form.List name="documents" initialValue={[{ key: {}, value: {} }]}>
@@ -593,24 +436,20 @@ const VisaForm = ({ isEdit = false, data }) => {
                       {languages?.map((l) => (
                         <div
                           key={l.code}
-                          style={{
-                            display: l.code === selectedLang ? "block" : "none",
-                          }}
+                          style={{ display: l.code === selectedLang ? "block" : "none" }}
                         >
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {/* Key field */}
                             <FormInput
                               name={[fieldName, "key", l.code]}
-                              placeholder={`Key`}
+                              placeholder="Key"
                               type="text"
                               required
                               className="!w-full rounded bg-transparent p-3 dashinput"
                               label={`Key ${index + 1}`}
                             />
-                            {/* Value field */}
                             <FormInput
                               name={[fieldName, "value", l.code]}
-                              placeholder={`Value`}
+                              placeholder="Value"
                               type="text"
                               required
                               className="!w-full rounded bg-transparent p-3 dashinput"
@@ -619,8 +458,6 @@ const VisaForm = ({ isEdit = false, data }) => {
                           </div>
                         </div>
                       ))}
-
-                      {/* Remove Button */}
                       <div className="text-right mt-3">
                         {fields.length > 1 && (
                           <button
@@ -635,8 +472,6 @@ const VisaForm = ({ isEdit = false, data }) => {
                     </div>
                   ))}
                 </div>
-
-                {/* Add Button */}
                 <button
                   type="button"
                   onClick={() => add({ key: {}, value: {} })}
@@ -649,14 +484,10 @@ const VisaForm = ({ isEdit = false, data }) => {
           </Form.List>
         </div>
 
-        {/* Faq */}
-        {/* FAQs Section */}
+        {/* ── FAQs ── */}
         <div className="mt-6 border rounded-md p-3">
           <h3 className="description-2 mb-2">FAQs</h3>
-          <Form.List
-            name="faqs"
-            initialValue={[{ heading: {}, description: {} }]}
-          >
+          <Form.List name="faqs" initialValue={[{ heading: {}, description: {} }]}>
             {(fields, { add, remove }) => (
               <div className="mt-4">
                 <div className="flex flex-wrap gap-4">
@@ -665,14 +496,12 @@ const VisaForm = ({ isEdit = false, data }) => {
                       {languages?.map((l) => (
                         <div
                           key={l.code}
-                          style={{
-                            display: l.code === selectedLang ? "block" : "none",
-                          }}
+                          style={{ display: l.code === selectedLang ? "block" : "none" }}
                         >
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormInput
                               name={[fieldName, "heading", l.code]}
-                              placeholder={`FAQ Heading`}
+                              placeholder="FAQ Heading"
                               type="text"
                               required
                               className="!w-full rounded bg-transparent p-3 dashinput"
@@ -680,7 +509,7 @@ const VisaForm = ({ isEdit = false, data }) => {
                             />
                             <FormInput
                               name={[fieldName, "description", l.code]}
-                              placeholder={`FAQ Description`}
+                              placeholder="FAQ Description"
                               type="text"
                               required
                               className="!w-full rounded bg-transparent p-3 dashinput"
@@ -689,8 +518,6 @@ const VisaForm = ({ isEdit = false, data }) => {
                           </div>
                         </div>
                       ))}
-
-                      {/* Remove FAQ */}
                       <div className="text-right mt-3">
                         {fields.length > 1 && (
                           <button
@@ -705,8 +532,6 @@ const VisaForm = ({ isEdit = false, data }) => {
                     </div>
                   ))}
                 </div>
-
-                {/* Add FAQ */}
                 <button
                   type="button"
                   onClick={() => add({ heading: {}, description: {} })}
