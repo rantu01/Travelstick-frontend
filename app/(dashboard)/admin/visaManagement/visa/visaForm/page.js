@@ -402,7 +402,7 @@ const VisaForm = ({ isEdit = false, data }) => {
         ))}
 
         {/* ── Apply Fee ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
           <FormInput
             label="Apply Online Fee"
             name="apply_fee"
@@ -411,7 +411,7 @@ const VisaForm = ({ isEdit = false, data }) => {
             className="!w-full rounded bg-transparent p-3 dashinput"
             placeholder={i18n.t("Apply Online Fee")}
           />
-        </div>
+        </div> */}
 
         {/* ── Features ── */}
         <div className="mt-6 border rounded-md p-3">
