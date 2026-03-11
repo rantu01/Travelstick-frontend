@@ -55,24 +55,21 @@ const HeroFilters = () => {
   const router = useRouter();
 
   const [tab, setTab] = useState("flight");
-  const [tripType, setTripType] = useState("Round Trip");
+  const [tripType, setTripType] = useState("One Way");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [destination, setDestination] = useState("Dhaka, Bangladesh");
   const [fromLocation, setFromLocation] = useState("Dhaka");
   const [toLocation, setToLocation] = useState("Cox's Bazar");
 
-  // ✅ Visa states
   const [citizenOf, setCitizenOf] = useState(null);
   const [travellingTo, setTravellingTo] = useState(null);
   const [visaCategory, setVisaCategory] = useState(null);
 
-  // ✅ Dependent dropdown options
   const [travellingToOptions, setTravellingToOptions] = useState([]);
   const [visaCategoryOptions, setVisaCategoryOptions] = useState([]);
   const [matchedVisaId, setMatchedVisaId] = useState(null);
 
-  // ✅ Loading states for dependent dropdowns
   const [loadingTravellingTo, setLoadingTravellingTo] = useState(false);
   const [loadingVisaCategory, setLoadingVisaCategory] = useState(false);
   const [visaSearching, setVisaSearching] = useState(false);
@@ -93,13 +90,11 @@ const HeroFilters = () => {
 
   const [filterData] = useFetch(getHeroFilterData);
 
-  // ✅ Step 1: citizen_of এর সব unique options (filterData থেকে)
   const visaCitizenOptions =
     filterData?.find(f => f.key === "visa_citizen_of")?.values?.map(v => v.name) ||
     filterData?.find(f => f.key === "visa_country")?.values?.map(v => v.name) ||
     [];
 
-  // ✅ Step 2: citizenOf select হলে → সেই citizen_of এর matching travelling_to fetch করো
   useEffect(() => {
     if (!citizenOf) {
       setTravellingTo(null);
@@ -119,7 +114,6 @@ const HeroFilters = () => {
       try {
         const { data } = await getAllPublicVisa({ citizen_of: citizenOf, limit: 100 });
         const docs = data?.docs || [];
-        // unique travelling_to values
         const unique = [...new Set(docs.map(v => v.travelling_to).filter(Boolean))];
         setTravellingToOptions(unique);
       } catch {
@@ -132,7 +126,6 @@ const HeroFilters = () => {
     fetchTravellingTo();
   }, [citizenOf]);
 
-  // ✅ Step 3: travellingTo select হলে → matching visa_type (category) fetch করো
   useEffect(() => {
     if (!citizenOf || !travellingTo) {
       setVisaCategory(null);
@@ -153,7 +146,6 @@ const HeroFilters = () => {
         });
         const docs = data?.docs || [];
 
-        // visa type name + _id map
         const seen = new Map();
         docs.forEach(v => {
           if (v.visa_type?._id && !seen.has(v.visa_type._id)) {
@@ -171,7 +163,6 @@ const HeroFilters = () => {
 
         setVisaCategoryOptions(options);
 
-        // যদি শুধু একটাই visa থাকে auto-match করো
         if (docs.length === 1) {
           setMatchedVisaId(docs[0]._id);
         }
@@ -192,7 +183,6 @@ const HeroFilters = () => {
     setOpenPopover(null);
   };
 
-  // ✅ Visa Category select হলে সেই visa এর _id সেট করো
   const handleVisaCategorySelect = (option) => {
     setVisaCategory(option.label);
     setMatchedVisaId(option.visaId);
@@ -250,7 +240,6 @@ const HeroFilters = () => {
     }
   };
 
-  // ✅ Search: matchedVisaId থাকলে সরাসরি details page এ যাবে
   const handleSearch = async () => {
     const query = new URLSearchParams();
 
@@ -269,13 +258,10 @@ const HeroFilters = () => {
       router.push(`/package?${query.toString()}`);
 
     } else if (tab === "visa") {
-      // ✅ তিনটা field সব select হলে এবং matchedVisaId থাকলে details এ যাবে
       if (citizenOf && travellingTo && visaCategory && matchedVisaId) {
         router.push(`/visa/${matchedVisaId}`);
         return;
       }
-
-      // তিনটা না হলে list page এ যাবে filters সহ
       if (citizenOf) query.append("citizen_of", citizenOf);
       if (travellingTo) query.append("travelling_to", travellingTo);
       router.push(`/visa?${query.toString()}`);
@@ -311,8 +297,29 @@ const HeroFilters = () => {
     { id: "visa", label: "Visa", icon: <Image src="/Header Icon/4.png" width={40} height={40} alt="Visa" /> },
   ];
 
+  // ── [FIX 2] Multi City: Traveller/Class একবার উপরে, প্রতিটি row-এ আর নেই ──
   const renderMultiCity = () => (
     <div className="flex flex-col gap-3">
+      {/* Shared Traveller & Class — একবারই দেখাবে */}
+      <div className="border rounded-xl p-4 hover:bg-gray-50 bg-white w-full md:w-fit">
+        <Popover
+          open={openPopover === "multi-guests"}
+          onOpenChange={(v) => setOpenPopover(v ? "multi-guests" : null)}
+          content={guestContent}
+          trigger="click"
+          placement="bottomLeft"
+        >
+          <div className="cursor-pointer">
+            <p className="text-[11px] text-gray-400 font-bold">Traveller, Class</p>
+            <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">
+              {adults} Adult{adults > 1 ? "s" : ""}, {children} Child{children > 1 ? "ren" : ""}, {infants} Infant{infants > 1 ? "s" : ""}
+            </h4>
+            <p className="text-[10px] text-gray-400">{bookingClass}</p>
+          </div>
+        </Popover>
+      </div>
+
+      {/* Flight rows — guest selector নেই (hideGuest=true) */}
       {multiCityFlights.map((flight, index) => (
         <MultiCityRow
           key={index} flight={flight} index={index}
@@ -324,10 +331,13 @@ const HeroFilters = () => {
           adults={adults} children={children} childrenAges={childrenAges}
           infants={infants} bookingClass={bookingClass}
           disabledDate={disabledDate} dateRender={dateRender}
-          guestContent={guestContent} filterData={filterData}
+          guestContent={null}
+          filterData={filterData}
           langCode={i18n.langCode}
+          hideGuest={true}
         />
       ))}
+
       <div className="flex items-center justify-between mt-1">
         {multiCityFlights.length < 5 ? (
           <button
@@ -416,7 +426,6 @@ const HeroFilters = () => {
               </>
             ) : tab === "visa" ? (
               <>
-                {/* ✅ Step 1: Citizen of */}
                 <div className="md:col-span-4 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
                   <Popover
                     open={openPopover === "visa-cit"}
@@ -437,8 +446,6 @@ const HeroFilters = () => {
                     </div>
                   </Popover>
                 </div>
-
-                {/* ✅ Step 2: Travelling to - citizenOf select হওয়ার পর enable হবে */}
                 <div className={`md:col-span-4 border rounded-xl p-4 bg-white ${!citizenOf ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 cursor-pointer"}`}>
                   <Popover
                     open={citizenOf ? openPopover === "visa-to" : false}
@@ -463,8 +470,6 @@ const HeroFilters = () => {
                     </div>
                   </Popover>
                 </div>
-
-                {/* ✅ Step 3: Visa Category - travellingTo select হওয়ার পর enable হবে */}
                 <div className={`md:col-span-3 border rounded-xl p-4 bg-white ${!travellingTo ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 cursor-pointer"}`}>
                   <Popover
                     open={travellingTo ? openPopover === "visa-cat" : false}
@@ -509,6 +514,7 @@ const HeroFilters = () => {
                 </div>
               </>
             ) : (
+              // ── Flight (One Way / Round Trip) ──
               <>
                 <div className="md:col-span-2 border rounded-xl p-4 hover:bg-gray-50 relative cursor-pointer bg-white">
                   <Popover open={openPopover === "flight-from"} onOpenChange={(v) => setOpenPopover(v ? "flight-from" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setFromLocation, v)} />} trigger="click" placement="bottomLeft">
@@ -519,7 +525,7 @@ const HeroFilters = () => {
                     </div>
                   </Popover>
                   <div onClick={handleSwapLocations} className="absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors">
-                    <FaExchangeAlt size={16} className="rotate-90 md:rotate-0" />
+                    <FaExchangeAlt size={20} className="rotate-90 md:rotate-0" />
                   </div>
                 </div>
                 <div className="md:col-span-2 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
@@ -536,19 +542,22 @@ const HeroFilters = () => {
                   <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
                   <p className="text-[10px] text-gray-400">{startDate ? startDate.format("dddd") : ""}</p>
                 </div>
-                <div className={`md:col-span-2 border rounded-xl p-4 group bg-white ${tripType === "One Way" ? "opacity-50 cursor-not-allowed pointer-events-none" : "hover:bg-gray-50"}`}>
-                  <p className="text-[11px] text-gray-400 font-bold">Return</p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <DatePicker onChange={(d) => setEndDate(d)} placeholder={tripType === "One Way" ? "N/A" : "Select date"} disabledDate={disabledDate} variant="borderless" disabled={tripType === "One Way"} className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={tripType === "One Way" ? null : endDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
-                      <p className="text-[10px] text-gray-400">{endDate && tripType !== "One Way" ? endDate.format("dddd") : ""}</p>
-                    </div>
-                    {tripType !== "One Way" && (
+
+                {/* ── [FIX 1] Return: শুধু Round Trip এ দেখাবে, One Way তে সম্পূর্ণ hidden ── */}
+                {tripType === "Round Trip" && (
+                  <div className="md:col-span-2 border rounded-xl p-4 hover:bg-gray-50 bg-white">
+                    <p className="text-[11px] text-gray-400 font-bold">Return</p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
+                        <p className="text-[10px] text-gray-400">{endDate ? endDate.format("dddd") : ""}</p>
+                      </div>
                       <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
-                    )}
+                    </div>
                   </div>
-                </div>
-                <div className="md:col-span-3 border rounded-xl p-4 hover:bg-gray-50 bg-white">
+                )}
+
+                <div className={`${tripType === "Round Trip" ? "md:col-span-3" : "md:col-span-5"} border rounded-xl p-4 hover:bg-gray-50 bg-white`}>
                   <Popover open={openPopover === "flight-guests"} onOpenChange={(v) => setOpenPopover(v ? "flight-guests" : null)} content={guestContent} trigger="click" placement="bottomRight">
                     <div className="cursor-pointer">
                       <p className="text-[11px] text-gray-400 font-bold">Traveller, Class</p>

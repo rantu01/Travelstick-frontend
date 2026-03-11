@@ -44,6 +44,7 @@ import {
   FaClipboardList,
   FaGlobe,
   FaHotel,
+  FaKaaba,
   FaRegCalendarCheck,
 } from "react-icons/fa6";
 import { fetchPublicSettings, getUser } from "@/app/helper/backend";
@@ -137,7 +138,7 @@ const menu = [
     icon: <FaUsers />,
     permission: "hrm",
   },
-    {
+  {
     label: "Advertisement",
     href: "/admin/advertisement",
     icon: <FaUsers />,
@@ -237,6 +238,18 @@ const menu = [
       {
         label: "Visa Inquery",
         href: "/admin/visaManagement/inquery",
+        icon: <TbBrandGoogleBigQuery />,
+      },
+    ],
+  },
+  {
+    label: "Umrah Management",
+    icon: <FaKaaba />,  // নিচে দেখো icon এর কথা
+    permission: "umrah",
+    child: [
+      {
+        label: "Inquiries",
+        href: "/admin/umrahManagement/inquiry",
         icon: <TbBrandGoogleBigQuery />,
       },
     ],

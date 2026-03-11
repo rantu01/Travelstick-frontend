@@ -32,7 +32,9 @@ const countryOptions = Object.entries(countries)
           width={22}
           height={15}
           style={{ objectFit: "cover", borderRadius: 2, flexShrink: 0 }}
-          onError={(e) => { e.target.style.display = "none"; }}
+          onError={(e) => {
+            e.target.style.display = "none";
+          }}
         />
         <span>{country.name}</span>
       </div>
@@ -40,6 +42,28 @@ const countryOptions = Object.entries(countries)
     searchLabel: country.name.toLowerCase(),
   }))
   .sort((a, b) => a.searchLabel.localeCompare(b.searchLabel));
+// ──────────────────────────────────────────────────────────────────────────────
+
+// ─── Entry Type options ───────────────────────────────────────────────────────
+const entryTypeOptions = [
+  { value: "single", label: "Single Entry" },
+  { value: "double", label: "Double Entry" },
+  { value: "multiple", label: "Multiple Entry" },
+];
+
+// ─── Visa Category options ────────────────────────────────────────────────────
+const visaCategoryOptions = [
+  { value: "tourist", label: "Tourist" },
+  { value: "business", label: "Business" },
+  { value: "student", label: "Student" },
+  { value: "work", label: "Work" },
+  { value: "transit", label: "Transit" },
+  { value: "medical", label: "Medical" },
+  { value: "family", label: "Family / Dependent" },
+  { value: "investor", label: "Investor" },
+  { value: "diplomatic", label: "Diplomatic" },
+  { value: "other", label: "Other" },
+];
 // ──────────────────────────────────────────────────────────────────────────────
 
 const VisaForm = ({ isEdit = false, data }) => {
@@ -82,6 +106,10 @@ const VisaForm = ({ isEdit = false, data }) => {
         processing_type: data?.processing_type,
         visa_mode: data?.visa_mode,
         country: data?.country,
+        visa_code: data?.visa_code || "",
+        max_stay_days: data?.max_stay_days || null,
+        entry_type: data?.entry_type || null,
+        visa_category: data?.visa_category || null,
         price: {
           amount: data?.price?.amount,
           discount_type: data?.price?.discount_type,
@@ -141,82 +169,87 @@ const VisaForm = ({ isEdit = false, data }) => {
         form={form}
         layout="vertical"
         onFinish={async (values) => {
-          let bannerImageUrl = "";
-          let cardImageUrl = "";
-
-          if (values?.banner_image?.[0]?.originFileObj) {
-            const { data } = await singleImageUpload({
-              image: values.banner_image[0].originFileObj,
-              image_name: "visa_banner",
-            });
-            bannerImageUrl = data?.image || "";
-          } else {
-            bannerImageUrl = values?.banner_image?.[0]?.url || "";
-          }
-
-          if (values?.card_image?.[0]?.originFileObj) {
-            const { data } = await singleImageUpload({
-              image: values.card_image[0].originFileObj,
-              image_name: "visa_card",
-            });
-            cardImageUrl = data?.image || "";
-          } else {
-            cardImageUrl = values?.card_image?.[0]?.url || "";
-          }
-
-          const feathersData = await Promise.all(
-            (values?.feathers || []).map(async (feather) => {
-              let logo = "";
-              if (feather?.logo?.[0]?.originFileObj) {
-                const { data } = await singleImageUpload({
-                  image: feather.logo[0].originFileObj,
-                  image_name: "feature_logo",
-                });
-                logo = data?.image || "";
-              } else {
-                logo = feather?.logo?.[0]?.url || "";
-              }
-              const text = {};
-              languages?.forEach((lang) => {
-                text[lang.code] = feather?.text?.[lang.code] || "";
-              });
-              return { logo, text };
-            })
-          );
-
-          let images = [];
-          if (values?.images?.length > 0) {
-            const uploadPromises = values.images.map(async (file) => {
-              if (!file.url) {
-                const { data } = await singleImageUpload({
-                  image: file.originFileObj,
-                });
-                return data?.image || "";
-              }
-              return file.url;
-            });
-            images = await Promise.all(uploadPromises);
-          }
-
-          const requestData = {
-            ...values,
-            _id: isEdit ? values._id : undefined,
-            banner_image: bannerImageUrl,
-            card_image: cardImageUrl,
-            feathers: feathersData,
-            images,
-          };
-
           setSubmitLoading(true);
-          await useAction(
-            isEdit ? updateVisa : createVisa,
-            { body: requestData },
-            () => {
-              form.resetFields();
-              setSubmitLoading(false);
-              router.push("/admin/visaManagement/visa");
+          try {
+            let bannerImageUrl = "";
+            let cardImageUrl = "";
+
+            if (values?.banner_image?.[0]?.originFileObj) {
+              const { data } = await singleImageUpload({
+                image: values.banner_image[0].originFileObj,
+                image_name: "visa_banner",
+              });
+              bannerImageUrl = data?.image || "";
+            } else {
+              bannerImageUrl = values?.banner_image?.[0]?.url || "";
             }
-          );
+
+            if (values?.card_image?.[0]?.originFileObj) {
+              const { data } = await singleImageUpload({
+                image: values.card_image[0].originFileObj,
+                image_name: "visa_card",
+              });
+              cardImageUrl = data?.image || "";
+            } else {
+              cardImageUrl = values?.card_image?.[0]?.url || "";
+            }
+
+            const feathersData = await Promise.all(
+              (values?.feathers || []).map(async (feather) => {
+                let logo = "";
+                if (feather?.logo?.[0]?.originFileObj) {
+                  const { data } = await singleImageUpload({
+                    image: feather.logo[0].originFileObj,
+                    image_name: "feature_logo",
+                  });
+                  logo = data?.image || "";
+                } else {
+                  logo = feather?.logo?.[0]?.url || "";
+                }
+                const text = {};
+                languages?.forEach((lang) => {
+                  text[lang.code] = feather?.text?.[lang.code] || "";
+                });
+                return { logo, text };
+              })
+            );
+
+            let images = [];
+            if (values?.images?.length > 0) {
+              const uploadPromises = values.images.map(async (file) => {
+                if (!file.url) {
+                  const { data } = await singleImageUpload({
+                    image: file.originFileObj,
+                  });
+                  return data?.image || "";
+                }
+                return file.url;
+              });
+              images = await Promise.all(uploadPromises);
+            }
+
+            const requestData = {
+              ...values,
+              _id: isEdit ? values._id : undefined,
+              banner_image: bannerImageUrl,
+              card_image: cardImageUrl,
+              feathers: feathersData,
+              images,
+            };
+
+            await useAction(
+              isEdit ? updateVisa : createVisa,
+              { body: requestData },
+              () => {
+                form.resetFields();
+                router.push("/admin/visaManagement/visa");
+              }
+            );
+          } catch (err) {
+            console.error("Submit error:", err);
+          } finally {
+            setSubmitLoading(false);
+          }
         }}
         className="mt-2"
       >
@@ -231,7 +264,10 @@ const VisaForm = ({ isEdit = false, data }) => {
 
         {/* ── Language-specific fields ── */}
         {languages?.map((l) => (
-          <div key={l.code} style={{ display: l.code === selectedLang ? "block" : "none" }}>
+          <div
+            key={l.code}
+            style={{ display: l.code === selectedLang ? "block" : "none" }}
+          >
             <FormInput
               label="Visa Title"
               name={["title", l.code]}
@@ -265,7 +301,7 @@ const VisaForm = ({ isEdit = false, data }) => {
               />
             </div>
 
-            {/* ── Citizen of / Travelling to — World Countries with Flags ── */}
+            {/* ── Citizen of / Travelling to ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
               <FormSelect
                 label={i18n.t("Citizen of")}
@@ -313,6 +349,47 @@ const VisaForm = ({ isEdit = false, data }) => {
               />
             </div>
 
+            {/* ── Visa Code & Max Stay Days ── */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <FormInput
+                label="Visa Code"
+                name="visa_code"
+                type="text"
+                className="w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("eg. VN-TV-30")}
+              />
+              <FormInput
+                label="Max Stay Days"
+                name="max_stay_days"
+                type="number"
+                getValueFromEvent={(e) => +e.target.value}
+                className="w-full rounded bg-transparent p-3 dashinput"
+                placeholder={i18n.t("eg. 30")}
+              />
+            </div>
+
+            {/* ── Entry Type & Visa Category ── */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+              <FormSelect
+                label={i18n.t("Entry Type")}
+                name="entry_type"
+                placeholder={i18n.t("Select Entry Type")}
+                className="!w-full rounded bg-transparent py-6 px-2 dashinput"
+                options={entryTypeOptions}
+              />
+              <FormSelect
+                label={i18n.t("Visa Category")}
+                name="visa_category"
+                placeholder={i18n.t("Select Visa Category")}
+                showSearch
+                filterOption={(input, option) =>
+                  option?.label?.toLowerCase().includes(input.toLowerCase())
+                }
+                className="!w-full rounded bg-transparent py-6 px-2 dashinput"
+                options={visaCategoryOptions}
+              />
+            </div>
+
             <FormInput
               label="Document about"
               name={["document_about", l.code]}
@@ -348,7 +425,9 @@ const VisaForm = ({ isEdit = false, data }) => {
                       {languages?.map((l) => (
                         <div
                           key={l.code}
-                          style={{ display: l.code === selectedLang ? "block" : "none" }}
+                          style={{
+                            display: l.code === selectedLang ? "block" : "none",
+                          }}
                         >
                           <MultipleImageInput
                             label="Features Image"
@@ -406,7 +485,7 @@ const VisaForm = ({ isEdit = false, data }) => {
             label={i18n.t("Discount Type")}
             name={["price", "discount_type"]}
             placeholder={i18n.t("Select Discount Type")}
-            required
+            
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
             options={[
               { value: "percent", label: "Percentage" },
@@ -417,7 +496,7 @@ const VisaForm = ({ isEdit = false, data }) => {
             label={i18n.t("Discount Amount")}
             name={["price", "discount"]}
             type="number"
-            required
+            
             getValueFromEvent={(e) => +e.target.value}
             className="w-full rounded bg-transparent p-3 dashinput"
             placeholder={i18n.t("Discount Amount")}
@@ -436,7 +515,9 @@ const VisaForm = ({ isEdit = false, data }) => {
                       {languages?.map((l) => (
                         <div
                           key={l.code}
-                          style={{ display: l.code === selectedLang ? "block" : "none" }}
+                          style={{
+                            display: l.code === selectedLang ? "block" : "none",
+                          }}
                         >
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormInput
@@ -496,7 +577,9 @@ const VisaForm = ({ isEdit = false, data }) => {
                       {languages?.map((l) => (
                         <div
                           key={l.code}
-                          style={{ display: l.code === selectedLang ? "block" : "none" }}
+                          style={{
+                            display: l.code === selectedLang ? "block" : "none",
+                          }}
                         >
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <FormInput

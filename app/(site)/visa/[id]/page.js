@@ -103,13 +103,26 @@ const VisaDetails = () => {
     });
   }, []);
 
+  // visaStats array টা এভাবে replace করো
+
   const visaStats = [
     { label: "Visa Type", value: data?.visa_type?.name?.[langCode], img: "/theme1/visa/student.png" },
     { label: "Travelling To", value: data?.travelling_to, img: "/theme1/visa/globe.png" },
     { label: "Citizen Of", value: data?.citizen_of, img: "/theme1/visa/lan.png" },
     { label: "Validity", value: data?.validity, img: "/theme1/blog/watch.png" },
     { label: "Processing", value: data?.processing_type, img: "/theme1/visa/process.png" },
-    // { label: "Mode", value: data?.visa_mode, img: "/theme1/visa/mode.png" },
+    ...(data?.visa_code
+      ? [{ label: "Visa Code", value: data.visa_code, img: "/theme1/visa/student.png" }]
+      : []),
+    ...(data?.max_stay_days
+      ? [{ label: "Max Stay", value: `${data.max_stay_days} Days`, img: "/theme1/blog/watch.png" }]
+      : []),
+    ...(data?.entry_type
+      ? [{ label: "Entry Type", value: data.entry_type.charAt(0).toUpperCase() + data.entry_type.slice(1), img: "/theme1/visa/process.png" }]
+      : []),
+    ...(data?.visa_category
+      ? [{ label: "Visa Category", value: data.visa_category.charAt(0).toUpperCase() + data.visa_category.slice(1), img: "/theme1/visa/lan.png" }]
+      : []),
   ];
 
   const totalPrice = data?.price?.amount || 0;
@@ -417,7 +430,7 @@ const VisaDetails = () => {
                   </div>
                 </div>
                 <div>
-                  <VisaForm id={data?._id} />
+                  <VisaForm id={data?._id} pricePerPerson={processingFee} />
                 </div>
               </div>
 
@@ -471,7 +484,7 @@ const VisaDetails = () => {
         width="100%"
         closeIcon={<RiArrowDropDownLine className="rotate-90 text-2xl" />}
       >
-        <VisaForm id={data?._id} />
+        <VisaForm id={data?._id} pricePerPerson={processingFee} />
       </Drawer>
     </div>
   );

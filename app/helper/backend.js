@@ -187,7 +187,7 @@ export const getAllSidePublicVisa = (data) => get('/visas/sidebar', data)
 export const getAllVisaQuery = (data) => get('/visas/inquiries', data)
 export const deleteVisaQuery = (data) => del(`/visas/inquiries/${data._id}`, data)
 export const createVisaQuery = (data) => post('/visas/inquiries', data)
-
+export const createVisaApply = (data) => post('/visas/inquiries/apply', data)
 //HRM
 export const CreateEmployee = (data) => post('/users/employees', data)
 export const UpdateEmployee = (data) => put('/users/employees', data)
@@ -338,3 +338,9 @@ export const getNotificationsByAdmin = (data) => get('/notifications', data);
 export const getAllReadNotifications = (data) => get('/notifications/all', data);
 export const updateNotificationByAdmin = (data) => patch('/notifications', data);
 export const deleteNotificationByAdmin = (data) => del(`/notifications/${data._id}`, data);
+// Umrah Inquiry
+export const getAllUmrahInquiries = (data) => get('/umrah-inquiry', data)
+export const getSingleUmrahInquiry = (data) => get(`/umrah-inquiry/${data._id}`, data)
+export const updateUmrahInquiry = (data) => put(`/umrah-inquiry/${data._id}`, data)
+export const deleteUmrahInquiry = (data) => del(`/umrah-inquiry/${data._id}`, data)
+export const createUmrahInquiry = (data) => post('/umrah-inquiry', data)
