@@ -94,11 +94,11 @@ const VisaForm = ({ isEdit = false, data }) => {
           : [],
         images: Array.isArray(data?.images)
           ? data.images.map((url, index) => ({
-              uid: String(index),
-              name: `image-${index}.png`,
-              status: "done",
-              url,
-            }))
+            uid: String(index),
+            name: `image-${index}.png`,
+            status: "done",
+            url,
+          }))
           : [],
         title: data?.title || {},
         visa_type: data?.visa_type?._id || null,
@@ -117,30 +117,29 @@ const VisaForm = ({ isEdit = false, data }) => {
         },
         overview: data?.overview || {},
         document_about: data?.document_about || {},
-        apply_fee: data?.apply_fee,
         documents: Array.isArray(data?.documents)
           ? data.documents.map((item) => ({ key: item.key, value: item.value }))
           : [],
         feathers: Array.isArray(data?.feathers)
           ? data.feathers.map((item, index) => ({
-              ...item,
-              logo: item?.logo
-                ? [
-                    {
-                      uid: `${index}`,
-                      name: `feather-logo-${index}.png`,
-                      status: "done",
-                      url: item.logo,
-                    },
-                  ]
-                : [],
-            }))
+            ...item,
+            logo: item?.logo
+              ? [
+                {
+                  uid: `${index}`,
+                  name: `feather-logo-${index}.png`,
+                  status: "done",
+                  url: item.logo,
+                },
+              ]
+              : [],
+          }))
           : [],
         faqs: Array.isArray(data?.faqs)
           ? data.faqs.map((item) => ({
-              heading: item.heading,
-              description: item.description,
-            }))
+            heading: item.heading,
+            description: item.description,
+          }))
           : [],
       });
     }
@@ -154,11 +153,10 @@ const VisaForm = ({ isEdit = false, data }) => {
           <button
             key={l.code}
             onClick={() => setSelectedLang(l.code)}
-            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${
-              l.code === selectedLang
-                ? "bg-primary text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            className={`px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 ${l.code === selectedLang
+              ? "bg-primary text-white"
+              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
           >
             {l.name}
           </button>
@@ -401,17 +399,6 @@ const VisaForm = ({ isEdit = false, data }) => {
           </div>
         ))}
 
-        {/* ── Apply Fee ── */}
-        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-          <FormInput
-            label="Apply Online Fee"
-            name="apply_fee"
-            type="number"
-            getValueFromEvent={(e) => +e.target.value}
-            className="!w-full rounded bg-transparent p-3 dashinput"
-            placeholder={i18n.t("Apply Online Fee")}
-          />
-        </div> */}
 
         {/* ── Features ── */}
         <div className="mt-6 border rounded-md p-3">
@@ -485,7 +472,7 @@ const VisaForm = ({ isEdit = false, data }) => {
             label={i18n.t("Discount Type")}
             name={["price", "discount_type"]}
             placeholder={i18n.t("Select Discount Type")}
-            
+
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
             options={[
               { value: "percent", label: "Percentage" },
@@ -496,11 +483,16 @@ const VisaForm = ({ isEdit = false, data }) => {
             label={i18n.t("Discount Amount")}
             name={["price", "discount"]}
             type="number"
-            
+
             getValueFromEvent={(e) => +e.target.value}
             className="w-full rounded bg-transparent p-3 dashinput"
             placeholder={i18n.t("Discount Amount")}
           />
+        </div>
+
+        <div className="mt-4 p-3 bg-yellow-50 border rounded text-sm">
+          Note: The fields below ( Citizen Of, Travelling To, Processing Time)
+          and ( Documents ) are displayed under "Other Information" on the public visa page.
         </div>
 
         {/* ── Documents ── */}

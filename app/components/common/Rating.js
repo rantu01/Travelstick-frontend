@@ -206,7 +206,7 @@ const Rating = ({ data, getData, slug, checked }) => {
       {/* User Review Input Form and contact*/}
       <div className="w-full xl:mt-24 lg:mt-20 md:mt-12 mt-10 flex flex-col lg:flex-row xl:gap-6 lg:gap-5 md:gap-4 sm:gap-3 gap-2">
         {/* User Review Input Form */}
-        <div className="lg:w-[70%] w-full">
+        <div className=" w-full">
           <Form
             className="relative"
             layout="vertical"
@@ -290,9 +290,9 @@ const Rating = ({ data, getData, slug, checked }) => {
             </div>
           </Form>
         </div>
-        <div className="lg:w-[30%] w-full">
+        {/* <div className="lg:w-[30%] w-full">
           <CommonContact/>
-        </div>
+        </div> */}
       </div>
       <AuthModal authModalOpen={authModalOpen} slug={`/package/${data?._id}`} setAuthModalOpen={setAuthModalOpen} />
     </div>

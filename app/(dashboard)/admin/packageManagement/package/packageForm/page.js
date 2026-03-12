@@ -49,8 +49,8 @@ const PackageForm = ({ isEdit = false, data }) => {
         banner_video_url: data?.banner_video_url,
         about: data?.about || {},
         destination: data?.destination?._id,
-        activity: Array.isArray(data?.activity)
-            ? data?.activity.map((a) => ({
+        activities: Array.isArray(data?.activities)
+            ? data?.activities.map((a) => ({
                 label: a?.name?.[langCode], 
                 value: a?._id,
               }))
@@ -107,8 +107,16 @@ const PackageForm = ({ isEdit = false, data }) => {
         // Itinerary
         itinerary: Array.isArray(data?.itinerary) ? data.itinerary : [],
         highlight: Array.isArray(data?.highlight) ? data.highlight : [],
-        include: Array.isArray(data?.include) ? data.include : [],
-        exclude: Array.isArray(data?.exclude) ? data.exclude : [],
+        includes: Array.isArray(data?.includes)
+          ? data.includes
+          : Array.isArray(data?.include)
+          ? data.include
+          : [],
+        excludes: Array.isArray(data?.excludes)
+          ? data.excludes
+          : Array.isArray(data?.exclude)
+          ? data.exclude
+          : [],
       });
     }
   }, [data, form, isEdit]);
@@ -210,12 +218,15 @@ const PackageForm = ({ isEdit = false, data }) => {
             ...values,
             ...formattedData,
             _id: isEdit ? values._id : undefined,
-            // activity: values.activity.map((a) => a.value),
-            // destination: values.destination,
             banner_image: bannerImageUrl,
             card_image: cardImageUrl,
             feathers: feathersData,
             images,
+            activities: Array.isArray(values?.activities)
+              ? values.activities.map((item) =>
+                  typeof item === "object" ? item?.value : item
+                )
+              : [],
             check_in: values.check_in
               ? values.check_in.format("YYYY-MM-DD")
               : null,
@@ -271,9 +282,9 @@ const PackageForm = ({ isEdit = false, data }) => {
               label={i18n?.t("About Package")}
               className="w-full rounded bg-transparent p-3 dashinput"
               required
-              value={form.getFieldValue("about") || ""}
+              value={form.getFieldValue(["about", l.code]) || ""}
               onChange={(newDescription) =>
-                form.setFieldValue("about", newDescription)
+                form.setFieldValue(["about", l.code], newDescription)
               }
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
@@ -319,6 +330,68 @@ const PackageForm = ({ isEdit = false, data }) => {
             required
             className="w-full rounded bg-transparent p-3 dashinput"
             placeholder={i18n.t("Tour Type")}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormInput
+            label="Start Location"
+            name="start_location"
+            required
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("Start Location")}
+          />
+          <FormInput
+            label="End Location"
+            name="end_location"
+            required
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("End Location")}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormSelect
+            label={i18n.t("Difficulty Level")}
+            name="difficulty_level"
+            placeholder={i18n.t("Select Difficulty Level")}
+            required
+            className="w-full rounded bg-transparent py-6 px-2 dashinput"
+            options={[
+              { value: "easy", label: "Easy" },
+              { value: "moderate", label: "Moderate" },
+              { value: "hard", label: "Hard" },
+            ]}
+          />
+          <FormInput
+            label="Transport Type"
+            name="transport_type"
+            required
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("Transport Type")}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">
+          <FormInput
+            label="Minimum Age"
+            name="min_age"
+            required
+            type={"number"}
+            getValueFromEvent={(e) => +e.target.value}
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("Minimum Age")}
+          />
+          <FormInput
+            label="Accommodation Type"
+            name="accommodation_type"
+            required
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("Accommodation Type")}
+          />
+          <FormInput
+            label="Meals Included"
+            name="meals_included"
+            required
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("Meals Included")}
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
@@ -457,7 +530,7 @@ const PackageForm = ({ isEdit = false, data }) => {
         {/* Include */}
         <div className="mt-5 border rounded-md p-3">
           <h3 className="description-2 mb-2">{i18n.t("Includes")}</h3>
-          <Form.List name="include" initialValue={[{}]}>
+          <Form.List name="includes" initialValue={[{}]}>
             {(fields, { add, remove }) => (
               <div className="mt-4">
                 <div className="flex flex-wrap gap-4">
@@ -510,7 +583,7 @@ const PackageForm = ({ isEdit = false, data }) => {
         {/* exclude */}
         <div className="mt-5 border rounded-md p-3">
           <h3 className="description-2 mb-2">{i18n.t("Excludes")}</h3>
-          <Form.List name="exclude" initialValue={[{}]}>
+          <Form.List name="excludes" initialValue={[{}]}>
             {(fields, { add, remove }) => (
               <div className="mt-4">
                 <div className="flex flex-wrap gap-4">

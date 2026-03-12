@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 const Package = () => {
   const router = useRouter();
   let { langCode } = useI18n();
-  const [data, getData, { loading }] = useFetch(getAllPackages);
+  const [data, getData, { loading }] = useFetch(getAllPackages, { limit: 1000 });
   const i18n = useI18n();
   const { currency_symbol } = useCurrency();
   const columns = [

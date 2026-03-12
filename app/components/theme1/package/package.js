@@ -16,9 +16,10 @@ import { FaSearch, FaTimesCircle } from "react-icons/fa";
 import CustomTourCard from "./CustomTourCard";
 
 const PackagePage = ({ discount, discount_type, destination: initialDest, startDate: initialDate, endDate, tourType, theme }) => {
+  const PACKAGE_LIST_LIMIT = 1000;
   const [openDrawer, setOpenDrawer] = useState(false);
   const i18n = useI18n();
-  const [data, getData] = useFetch(getAllPublicPackages, { limit: 12 }, false); // Default limit 12 kora hoyeche better view er jonno
+  const [data, getData] = useFetch(getAllPublicPackages, { limit: PACKAGE_LIST_LIMIT }, false);
 
   // --- Search States ---
   const [searchDest, setSearchDest] = useState(initialDest || null);
@@ -29,6 +30,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
 
   useEffect(() => {
     getData({
+      limit: PACKAGE_LIST_LIMIT,
       discount: discount,
       discount_type: discount_type,
       destination: searchDest,
@@ -44,6 +46,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
 
   const handleSearch = () => {
     getData({
+      limit: PACKAGE_LIST_LIMIT,
       destination: searchDest,
       check_in: prefDate ? prefDate.format("YYYY-MM-DD") : null,
     });
@@ -52,6 +55,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
   // --- Pagination Handler ---
   const handlePageChange = (page) => {
     getData({
+      limit: PACKAGE_LIST_LIMIT,
       page: page, // Backend e page number pathano hochhe
       discount: discount,
       discount_type: discount_type,
@@ -198,7 +202,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
                     <Pagination
                       current={data?.page}
                       total={data?.totalDocs}
-                      pageSize={data?.limit || 12}
+                      pageSize={data?.limit || PACKAGE_LIST_LIMIT}
                       onChange={handlePageChange}
                       showSizeChanger={false}
                       className="custom-pagination"
