@@ -237,6 +237,18 @@ const RoomForm = ({ isEdit = false, data }) => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormInput
+            label="Total Available Rooms"
+            name="total_rooms"
+            type="number"
+            required
+            getValueFromEvent={(e) => +e.target.value}
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder="e.g., 5"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
           <FormSelect
             label={i18n.t("Meal Plans")}
             name="meal_plan"

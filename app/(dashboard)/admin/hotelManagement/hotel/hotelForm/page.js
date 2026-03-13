@@ -387,12 +387,36 @@ const HotelForm = ({ isEdit = false, data }) => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
           <FormSelect
+            label={i18n.t("Hotel Card Badges")}
+            name="card_badges"
+            placeholder={i18n.t("Add card badges")}
+            className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            options={facilitiesOptions.length ? facilitiesOptions : fallbackFacilities}
+            tags
+          />
+          <FormInput
+            label={i18n.t("Hotel Card Room Label")}
+            name="card_room_label"
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("e.g. Standard")}
+          />
+        </div>
+        <div className="mt-5">
+          <FormInput
+            label={i18n.t("Hotel Card Room Details")}
+            name="card_room_details"
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("e.g. Non Refundable • Breakfast Included")}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormSelect
             label={i18n.t("Meal Plans")}
             name="meal_plans"
             placeholder={i18n.t("Select Meal Plans")}
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
             options={mealPlanOptions.length ? mealPlanOptions : fallbackMealPlans}
-            multi
+            tags
           />
           <FormSelect
             label={i18n.t("Reservation policy")}
@@ -400,7 +424,7 @@ const HotelForm = ({ isEdit = false, data }) => {
             placeholder={i18n.t("Select Reservation Policy")}
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
             options={reservationPolicyOptions.length ? reservationPolicyOptions : fallbackReservationPolicies}
-            multi
+            tags
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
@@ -417,7 +441,7 @@ const HotelForm = ({ isEdit = false, data }) => {
             placeholder={i18n.t("Select Facilities and Services")}
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
             options={facilitiesOptions.length ? facilitiesOptions : fallbackFacilities}
-            multi
+            tags
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">

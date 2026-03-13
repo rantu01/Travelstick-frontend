@@ -152,6 +152,7 @@ export const updateRoom = (data) => patch(`/rooms/${data.id || data._id || data.
 export const getAllRooms = (data) => get('/rooms', data)
 export const getRoomsByHotel = (data) => get(`/rooms/hotel/${data.hotelId}`, data)
 export const getRoomById = (data) => get(`/rooms/${data.id || data._id}`, data)
+export const getRoomAvailability = (data) => get(`/rooms/${data.id || data._id}/availability`, data)
 export const deleteRoom = (data) => del(`/rooms/${data.id || data._id}`, data)
 
 //create Hotel booking payment and calculation

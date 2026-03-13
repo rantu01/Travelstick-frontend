@@ -121,6 +121,35 @@ const HotelBookingModal = ({
                   ))}
                 </tbody>
               </table>
+
+              {/* Room Details */}
+              {viewData?.room_details?.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="text-[#05073C] font-semibold text-sm mb-2">
+                    {i18n.t("Room Details")}
+                  </h3>
+                  <table className="w-full text-left text-[#05073C] border border-gray-200">
+                    <thead>
+                      <tr className="bg-gray-50">
+                        <th className="py-2 px-4 description-2 font-semibold">{i18n.t("Room")}</th>
+                        <th className="py-2 px-4 description-2 font-semibold">{i18n.t("Count")}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {viewData.room_details.map((rd, idx) => (
+                        <tr key={idx} className="border-t border-gray-200">
+                          <td className="py-2 px-4 description-2 text-[#717171]">
+                            {rd?.room?.name?.[langCode] || rd?.room?.name || rd?.room?._id || "N/A"}
+                          </td>
+                          <td className="py-2 px-4 description-1 text-[#717171]">
+                            {rd?.count}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         )}

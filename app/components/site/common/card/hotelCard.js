@@ -30,6 +30,30 @@ const HotelCard = ({ data }) => {
       return data.destination.address || 'Unknown location';
     })();
 
+  const getDistanceText = () => {
+    if (typeof data?.distance_from_city === "number" && Number.isFinite(data?.distance_from_city)) {
+      return `${data.distance_from_city} km from centre`;
+    }
+    return "Distance not specified";
+  };
+
+  const badges = Array.isArray(data?.card_badges) && data.card_badges.length
+    ? data.card_badges
+    : Array.isArray(data?.facilities_services) && data.facilities_services.length
+      ? data.facilities_services
+      : [];
+
+  const visibleBadges = badges.slice(0, 3);
+  const remainingBadgeCount = badges.length > 3 ? badges.length - 3 : 0;
+
+  const roomLabel = data?.card_room_label || data?.room_type || "Standard";
+  const roomDetails = data?.card_room_details || [
+    data?.refundability === "non_refundable" ? "Non Refundable" : data?.refundability === "refundable" ? "Refundable" : null,
+    Array.isArray(data?.meal_plans) && data.meal_plans.length ? data.meal_plans[0] : null,
+  ].filter(Boolean).join(" • ") || "Room details not specified";
+
+  const starLabel = Number(data?.star) > 0 ? `${Number(data?.star)}-star hotel` : "Hotel";
+
   return (
     <div className="group w-full rounded-[15px] border border-[#E8EAE8] bg-white overflow-hidden flex flex-col md:flex-row transition-shadow hover:shadow-md min-h-[220px]">
 
@@ -59,30 +83,28 @@ const HotelCard = ({ data }) => {
 
         <div className="flex items-center gap-1 text-[#717171] mb-4 overflow-hidden">
           <span className="text-[14px] whitespace-nowrap">Hotel</span>
-          <span className="text-[14px] ml-1 whitespace-nowrap">• 2.46 km from centre</span>
+          <span className="text-[14px] ml-1 whitespace-nowrap">• {getDistanceText()}</span>
           <MdOutlineLocationOn className="ml-1 text-[16px] flex-shrink-0" />
           <p className="text-[14px] truncate">{safeDestination}</p>
-          <p className="text-[14px] truncate">3-star hotel</p>
+          <p className="text-[14px] truncate">{starLabel}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-y-2 gap-x-4 mb-4">
-          <div className="flex items-center gap-2 text-[13px] text-[#555]">
-            <span className="opacity-60">🧳</span> Luggage storage
-          </div>
-          <div className="flex items-center gap-2 text-[13px] text-[#555]">
-            <span className="opacity-60">♿</span> Accessibility
-          </div>
-          <div className="flex items-center gap-2 text-[13px] text-[#555]">
-            <span className="opacity-60">📶</span> Free Wi-Fi
-          </div>
-          <div className="text-[13px] text-blue-500 cursor-pointer">+ 3 more</div>
+          {visibleBadges.map((badge, index) => (
+            <div key={`${badge}-${index}`} className="flex items-center gap-2 text-[13px] text-[#555]">
+              <span className="opacity-60">•</span> {badge}
+            </div>
+          ))}
+          {remainingBadgeCount > 0 && (
+            <div className="text-[13px] text-blue-500 cursor-pointer">+ {remainingBadgeCount} more</div>
+          )}
         </div>
 
         <div className="mt-auto border-t pt-3 flex items-start gap-3">
-          <span className="text-xl opacity-40">🛏️</span>
+          
           <div>
-            <p className="font-semibold text-sm text-[#1A1A1A]">Standard</p>
-            <p className="text-[12px] text-[#717171]">Non Refundable • Breakfast Included</p>
+            <p className="font-semibold text-sm text-[#1A1A1A] capitalize">{roomLabel}</p>
+            <p className="text-[12px] text-[#717171]">{roomDetails}</p>
           </div>
         </div>
       </div>

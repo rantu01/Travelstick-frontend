@@ -4,9 +4,9 @@ import { ShowerHead, Wind, Construction, Bath, Plus, Minus, Wifi, Tv, GlassWater
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useFetch } from "@/app/helper/hooks";
-import { getRoomsByHotel } from "@/app/helper/backend";
+import { getRoomsByHotel, getRoomAvailability } from "@/app/helper/backend";
 import { useI18n } from "@/app/contexts/i18n";
-import { useCurrency } from "@/app/contexts/site"; // Import useCurrency
+import { useCurrency } from "@/app/contexts/site";
 
 const AmenityIcon = ({ amenity, size = 20 }) => {
   const iconMap = {
@@ -27,19 +27,19 @@ const AmenityIcon = ({ amenity, size = 20 }) => {
 
 const RoomSelection = () => {
   const { langCode } = useI18n();
-  const { formatPrice } = useCurrency(); // Use formatPrice from context
+  const { formatPrice } = useCurrency();
   const params = useParams();
   const hotelId = params?.id;
 
   const [rooms, getRooms, { loading }] = useFetch(getRoomsByHotel, { hotelId }, false);
+  // availability: { [roomId]: { total, booked, available } }
+  const [availability, setAvailability] = useState({});
 
   const getImageUrl = (image) => {
     if (!image) return "/placeholder-room.jpg";
     const url = typeof image === 'string' ? image : image?.url;
     if (!url) return "/placeholder-room.jpg";
-
     if (url.startsWith('http')) return url;
-
     const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
     return `${baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl}/${url.startsWith('/') ? url.slice(1) : url}`;
   };
@@ -50,13 +50,36 @@ const RoomSelection = () => {
     }
   }, [hotelId]);
 
+  // Fetch availability for each room after rooms load
+  useEffect(() => {
+    if (!rooms || rooms.length === 0) return;
+    const fetchAll = async () => {
+      const entries = await Promise.all(
+        rooms.map(async (room) => {
+          try {
+            const res = await getRoomAvailability({ id: room._id });
+            return [room._id, res?.data ?? { total: 1, booked: 0, available: 1 }];
+          } catch {
+            return [room._id, { total: 1, booked: 0, available: 1 }];
+          }
+        })
+      );
+      setAvailability(Object.fromEntries(entries));
+    };
+    fetchAll();
+  }, [rooms]);
+
   const [roomCounts, setRoomCounts] = useState({});
 
   const handleCountChange = (id, delta) => {
-    setRoomCounts(prev => ({
-      ...prev,
-      [id]: Math.max(0, (prev[id] || 1) + delta)
-    }));
+    const avail = availability[id]?.available ?? Infinity;
+    setRoomCounts(prev => {
+      const current = prev[id] || 1;
+      const next = current + delta;
+      if (next < 1) return { ...prev, [id]: 1 };
+      if (next > avail) return prev; // block exceeding availability
+      return { ...prev, [id]: next };
+    });
   };
 
   if (loading) {
@@ -75,6 +98,10 @@ const RoomSelection = () => {
         const count = roomCounts[room._id] || 1;
         const roomName = room.name?.[langCode] || room.name?.en || room.type || "Room";
         const totalCapacity = (room.capacity?.adults || 0) + (room.capacity?.children || 0);
+        const avail = availability[room._id];
+        const availableCount = avail?.available ?? null;
+        const isMaxed = availableCount !== null && count >= availableCount;
+        const isUnavailable = availableCount !== null && availableCount <= 0;
 
         return (
           <div key={room._id} className="w-full max-w-6xl bg-white border border-gray-300 rounded-[20px] overflow-hidden flex flex-col md:flex-row p-4 gap-4 shadow-sm font-sans mb-6">
@@ -114,30 +141,49 @@ const RoomSelection = () => {
                   </div>
 
                   {/* Counter Input */}
-                  <div className="flex items-center border border-gray-400 rounded-lg overflow-hidden h-[40px] bg-white">
-                    <button
-                      onClick={() => handleCountChange(room._id, 1)}
-                      className="px-3 hover:bg-gray-100 border-r border-gray-400"
-                    >
-                      <Plus size={14} />
-                    </button>
-                    <div className="px-4 font-bold text-md min-w-[45px] text-center">
-                      {count < 10 ? `0${count}` : count}
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="flex items-center border border-gray-400 rounded-lg overflow-hidden h-[40px] bg-white">
+                      <button
+                        onClick={() => handleCountChange(room._id, 1)}
+                        disabled={isMaxed || isUnavailable}
+                        className="px-3 hover:bg-gray-100 border-r border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <Plus size={14} />
+                      </button>
+                      <div className="px-4 font-bold text-md min-w-[45px] text-center">
+                        {count < 10 ? `0${count}` : count}
+                      </div>
+                      <button
+                        onClick={() => handleCountChange(room._id, -1)}
+                        disabled={count <= 1}
+                        className="px-3 hover:bg-gray-100 border-l border-gray-400 disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <Minus size={14} />
+                      </button>
                     </div>
-                    <button
-                      onClick={() => handleCountChange(room._id, -1)}
-                      className="px-3 hover:bg-gray-100 border-l border-gray-400"
-                    >
-                      <Minus size={14} />
-                    </button>
+                    {availableCount !== null && (
+                      isUnavailable ? (
+                        <span className="text-[11px] font-bold text-red-600">No rooms available</span>
+                      ) : isMaxed ? (
+                        <span className="text-[11px] font-bold text-orange-500">Max {availableCount} room{availableCount > 1 ? 's' : ''} left</span>
+                      ) : (
+                        <span className="text-[11px] text-gray-500">{availableCount} available</span>
+                      )
+                    )}
                   </div>
 
                   {/* Book Now Button */}
-                  <Link href={`/hotel/${hotelId}/booking?room=${room._id}&count=${count}`}>
-                    <button className="bg-[#1e3a8a] hover:bg-[#172554] text-white px-8 py-2.5 rounded-lg text-[16px] font-bold transition-all shadow-sm">
-                      Book Now
+                  {isUnavailable ? (
+                    <button disabled className="bg-gray-400 cursor-not-allowed text-white px-8 py-2.5 rounded-lg text-[16px] font-bold shadow-sm opacity-60">
+                      Sold Out
                     </button>
-                  </Link>
+                  ) : (
+                    <Link href={`/hotel/${hotelId}/booking?room=${room._id}&count=${count}`}>
+                      <button className="bg-[#1e3a8a] hover:bg-[#172554] text-white px-8 py-2.5 rounded-lg text-[16px] font-bold transition-all shadow-sm">
+                        Book Now
+                      </button>
+                    </Link>
+                  )}
                 </div>
               </div>
 

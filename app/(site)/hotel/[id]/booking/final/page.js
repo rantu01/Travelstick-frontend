@@ -1,107 +1,208 @@
-"use client";
-import React from 'react';
-import { 
-    Lock, CreditCard, ShieldCheck, ChevronLeft, 
-    Info, Calendar, MapPin, Star 
-} from 'lucide-react';
+﻿"use client";
+import React, { useEffect, useState } from 'react';
+import { Lock, ShieldCheck, ChevronLeft } from 'lucide-react';
+import { useRouter, useParams } from 'next/navigation';
+import { useCurrency } from '@/app/contexts/site';
+import { createHotelBookingPayment } from '@/app/helper/backend';
+import { FaStar } from 'react-icons/fa6';
 
 export default function FinalBookingStep() {
+    const router = useRouter();
+    const params = useParams();
+    const hotelId = params?.id;
+    const { formatPrice } = useCurrency();
+
+    const [bookingData, setBookingData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [agreed, setAgreed] = useState(false);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const stored = sessionStorage.getItem('hotelBookingData');
+            if (stored) {
+                try { setBookingData(JSON.parse(stored)); } catch { /* ignore */ }
+            }
+        }
+    }, []);
+
+    const nights = bookingData?._nights ?? 1;
+    const roomPrice = bookingData?._room_price ?? 0;
+    const roomCount = bookingData?.rooms_count ?? 1;
+    const totalAmount = bookingData?.amount ?? 0;
+
+    const handleCompleteBooking = async () => {
+        if (!agreed) {
+            alert('Please agree to the Terms and Conditions.');
+            return;
+        }
+        if (!bookingData) {
+            alert('Booking data not found. Please go back and fill the form.');
+            return;
+        }
+        setLoading(true);
+        try {
+            const payload = {
+                hotel: bookingData.hotel,
+                check_in: bookingData.check_in,
+                check_out: bookingData.check_out,
+                person: bookingData.person || bookingData.adults + (bookingData.children || 0),
+                adults: bookingData.adults,
+                children: bookingData.children || 0,
+                rooms_count: bookingData.rooms_count,
+                with_pets: false,
+                first_name: bookingData.first_name,
+                last_name: bookingData.last_name,
+                email: bookingData.email,
+                phone: bookingData.phone,
+                country: bookingData.country,
+                arrival_time: bookingData.arrival_time || 'dont_know',
+                special_requests: bookingData.special_requests || '',
+                smoking_preference: bookingData.smoking_preference || 'non-smoking',
+                bed_preference: bookingData.bed_preference || 'large',
+                room_details: bookingData.room_details || [],
+                services: [],
+                amount: bookingData.amount,
+                method: 'cash',
+            };
+
+            const res = await createHotelBookingPayment({ body: payload });
+            if (res?.success) {
+                sessionStorage.removeItem('hotelBookingData');
+                router.push(`/hotel/${hotelId}?booking=success`);
+            } else {
+                alert(res?.message || 'Booking failed. Please try again.');
+            }
+        } catch (err) {
+            alert(err?.message || 'Something went wrong. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (!bookingData) {
+        return (
+            <div className="bg-[#f2f2f2] min-h-screen flex items-center justify-center">
+                <div className="text-center">
+                    <p className="text-gray-500 mb-4">No booking data found.</p>
+                    <button
+                        onClick={() => router.back()}
+                        className="text-[#006ce4] font-bold hover:underline"
+                    >
+                        â† Go Back
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="bg-[#f2f2f2] min-h-screen p-4 md:p-8 font-sans text-[#1a1a1a]">
             <div className="max-w-6xl mx-auto">
-                
-                {/* Header / Back Button */}
-                <button className="flex items-center gap-2 text-[#006ce4] font-bold text-sm mb-6 hover:underline">
+
+                {/* Back Button */}
+                <button
+                    onClick={() => router.back()}
+                    className="flex items-center gap-2 text-[#006ce4] font-bold text-sm mb-6 hover:underline"
+                >
                     <ChevronLeft size={18} />
                     Back to guest details
                 </button>
 
                 <div className="flex flex-col lg:flex-row gap-6">
-                    
+
                     {/* LEFT: PAYMENT & FINAL DETAILS */}
                     <div className="flex-1 space-y-4">
-                        
+
                         {/* Security Alert */}
                         <div className="bg-[#f2faf3] border border-[#d1e9d4] p-4 rounded-xl flex items-center gap-3">
                             <ShieldCheck className="text-[#008009]" size={24} />
                             <div>
-                                <p className="font-bold text-sm text-[#1a1a1a]">Secure payment</p>
+                                <p className="font-bold text-sm text-[#1a1a1a]">Secure booking</p>
                                 <p className="text-[11px] text-gray-600">All your information is encrypted and transmitted securely.</p>
                             </div>
                         </div>
 
-                        {/* Payment Method Selection */}
+                        {/* Booking Summary - Lead Guest */}
                         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="font-bold text-xl">How would you like to pay?</h3>
-                                <div className="flex gap-1">
+                            <h3 className="font-bold text-lg mb-4">Booking Summary</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                <div><span className="text-gray-500 text-xs">Guest Name</span><p className="font-bold">{bookingData.first_name} {bookingData.last_name}</p></div>
+                                <div><span className="text-gray-500 text-xs">Email</span><p className="font-bold">{bookingData.email}</p></div>
+                                <div><span className="text-gray-500 text-xs">Phone</span><p className="font-bold">{bookingData.phone}</p></div>
+                                <div><span className="text-gray-500 text-xs">Country</span><p className="font-bold">{bookingData.country}</p></div>
+                                <div><span className="text-gray-500 text-xs">Check-in</span><p className="font-bold">{bookingData.check_in}</p></div>
+                                <div><span className="text-gray-500 text-xs">Check-out</span><p className="font-bold">{bookingData.check_out}</p></div>
+                                <div><span className="text-gray-500 text-xs">Nights</span><p className="font-bold">{nights}</p></div>
+                                <div><span className="text-gray-500 text-xs">Rooms</span><p className="font-bold">{roomCount}x {bookingData._room_name}</p></div>
+                                <div><span className="text-gray-500 text-xs">Guests</span><p className="font-bold">{bookingData.adults} Adults{bookingData.children > 0 ? `, ${bookingData.children} Children` : ''}</p></div>
+                                {bookingData.arrival_time && bookingData.arrival_time !== 'dont_know' && (
+                                    <div><span className="text-gray-500 text-xs">Arrival Time</span><p className="font-bold">{bookingData.arrival_time}</p></div>
+                                )}
+                            </div>
+                            {bookingData.special_requests && (
+                                <div className="mt-3 pt-3 border-t">
+                                    <span className="text-gray-500 text-xs">Special Requests</span>
+                                    <p className="text-sm mt-1">{bookingData.special_requests}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Payment Method - Pay on Arrival */}
+                        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="font-bold text-xl">Payment</h3>
+                                <div className="flex gap-1 items-center">
                                     <Lock size={14} className="text-gray-400" />
                                     <span className="text-[10px] text-gray-400 uppercase font-bold">Secure</span>
                                 </div>
                             </div>
 
-                            <div className="space-y-4">
-                                {/* Credit/Debit Card Option */}
-                                <div className="border-2 border-blue-600 bg-blue-50/30 p-4 rounded-lg">
-                                    <div className="flex justify-between items-center mb-4">
-                                        <div className="flex items-center gap-3">
-                                            <input type="radio" checked readOnly className="w-5 h-5" />
-                                            <span className="font-bold text-sm italic">Credit/Debit Card</span>
-                                        </div>
-                                        <div className="flex gap-1">
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-4" alt="visa" />
-                                            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-4" alt="mastercard" />
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold">Cardholder's name *</label>
-                                            <input type="text" className="w-full border border-gray-300 rounded p-2.5 outline-none focus:ring-1 focus:ring-blue-500" placeholder="John Doe" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold">Card number *</label>
-                                            <div className="relative">
-                                                <input type="text" className="w-full border border-gray-300 rounded p-2.5 outline-none focus:ring-1 focus:ring-blue-500" placeholder="0000 0000 0000 0000" />
-                                                <CreditCard className="absolute right-3 top-2.5 text-gray-400" size={18} />
-                                            </div>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold">Expiry date *</label>
-                                            <input type="text" className="w-full border border-gray-300 rounded p-2.5 outline-none" placeholder="MM / YY" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <label className="text-xs font-bold">CVC / CVV *</label>
-                                            <input type="text" className="w-full border border-gray-300 rounded p-2.5 outline-none" placeholder="123" />
-                                        </div>
+                            <div className="border-2 border-blue-600 bg-blue-50/30 p-4 rounded-lg">
+                                <div className="flex items-center gap-3">
+                                    <input type="radio" checked readOnly className="w-5 h-5" />
+                                    <div>
+                                        <p className="font-bold text-sm">Pay on Arrival (Cash)</p>
+                                        <p className="text-xs text-gray-500 mt-1">You will pay at the property upon check-in. No online payment required.</p>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Digital Wallet / Others */}
-                                <div className="border border-gray-200 p-4 rounded-lg flex items-center justify-between group cursor-pointer hover:bg-gray-50">
-                                    <div className="flex items-center gap-3">
-                                        <input type="radio" name="pay" className="w-5 h-5" />
-                                        <span className="font-bold text-sm text-gray-700">Mobile Banking (bKash/Nagad)</span>
-                                    </div>
-                                    <div className="flex gap-2">
-                                        <div className="w-8 h-5 bg-gray-100 rounded"></div>
-                                        <div className="w-8 h-5 bg-gray-100 rounded"></div>
-                                    </div>
+                            <div className="mt-4 border border-gray-200 p-4 rounded-lg flex items-center justify-between opacity-50 cursor-not-allowed">
+                                <div className="flex items-center gap-3">
+                                    <input type="radio" disabled className="w-5 h-5" />
+                                    <p className="font-bold text-sm text-gray-600">Credit/Debit Card <span className="text-xs font-normal">(coming soon)</span></p>
+                                </div>
+                                <div className="flex gap-1">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-4" alt="visa" />
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-4" alt="mastercard" />
                                 </div>
                             </div>
                         </div>
 
-                        {/* Terms & Conditions Checkbox */}
+                        {/* Terms & Book Button */}
                         <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-                            <div className="flex gap-3">
-                                <input type="checkbox" className="mt-1 w-5 h-5 min-w-[20px]" />
-                                <p className="text-xs text-gray-600 leading-relaxed">
-                                    By clicking "Book Now", you agree to the <span className="text-[#006ce4] cursor-pointer">Terms and Conditions</span> and <span className="text-[#006ce4] cursor-pointer">Privacy Policy</span>. Your booking is with Hotel Kollol by J&Z Group directly.
-                                </p>
+                            <div className="flex gap-3 mb-6">
+                                <input
+                                    type="checkbox"
+                                    id="terms"
+                                    checked={agreed}
+                                    onChange={e => setAgreed(e.target.checked)}
+                                    className="mt-1 w-5 h-5 min-w-[20px] cursor-pointer"
+                                />
+                                <label htmlFor="terms" className="text-xs text-gray-600 leading-relaxed cursor-pointer">
+                                    By clicking "Confirm Booking", I agree to the{' '}
+                                    <span className="text-[#006ce4]">Terms and Conditions</span> and{' '}
+                                    <span className="text-[#006ce4]">Privacy Policy</span>.
+                                    I understand payment is due upon arrival at the property.
+                                </label>
                             </div>
-                            
-                            <button className="w-full bg-[#003580] text-white font-black py-4 rounded-lg text-lg uppercase tracking-wider mt-6 hover:bg-blue-900 transition-colors shadow-lg">
-                                Complete Booking
+
+                            <button
+                                onClick={handleCompleteBooking}
+                                disabled={loading || !agreed}
+                                className="w-full bg-[#003580] text-white font-black py-4 rounded-lg text-lg uppercase tracking-wider hover:bg-blue-900 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {loading ? 'Processing...' : 'Confirm Booking'}
                             </button>
                             <div className="flex items-center justify-center gap-2 mt-4 text-gray-500 text-[11px]">
                                 <Lock size={12} />
@@ -110,56 +211,61 @@ export default function FinalBookingStep() {
                         </div>
                     </div>
 
-                    {/* RIGHT: SUMMARY (STICKY) */}
+                    {/* RIGHT: SUMMARY STICKY */}
                     <div className="lg:w-[370px] space-y-4">
                         <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden sticky top-8">
                             <div className="p-4 bg-gray-50 border-b">
                                 <h4 className="font-bold text-sm">Your booking details</h4>
                             </div>
-                            
                             <div className="p-4 space-y-4">
                                 <div className="flex gap-3">
-                                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=200" className="w-16 h-16 rounded object-cover" alt="hotel" />
+                                    {bookingData._hotel_image && (
+                                        <img
+                                            src={bookingData._hotel_image}
+                                            className="w-16 h-16 rounded object-cover"
+                                            alt="hotel"
+                                        />
+                                    )}
                                     <div>
-                                        <p className="font-bold text-xs">Hotel Kollol by J&Z Group</p>
-                                        <div className="flex text-[#febb02] text-[10px] mb-1">{"★".repeat(3)}</div>
-                                        <p className="text-[10px] text-gray-500 line-clamp-1">Cox's Bazar, Bangladesh</p>
+                                        <p className="font-bold text-xs">{bookingData._hotel_name}</p>
+                                        <div className="flex text-yellow-400 text-[10px] mb-1">
+                                            {Array.from({ length: bookingData._hotel_star || 3 }).map((_, i) => (
+                                                <FaStar key={i} />
+                                            ))}
+                                        </div>
+                                        <p className="text-[10px] text-gray-500">{bookingData._destination}</p>
                                     </div>
                                 </div>
 
                                 <div className="pt-4 border-t space-y-2">
                                     <div className="flex justify-between text-xs font-bold">
                                         <span className="text-gray-500">Dates:</span>
-                                        <span>13 Mar - 15 Mar (2 nights)</span>
+                                        <span>{bookingData.check_in} â†’ {bookingData.check_out} ({nights} night{nights > 1 ? 's' : ''})</span>
                                     </div>
                                     <div className="flex justify-between text-xs font-bold">
                                         <span className="text-gray-500">Room:</span>
-                                        <span>1x Standard Room</span>
+                                        <span>{roomCount}x {bookingData._room_name}</span>
                                     </div>
                                     <div className="flex justify-between text-xs font-bold">
                                         <span className="text-gray-500">Guests:</span>
-                                        <span>2 Adults</span>
+                                        <span>{bookingData.adults} Adults{bookingData.children > 0 ? `, ${bookingData.children} Children` : ''}</span>
                                     </div>
                                 </div>
 
                                 <div className="pt-4 border-t">
+                                    <div className="text-xs text-gray-500 mb-2">
+                                        {formatPrice(roomPrice)} Ã— {nights} night{nights > 1 ? 's' : ''} Ã— {roomCount} room{roomCount > 1 ? 's' : ''}
+                                    </div>
                                     <div className="flex justify-between items-center mb-1">
                                         <span className="font-bold text-lg">Total Price</span>
-                                        <span className="font-black text-2xl text-[#1a1a1a]">USD 154.96</span>
+                                        <span className="font-black text-2xl text-[#1a1a1a]">{formatPrice(totalAmount)}</span>
                                     </div>
                                     <p className="text-[10px] text-green-700 font-bold text-right">Includes taxes and fees</p>
-                                </div>
-
-                                <div className="bg-blue-50 p-3 rounded-lg flex gap-2">
-                                    <Info size={16} className="text-blue-600 shrink-0" />
-                                    <p className="text-[10px] text-blue-800 leading-tight">
-                                        <strong>Free cancellation</strong> until 5 March. No immediate payment needed if you choose "Pay Later".
-                                    </p>
+                                    <p className="text-[10px] text-orange-600 font-bold text-right mt-1">Payable at the property</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
