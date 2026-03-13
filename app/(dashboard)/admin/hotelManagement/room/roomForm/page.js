@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/app/contexts/i18n";
 import { Form, notification } from "antd";
 import {
   createRoom,
   getAllHotel,
+  getAllSidePublicHotel,
   singleImageUpload,
   updateRoom,
 } from "@/app/helper/backend";
@@ -23,6 +24,7 @@ const RoomForm = ({ isEdit = false, data }) => {
   const [form] = Form.useForm();
   const i18n = useI18n();
   const [hotels] = useFetch(getAllHotel, { limit: 100 });
+  const [hotelSidebarOptions] = useFetch(getAllSidePublicHotel);
   let { languages, langCode } = useI18n();
   const [selectedLang, setSelectedLang] = useState(langCode);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -50,6 +52,35 @@ const RoomForm = ({ isEdit = false, data }) => {
       });
     }
   }, [data, form, isEdit]);
+
+  const sidebarMap = useMemo(() => {
+    const map = {};
+    (hotelSidebarOptions || []).forEach((item) => {
+      map[item.key] = item.values;
+    });
+    return map;
+  }, [hotelSidebarOptions]);
+
+  const mealPlanOptions = (sidebarMap.meal_plans || []).map((item) => ({
+    value: item.name,
+    label: item.name,
+  }));
+
+  const refundabilityOptions = (sidebarMap.refundability || []).map((item) => ({
+    value: item.name,
+    label: item.name === "non_refundable" ? "Non Refundable" : "Refundable",
+  }));
+
+  const fallbackMealPlans = [
+    "Bed & Breakfast (BB)",
+    "Half Board (HB)",
+    "Room Only (RO)",
+  ].map((value) => ({ value, label: value }));
+
+  const fallbackRefundability = [
+    { value: "refundable", label: "Refundable" },
+    { value: "non_refundable", label: "Non Refundable" },
+  ];
 
   return (
     <div className="">
@@ -202,6 +233,23 @@ const RoomForm = ({ isEdit = false, data }) => {
             getValueFromEvent={(e) => +e.target.value}
             className="w-full rounded bg-transparent p-3 dashinput"
             placeholder="Number of children"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormSelect
+            label={i18n.t("Meal Plans")}
+            name="meal_plan"
+            placeholder={i18n.t("Select Meal Plan")}
+            className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            options={mealPlanOptions.length ? mealPlanOptions : fallbackMealPlans}
+          />
+          <FormSelect
+            label={i18n.t("Refundability")}
+            name="refundability"
+            placeholder={i18n.t("Select Refundability")}
+            className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            options={refundabilityOptions.length ? refundabilityOptions : fallbackRefundability}
           />
         </div>
 

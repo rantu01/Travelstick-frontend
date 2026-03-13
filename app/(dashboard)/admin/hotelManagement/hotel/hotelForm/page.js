@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/app/contexts/i18n";
 import { Form } from "antd";
 import {
   createHotel,
   getDestination,
+  getAllSidePublicHotel,
   singleImageUpload,
   updateHotel,
 } from "@/app/helper/backend";
@@ -24,6 +25,7 @@ const HotelForm = ({ isEdit = false, data }) => {
   const [form] = Form.useForm();
   const i18n = useI18n();
   const [destination] = useFetch(getDestination, { limit: 100 });
+  const [hotelSidebarOptions] = useFetch(getAllSidePublicHotel);
   let { languages, langCode } = useI18n();
   const [selectedLang, setSelectedLang] = useState(langCode);
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -78,6 +80,70 @@ const HotelForm = ({ isEdit = false, data }) => {
       });
     }
   }, [data, form, isEdit]);
+
+  const sidebarMap = useMemo(() => {
+    const map = {};
+    (hotelSidebarOptions || []).forEach((item) => {
+      map[item.key] = item.values;
+    });
+    return map;
+  }, [hotelSidebarOptions]);
+
+  const mapOptionValues = (values = []) =>
+    values
+      .filter((item) => item?.name)
+      .map((item) => ({ label: item.name, value: item.name }));
+
+  const hotelTypeOptions =
+    mapOptionValues(sidebarMap.hotel_type) || [];
+  const roomTypeOptions =
+    mapOptionValues(sidebarMap.room_type) || [];
+  const neighborhoodOptions =
+    mapOptionValues(sidebarMap.neighborhood) || [];
+  const mealPlanOptions =
+    mapOptionValues(sidebarMap.meal_plans) || [];
+  const reservationPolicyOptions =
+    mapOptionValues(sidebarMap.reservation_policies) || [];
+  const refundabilityOptions =
+    mapOptionValues(sidebarMap.refundability) || [];
+  const facilitiesOptions =
+    mapOptionValues(sidebarMap.facilities_services) || [];
+
+  const fallbackHotelTypes = ["apartment", "banglo", "palace", "resort"].map((value) => ({
+    value,
+    label: value.charAt(0).toUpperCase() + value.slice(1),
+  }));
+  const fallbackRoomTypes = ["couple", "deluxe", "family", "single", "seaView"].map((value) => ({
+    value,
+    label: value === "deluxe" ? "Deluxe King Suite" : value === "seaView" ? "Sea View" : `${value.charAt(0).toUpperCase()}${value.slice(1)} Room`,
+  }));
+  const fallbackMealPlans = [
+    "Bed & Breakfast (BB)",
+    "Half Board (HB)",
+    "Room Only (RO)",
+  ].map((value) => ({ label: value, value }));
+  const fallbackReservationPolicies = [
+    "Free cancellation",
+    "Book without credit card",
+    "No prepayment",
+  ].map((value) => ({ label: value, value }));
+  const fallbackFacilities = [
+    "Air conditioning",
+    "Television in lobby",
+    "Reception desk",
+    "Security guard",
+    "24-hour reception",
+  ].map((value) => ({ label: value, value }));
+  const fallbackRefundability = [
+    { label: "Refundable", value: "refundable" },
+    { label: "Non Refundable", value: "non_refundable" },
+  ];
+  const fallbackNeighborhoods = [
+    "Sukhumvit",
+    "Downtown Bangkok",
+    "Bangkok Old Town",
+    "Wattana",
+  ].map((value) => ({ label: value, value }));
   return (
     <div className="">
       <div className="flex justify-start flex-wrap gap-3 mt-4">
@@ -291,12 +357,7 @@ const HotelForm = ({ isEdit = false, data }) => {
             placeholder={i18n.t("Select Hotel Type")}
             required
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
-            options={[
-              { value: "apartment", label: "Apartment" },
-              { value: "banglo", label: "Banglo" },
-              { value: "palace", label: "Palace" },
-              { value: "resort", label: "Resort" },
-            ]}
+            options={hotelTypeOptions.length ? hotelTypeOptions : fallbackHotelTypes}
           />
           <FormSelect
             label={i18n.t("Room Type")}
@@ -304,13 +365,59 @@ const HotelForm = ({ isEdit = false, data }) => {
             placeholder={i18n.t("Select Room Type")}
             required
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
-            options={[
-              { value: "couple", label: "Couple Room" },
-              { value: "deluxe", label: "Deluxe King Suite" },
-              { value: "family", label: "Family Room" },
-              { value: "single", label: "Single Room" },
-              { value: "seaView", label: "Sea View" },
-            ]}
+            options={roomTypeOptions.length ? roomTypeOptions : fallbackRoomTypes}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormInput
+            label={i18n.t("Distance from City (KM)")}
+            name="distance_from_city"
+            type={"number"}
+            getValueFromEvent={(e) => +e.target.value}
+            className="w-full rounded bg-transparent p-3 dashinput"
+            placeholder={i18n.t("e.g. 5")}
+          />
+          <FormSelect
+            label={i18n.t("Neighborhood")}
+            name="neighborhood"
+            placeholder={i18n.t("Select Neighborhood")}
+            className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            options={neighborhoodOptions.length ? neighborhoodOptions : fallbackNeighborhoods}
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormSelect
+            label={i18n.t("Meal Plans")}
+            name="meal_plans"
+            placeholder={i18n.t("Select Meal Plans")}
+            className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            options={mealPlanOptions.length ? mealPlanOptions : fallbackMealPlans}
+            multi
+          />
+          <FormSelect
+            label={i18n.t("Reservation policy")}
+            name="reservation_policies"
+            placeholder={i18n.t("Select Reservation Policy")}
+            className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            options={reservationPolicyOptions.length ? reservationPolicyOptions : fallbackReservationPolicies}
+            multi
+          />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormSelect
+            label={i18n.t("Refundability")}
+            name="refundability"
+            placeholder={i18n.t("Select Refundability")}
+            className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            options={refundabilityOptions.length ? refundabilityOptions : fallbackRefundability}
+          />
+          <FormSelect
+            label={i18n.t("Facilities and Services")}
+            name="facilities_services"
+            placeholder={i18n.t("Select Facilities and Services")}
+            className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            options={facilitiesOptions.length ? facilitiesOptions : fallbackFacilities}
+            multi
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5">

@@ -12,9 +12,23 @@ const HotelCard = ({ data }) => {
   const { langCode } = useI18n();
 
   const safeDestination =
-    typeof data?.destination === "object"
-      ? data?.destination?.name || data?.destination?.address || "Unknown location"
-      : data?.destination || "Unknown location";
+    (() => {
+      if (!data?.destination) return "Unknown location";
+      if (typeof data.destination === "string") return data.destination;
+      const name = data.destination?.name;
+      if (name) {
+        try {
+          // name can be a Map-like object with language keys
+          if (typeof name === 'object') {
+            return name[langCode] || name.en || Object.values(name)[0] || data.destination.address || 'Unknown location';
+          }
+          return name;
+        } catch (e) {
+          return data.destination.address || 'Unknown location';
+        }
+      }
+      return data.destination.address || 'Unknown location';
+    })();
 
   return (
     <div className="group w-full rounded-[15px] border border-[#E8EAE8] bg-white overflow-hidden flex flex-col md:flex-row transition-shadow hover:shadow-md min-h-[220px]">
