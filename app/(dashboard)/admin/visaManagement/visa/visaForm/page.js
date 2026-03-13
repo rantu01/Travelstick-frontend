@@ -255,10 +255,10 @@ const VisaForm = ({ isEdit = false, data }) => {
 
         {/* ── Images ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
-          <MultipleImageInput label="Banner Image" name="banner_image" required />
-          <MultipleImageInput label="Card Image" name="card_image" required />
+          <MultipleImageInput label="Banner Image" name="banner_image" required maxFileSizeMB={5} />
+          <MultipleImageInput label="Card Image" name="card_image" required maxFileSizeMB={5} />
         </div>
-        <MultipleImageInput name="images" label="Visa Images" required max={12} />
+        <MultipleImageInput name="images" label="Visa Images" required max={12} maxFileSizeMB={5} />
 
         {/* ── Language-specific fields ── */}
         {languages?.map((l) => (
@@ -307,9 +307,6 @@ const VisaForm = ({ isEdit = false, data }) => {
                 placeholder={i18n.t("Select Citizen Country")}
                 required
                 showSearch
-                filterOption={(input, option) =>
-                  option?.searchLabel?.includes(input.toLowerCase())
-                }
                 className="!w-full rounded bg-transparent py-6 px-2 dashinput"
                 options={countryOptions}
               />
@@ -319,9 +316,6 @@ const VisaForm = ({ isEdit = false, data }) => {
                 placeholder={i18n.t("Select Destination")}
                 required
                 showSearch
-                filterOption={(input, option) =>
-                  option?.searchLabel?.includes(input.toLowerCase())
-                }
                 className="!w-full rounded bg-transparent py-6 px-2 dashinput"
                 options={countryOptions}
               />

@@ -32,13 +32,14 @@ const MultipleImageInput = (props) => {
           pdf={props?.pdf}
           noWebp={props?.noWebp}
           video={props?.video}
+          maxFileSizeMB={props?.maxFileSizeMB}
         />
       </Form.Item>
     </div>
   );
 };
 
-const Input = ({ value, onChange, listType, max, noWebp, pdf, video }) => {
+const Input = ({ value, onChange, listType, max, noWebp, pdf, video, maxFileSizeMB = 5 }) => {
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
 
@@ -54,7 +55,17 @@ const Input = ({ value, onChange, listType, max, noWebp, pdf, video }) => {
   };
 
   const handleChange = ({ fileList }) => {
-    onChange(fileList);
+    const maxBytes = (maxFileSizeMB || 5) * 1024 * 1024;
+    const filtered = [];
+    for (const f of fileList) {
+      // only validate actual files (newly added) that have originFileObj
+      if (f?.originFileObj && f.originFileObj.size > maxBytes) {
+        message.error(`${f.name || 'File'} is too large. Please reduce to ${maxFileSizeMB}MB or smaller and try again.`);
+        continue;
+      }
+      filtered.push(f);
+    }
+    onChange(filtered);
   };
 
   const handleRemove = async (file) => {
@@ -71,7 +82,8 @@ const Input = ({ value, onChange, listType, max, noWebp, pdf, video }) => {
 
   return (
     <>
-      <Upload
+      <div>
+        <Upload
         accept={`image/png, image/gif, image/jpeg, ${!noWebp && "image/webp"}${pdf && ",application/pdf"}${video && ",video/mp4, application/mpeg, video/*"}`}
         listType={listType}
         onPreview={handlePreview}
@@ -83,6 +95,8 @@ const Input = ({ value, onChange, listType, max, noWebp, pdf, video }) => {
       >
         {(value?.length || 0) < max && "+ upload"}
       </Upload>
+        <div className="mt-2 text-xs text-gray-500">Max file size: {maxFileSizeMB}MB. If upload fails, reduce image size (e.g. via image compressor) and try again.</div>
+      </div>
       <Modal
         open={previewVisible}
         footer={null}
@@ -121,4 +135,3 @@ function getBase64(file) {
     reader.onerror = (error) => reject(error);
   });
 }
-
