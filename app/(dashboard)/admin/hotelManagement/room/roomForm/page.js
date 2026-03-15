@@ -83,7 +83,7 @@ const RoomForm = ({ isEdit = false, data }) => {
   ];
 
   return (
-    <div className="">
+    <div className="p-6">
       <div className="flex justify-start flex-wrap gap-3 mt-4">
         {languages?.map((l) => (
           <button

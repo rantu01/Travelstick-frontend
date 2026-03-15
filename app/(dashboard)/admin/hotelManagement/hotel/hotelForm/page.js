@@ -109,41 +109,83 @@ const HotelForm = ({ isEdit = false, data }) => {
   const facilitiesOptions =
     mapOptionValues(sidebarMap.facilities_services) || [];
 
-  const fallbackHotelTypes = ["apartment", "banglo", "palace", "resort"].map((value) => ({
-    value,
-    label: value.charAt(0).toUpperCase() + value.slice(1),
-  }));
-  const fallbackRoomTypes = ["couple", "deluxe", "family", "single", "seaView"].map((value) => ({
-    value,
-    label: value === "deluxe" ? "Deluxe King Suite" : value === "seaView" ? "Sea View" : `${value.charAt(0).toUpperCase()}${value.slice(1)} Room`,
-  }));
+  const fallbackHotelTypes = [
+    { value: "apartment", label: "Apartment" },
+    { value: "bungalow", label: "Bungalow" },
+    { value: "villa", label: "Villa" },
+    { value: "hostel", label: "Hostel" },
+    { value: "guesthouse", label: "Guesthouse" },
+    { value: "boutique", label: "Boutique Hotel" },
+    { value: "resort", label: "Resort" },
+    { value: "palace", label: "Palace" },
+    { value: "motel", label: "Motel" },
+    { value: "serviced_apartment", label: "Serviced Apartment" },
+  ];
+
+  const fallbackRoomTypes = [
+    { value: "single", label: "Single Room" },
+    { value: "double", label: "Double Room" },
+    { value: "twin", label: "Twin Room" },
+    { value: "deluxe", label: "Deluxe King Suite" },
+    { value: "family", label: "Family Room" },
+    { value: "suite", label: "Suite" },
+    { value: "junior_suite", label: "Junior Suite" },
+    { value: "executive_suite", label: "Executive Suite" },
+    { value: "studio", label: "Studio" },
+    { value: "sea_view", label: "Sea View Room" },
+  ];
+
   const fallbackMealPlans = [
-    "Bed & Breakfast (BB)",
-    "Half Board (HB)",
-    "Room Only (RO)",
-  ].map((value) => ({ label: value, value }));
+    { label: "Bed & Breakfast (BB)", value: "bb" },
+    { label: "Half Board (HB)", value: "hb" },
+    { label: "Full Board (FB)", value: "fb" },
+    { label: "All Inclusive (AI)", value: "ai" },
+    { label: "Room Only (RO)", value: "ro" },
+  ];
+
   const fallbackReservationPolicies = [
-    "Free cancellation",
-    "Book without credit card",
-    "No prepayment",
-  ].map((value) => ({ label: value, value }));
+    { label: "Free cancellation", value: "free_cancellation" },
+    { label: "Book without credit card", value: "no_credit_card" },
+    { label: "No prepayment", value: "no_prepayment" },
+    { label: "Prepayment required", value: "prepayment_required" },
+    { label: "Deposit required", value: "deposit_required" },
+    { label: "Pay at hotel", value: "pay_at_hotel" },
+  ];
+
   const fallbackFacilities = [
-    "Air conditioning",
-    "Television in lobby",
-    "Reception desk",
-    "Security guard",
-    "24-hour reception",
-  ].map((value) => ({ label: value, value }));
+    { label: "Free Wi-Fi", value: "wifi" },
+    { label: "Swimming Pool", value: "swimming_pool" },
+    { label: "Fitness Center", value: "fitness_center" },
+    { label: "Spa", value: "spa" },
+    { label: "Restaurant", value: "restaurant" },
+    { label: "Bar", value: "bar" },
+    { label: "Airport Shuttle", value: "airport_shuttle" },
+    { label: "Free Parking", value: "parking" },
+    { label: "Room Service", value: "room_service" },
+    { label: "Laundry", value: "laundry" },
+    { label: "24-hour Reception", value: "24h_reception" },
+    { label: "Concierge", value: "concierge" },
+    { label: "Pet Friendly", value: "pet_friendly" },
+    { label: "Family Rooms", value: "family_rooms" },
+    { label: "Wheelchair Accessible", value: "wheelchair_accessible" },
+  ];
+
   const fallbackRefundability = [
     { label: "Refundable", value: "refundable" },
     { label: "Non Refundable", value: "non_refundable" },
+    { label: "Partially Refundable", value: "partially_refundable" },
   ];
+
   const fallbackNeighborhoods = [
-    "Sukhumvit",
-    "Downtown Bangkok",
-    "Bangkok Old Town",
-    "Wattana",
-  ].map((value) => ({ label: value, value }));
+    { label: "Sukhumvit", value: "sukhumvit" },
+    { label: "Silom", value: "silom" },
+    { label: "Khaosan", value: "khaosan" },
+    { label: "Rattanakosin", value: "rattanakosin" },
+    { label: "Chatuchak", value: "chatuchak" },
+    { label: "Riverside", value: "riverside" },
+    { label: "Phra Khanong", value: "phra_khanong" },
+    { label: "Thonglor", value: "thonglor" },
+  ];
   return (
     <div className="">
       <div className="flex justify-start flex-wrap gap-3 mt-4">
@@ -163,7 +205,7 @@ const HotelForm = ({ isEdit = false, data }) => {
       <Form
         form={form}
         layout="vertical"
-        onFinish={async (values) => {
+          onFinish={async (values) => {
           let bannerImageUrl = "";
           let cardImageUrl = "";
 
@@ -227,6 +269,17 @@ const HotelForm = ({ isEdit = false, data }) => {
 
             images = await Promise.all(uploadPromises);
           }
+
+          // Normalize single-value fields that may be submitted as tags (array)
+          const normalizeSingleTag = (field) => {
+            const val = values[field];
+            if (Array.isArray(val)) return val.length ? val[0] : "";
+            return val;
+          };
+
+          values.hotel_type = normalizeSingleTag("hotel_type");
+          values.room_type = normalizeSingleTag("room_type");
+          values.neighborhood = normalizeSingleTag("neighborhood");
 
           const multiLangFields = ["name", "about"];
           const formattedData = multiLangFields.reduce((acc, field) => {
@@ -356,6 +409,8 @@ const HotelForm = ({ isEdit = false, data }) => {
             name={"hotel_type"}
             placeholder={i18n.t("Select Hotel Type")}
             required
+            tags
+            allowClear
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
             options={hotelTypeOptions.length ? hotelTypeOptions : fallbackHotelTypes}
           />
@@ -365,6 +420,8 @@ const HotelForm = ({ isEdit = false, data }) => {
             placeholder={i18n.t("Select Room Type")}
             required
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            tags
+            allowClear
             options={roomTypeOptions.length ? roomTypeOptions : fallbackRoomTypes}
           />
         </div>
@@ -382,6 +439,8 @@ const HotelForm = ({ isEdit = false, data }) => {
             name="neighborhood"
             placeholder={i18n.t("Select Neighborhood")}
             className="w-full rounded bg-transparent py-6 px-2 dashinput !text-white"
+            tags
+            allowClear
             options={neighborhoodOptions.length ? neighborhoodOptions : fallbackNeighborhoods}
           />
         </div>

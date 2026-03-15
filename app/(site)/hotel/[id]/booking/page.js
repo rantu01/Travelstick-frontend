@@ -96,6 +96,10 @@ export default function BookingDetailsPage() {
     const totalAmount = roomPrice * nights * roomCount;
 
     const handleContinue = () => {
+        if (!roomId) {
+            alert('Please select a room first and try again.');
+            return;
+        }
         if (!form.first_name || !form.last_name || !form.email || !form.phone || !form.country) {
             alert('Please fill in all required fields.');
             return;

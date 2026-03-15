@@ -3,18 +3,24 @@ import React, { useEffect, useState } from 'react';
 import { Lock, ShieldCheck, ChevronLeft } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { useCurrency } from '@/app/contexts/site';
+import { useUser } from '@/app/contexts/user';
 import { createHotelBookingPayment } from '@/app/helper/backend';
 import { FaStar } from 'react-icons/fa6';
+import AuthModal from '@/app/components/site/common/component/authModal';
 
 export default function FinalBookingStep() {
     const router = useRouter();
     const params = useParams();
     const hotelId = params?.id;
     const { formatPrice } = useCurrency();
+    const { user } = useUser();
 
     const [bookingData, setBookingData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [agreed, setAgreed] = useState(false);
+    const [authModalOpen, setAuthModalOpen] = useState(false);
+
+    const isValidObjectId = (value) => typeof value === 'string' && /^[a-f\d]{24}$/i.test(value);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -35,21 +41,54 @@ export default function FinalBookingStep() {
             alert('Please agree to the Terms and Conditions.');
             return;
         }
+        if (!user) {
+            setAuthModalOpen(true);
+            return;
+        }
         if (!bookingData) {
             alert('Booking data not found. Please go back and fill the form.');
             return;
         }
+
+        if (!isValidObjectId(bookingData.hotel)) {
+            alert('Invalid hotel information. Please start booking again.');
+            return;
+        }
+
+        const adults = Number(bookingData.adults || 0);
+        const children = Number(bookingData.children || 0);
+        const person = Number(bookingData.person || adults + children);
+        const amount = Number(bookingData.amount || 0);
+        const roomDetails = Array.isArray(bookingData.room_details)
+            ? bookingData.room_details
+                .filter((item) => isValidObjectId(item?.room) && Number(item?.count) > 0)
+                .map((item) => ({ room: item.room, count: Number(item.count) }))
+            : [];
+        const services = Array.isArray(bookingData.services)
+            ? bookingData.services.filter((item) => isValidObjectId(item))
+            : [];
+
+        if (person <= 0) {
+            alert('Guest count is invalid. Please update your booking details.');
+            return;
+        }
+
+        if (!Number.isFinite(amount) || amount < 0) {
+            alert('Booking amount is invalid. Please go back and try again.');
+            return;
+        }
+
         setLoading(true);
         try {
             const payload = {
                 hotel: bookingData.hotel,
                 check_in: bookingData.check_in,
                 check_out: bookingData.check_out,
-                person: bookingData.person || bookingData.adults + (bookingData.children || 0),
-                adults: bookingData.adults,
-                children: bookingData.children || 0,
-                rooms_count: bookingData.rooms_count,
-                with_pets: false,
+                person,
+                adults,
+                children,
+                rooms_count: Number(bookingData.rooms_count || 1),
+                with_pets: Boolean(bookingData.with_pets),
                 first_name: bookingData.first_name,
                 last_name: bookingData.last_name,
                 email: bookingData.email,
@@ -59,9 +98,9 @@ export default function FinalBookingStep() {
                 special_requests: bookingData.special_requests || '',
                 smoking_preference: bookingData.smoking_preference || 'non-smoking',
                 bed_preference: bookingData.bed_preference || 'large',
-                room_details: bookingData.room_details || [],
-                services: [],
-                amount: bookingData.amount,
+                room_details: roomDetails,
+                services,
+                amount,
                 method: 'cash',
             };
 
@@ -70,10 +109,10 @@ export default function FinalBookingStep() {
                 sessionStorage.removeItem('hotelBookingData');
                 router.push(`/hotel/${hotelId}?booking=success`);
             } else {
-                alert(res?.message || 'Booking failed. Please try again.');
+                alert(res?.errorMessage || res?.message || 'Booking failed. Please try again.');
             }
         } catch (err) {
-            alert(err?.message || 'Something went wrong. Please try again.');
+            alert(err?.response?.data?.errorMessage || err?.message || 'Something went wrong. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -268,6 +307,11 @@ export default function FinalBookingStep() {
                     </div>
                 </div>
             </div>
+            <AuthModal
+                authModalOpen={authModalOpen}
+                setAuthModalOpen={setAuthModalOpen}
+                slug={`/hotel/${hotelId}/booking/final`}
+            />
         </div>
     );
 }
