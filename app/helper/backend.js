@@ -345,3 +345,10 @@ export const getSingleUmrahInquiry = (data) => get(`/umrah-inquiry/${data._id}`,
 export const updateUmrahInquiry = (data) => put(`/umrah-inquiry/${data._id}`, data)
 export const deleteUmrahInquiry = (data) => del(`/umrah-inquiry/${data._id}`, data)
 export const createUmrahInquiry = (data) => post('/umrah-inquiry', data)
+
+// Custom Tour Request
+export const createCustomTourRequest = (data) => post('/custom-tour-requests', { body: data })
+export const getAllCustomTourRequests = (data) => get('/custom-tour-requests', data)
+export const updateCustomTourRequest = (data) =>
+	put(`/custom-tour-requests/${data._id}`, { body: data })
+export const deleteCustomTourRequest = (data) => del(`/custom-tour-requests/${data._id}`, data)

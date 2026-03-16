@@ -174,6 +174,11 @@ const menu = [
         href: "/admin/packageManagement/review",
         icon: <IoChatbox />,
       },
+      {
+        label: "Custom Tour Requests",
+        href: "/admin/packageManagement/customTourRequest",
+        icon: <TbBrandGoogleBigQuery />,
+      },
     ],
   },
   {

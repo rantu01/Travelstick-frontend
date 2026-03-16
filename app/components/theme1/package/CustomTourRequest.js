@@ -1,12 +1,44 @@
 "use client";
-import React from 'react';
-import { Input, DatePicker, Button, Select } from 'antd';
+import React, { useState } from 'react';
+import { Input, DatePicker, Button, Select, Form } from 'antd';
 import { PhoneOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { useAction } from '@/app/helper/hooks';
+import { createCustomTourRequest } from '@/app/helper/backend';
 
 const { TextArea } = Input;
 
 const CustomTourRequest = () => {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (values) => {
+    const payload = {
+      selectedDestination: values?.selectedDestination,
+      customDestination: values?.customDestination,
+      travelDate: values?.travelDate
+        ? dayjs(values.travelDate).format('YYYY-MM-DD')
+        : undefined,
+      firstName: values?.firstName,
+      lastName: values?.lastName,
+      phone: values?.phone,
+      email: values?.email,
+      requirements: values?.requirements,
+    };
+
+    setLoading(true);
+    await useAction(
+      createCustomTourRequest,
+      payload,
+      () => {
+        form.resetFields();
+      },
+      true,
+      'Your custom tour request has been submitted successfully'
+    );
+    setLoading(false);
+  };
+
   return (
     <div className=" min-h-screen mb-20">
       <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -28,39 +60,49 @@ const CustomTourRequest = () => {
         </div>
 
         {/* Form Body */}
-        <div className="p-6 md:p-10 space-y-10">
-          
+        <Form
+          form={form}
+          onFinish={handleSubmit}
+          initialValues={{ travelDate: dayjs() }}
+          className="p-6 md:p-10 space-y-10"
+          layout="vertical"
+        >
           {/* Section 1: Destination */}
           <section className="">
             <h3 className="text-lg font-bold text-[#0D2E5E] mb-6 border-b pb-2">Tell us where do you want to go?</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700">Select a destination from list</label>
+              <Form.Item
+                label="Select a destination from list"
+                name="selectedDestination"
+                className="mb-0"
+              >
                 <Select
                   showSearch
                   placeholder="City"
                   className="w-full h-12"
                   options={[
-                    { value: 'dubai', label: 'Dubai' },
-                    { value: 'maldives', label: 'Maldives' },
-                    { value: 'thailand', label: 'Thailand' },
+                    { value: 'Dubai', label: 'Dubai' },
+                    { value: 'Maldives', label: 'Maldives' },
+                    { value: 'Thailand', label: 'Thailand' },
                   ]}
                 />
-              </div>
-              
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700">When do you want to go?</label>
-                <DatePicker 
-                  className="w-full h-12" 
-                  defaultValue={dayjs()} 
-                  format="D MMM YY"
-                />
-              </div>
+              </Form.Item>
 
-              <div className="space-y-2 md:col-span-1">
-                <label className="text-sm font-semibold text-gray-700">Or, Write it down</label>
+              <Form.Item
+                label="When do you want to go?"
+                name="travelDate"
+                className="mb-0"
+              >
+                <DatePicker className="w-full h-12" format="D MMM YY" />
+              </Form.Item>
+
+              <Form.Item
+                label="Or, Write it down"
+                name="customDestination"
+                className="mb-0 md:col-span-1"
+              >
                 <Input placeholder="Write City Name" className="h-12" />
-              </div>
+              </Form.Item>
             </div>
           </section>
 
@@ -68,34 +110,60 @@ const CustomTourRequest = () => {
           <section className="">
             <h3 className="text-lg font-bold text-[#0D2E5E] mb-6 border-b pb-2">Tell us about Yourself</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Input placeholder="First Name" className="h-12" />
-              <Input placeholder="Last Name" className="h-12" />
-              <Input placeholder="Mobile Number" className="h-12" />
-              <Input placeholder="Email" className="h-12" />
+              <Form.Item
+                name="firstName"
+                rules={[{ required: true, message: 'First name is required' }]}
+                className="mb-0"
+              >
+                <Input placeholder="First Name" className="h-12" />
+              </Form.Item>
+              <Form.Item name="lastName" className="mb-0">
+                <Input placeholder="Last Name" className="h-12" />
+              </Form.Item>
+              <Form.Item
+                name="phone"
+                rules={[{ required: true, message: 'Mobile number is required' }]}
+                className="mb-0"
+              >
+                <Input placeholder="Mobile Number" className="h-12" />
+              </Form.Item>
+              <Form.Item
+                name="email"
+                rules={[
+                  { required: true, message: 'Email is required' },
+                  { type: 'email', message: 'Please enter a valid email' },
+                ]}
+                className="mb-0"
+              >
+                <Input placeholder="Email" className="h-12" />
+              </Form.Item>
             </div>
           </section>
 
           {/* Section 3: Requirements */}
           <section className="">
             <h3 className="text-lg font-bold text-[#0D2E5E] mb-6 border-b pb-2">Share your Requirements</h3>
-            <TextArea 
-              rows={5} 
-              placeholder="Enter Your requirements" 
-              className="rounded-lg p-4"
-            />
+            <Form.Item name="requirements" className="mb-0">
+              <TextArea
+                rows={5}
+                placeholder="Enter Your requirements"
+                className="rounded-lg p-4"
+              />
+            </Form.Item>
           </section>
 
           {/* Submit Button */}
           <div className="pt-4">
-            <Button 
-              type="primary" 
+            <Button
+              htmlType="submit"
+              type="primary"
+              loading={loading}
               className="bg-[#2185FF] hover:bg-blue-600 h-14 px-10 text-base font-bold rounded-lg"
             >
               Submit Your Request
             </Button>
           </div>
-
-        </div>
+        </Form>
       </div>
     </div>
   );
