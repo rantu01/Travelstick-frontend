@@ -19,6 +19,7 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { FiShare2, FiX, FiChevronLeft, FiChevronRight, FiCheck, FiMap } from "react-icons/fi";
 import { CiLocationOn, CiClock2, CiCalendar } from "react-icons/ci";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCurrency } from "@/app/contexts/site";
 import AboutDetails from "@/app/components/common/aboutDetails";
 
 const PackageDetails = () => {
@@ -144,6 +145,7 @@ const PackageDetails = () => {
       ? data?.price?.discount
       : (totalPrice * data?.price?.discount) / 100;
   const finalPrice = totalPrice - (discountAmount || 0);
+  const { formatPrice } = useCurrency();
 
   return (
     <div className="min-h-screen pb-20 isolate">
@@ -364,13 +366,11 @@ const PackageDetails = () => {
                   </span>
                   {discountAmount > 0 && (
                     <span className="text-gray-400 text-sm line-through mb-0.5">
-                      ৳ {totalPrice.toLocaleString()}
+                      {formatPrice(totalPrice)}
                     </span>
                   )}
                   <div className="flex items-baseline gap-1">
-                    <span className="text-[#0ea5e9] text-3xl font-black">
-                      ৳ {finalPrice.toLocaleString()}
-                    </span>
+                    <span className="text-[#0ea5e9] text-3xl font-black">{formatPrice(finalPrice)}</span>
                     <span className="text-gray-400 text-sm font-medium">/ person</span>
                   </div>
                 </div>
@@ -539,9 +539,7 @@ const PackageDetails = () => {
                     Book This Tour
                   </p>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black">
-                      ৳ {finalPrice.toLocaleString()}
-                    </span>
+                    <span className="text-3xl font-black">{formatPrice(finalPrice)}</span>
                     <span className="text-sm opacity-80">/ Per Person</span>
                   </div>
                 </div>
@@ -608,7 +606,7 @@ const PackageDetails = () => {
         <div>
           <p className="text-xs text-gray-400 font-bold uppercase">Price Per Person</p>
           <p className="text-xl font-black text-primary">
-            ৳ {finalPrice.toLocaleString()}
+            {formatPrice(finalPrice)}
           </p>
         </div>
         <button

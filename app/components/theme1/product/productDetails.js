@@ -32,7 +32,7 @@ const ProductDetailsPage = ({ theme }) => {
   const [paymentMethod, setPaymentMethod] = useState("stripe");
   const i18n = useI18n();
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const params = useParams();
   const { _id } = params;
   const [data, getData] = useFetch(getPublicProducts, {}, false);
@@ -178,15 +178,9 @@ const ProductDetailsPage = ({ theme }) => {
             </div>
             <div className="mt-3 lg:mt-4 xl:mt-5 flex items-center gap-2 md:gap-3 lg:gap-4 xl:gap-6 heading2">
               <span className="text-[#05073C] description-2">{i18n.t("Price")}: </span>
-              <p className="text-primary description-2">
-                {currency_symbol}
-                {data?.final_price}
-              </p>
+              <p className="text-primary description-2">{formatPrice(data?.final_price)}</p>
               <p className="text-red-400 description-2">
-                <del>
-                  {currency_symbol}
-                  {data?.price?.amount}
-                </del>
+                <del>{formatPrice(data?.price?.amount)}</del>
               </p>
             </div>
             <p className="mt-3 lg:mt-4 xl:mt-5">

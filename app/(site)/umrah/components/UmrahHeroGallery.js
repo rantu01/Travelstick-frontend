@@ -17,7 +17,7 @@ const GALLERY_IMAGES = [
     alt: "Madinah Mosque",
   },
   {
-    src: "https://images.unsplash.com/photo-1609946660222-04dfde8e82f8?w=800&q=80",
+    src: "https://www.aljazeera.com/wp-content/uploads/2022/07/h_57793313.jpg?resize=770%2C513&quality=80",
     alt: "Pilgrims",
   },
   {

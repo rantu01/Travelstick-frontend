@@ -17,7 +17,7 @@ const ProductCard = ({ data }) => {
   const { user } = useUser();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const { addItem } = useCart();
-  const { currency_symbol } = useCurrency();
+  const { formatPrice } = useCurrency();
   const i18n = useI18n();
   const { langCode } = useI18n();
   const currentPath = usePathname()
@@ -85,15 +85,9 @@ const ProductCard = ({ data }) => {
               {i18n?.t("Quantity")}: {data?.quantity}
             </p>
             <div className="flex items-center gap-1">
-              <p className="heading-3 text-primary ">
-                {currency_symbol}
-                {data?.final_price ? data?.final_price.toFixed(2) : "0.00"}
-              </p>
+              <p className="heading-3 text-primary ">{formatPrice(data?.final_price)}</p>
               <p className="description-1 text-red-400 line-through">
-                <del>
-                  {currency_symbol}
-                  {data?.regular_price ? data?.regular_price.toFixed(2) : "0.00"}
-                </del>
+                <del>{formatPrice(data?.regular_price)}</del>
               </p>
             </div>
           </div>

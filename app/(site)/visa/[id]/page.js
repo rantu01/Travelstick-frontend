@@ -10,6 +10,7 @@ import VisaForm from "@/app/components/common/visaForm";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { FiShare2, FiX, FiChevronLeft, FiChevronRight, FiCheck } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCurrency } from "@/app/contexts/site";
 
 const countryToCode = {
   "usa": "us",
@@ -130,6 +131,7 @@ const VisaDetails = () => {
     ? data?.price?.discount
     : (totalPrice * data?.price?.discount) / 100;
   const processingFee = totalPrice - (discountAmount || 0);
+  const { formatPrice } = useCurrency();
 
   const otherInfoDetails = [
     { label: "Citizen Of", value: data?.citizen_of },
@@ -321,9 +323,7 @@ const VisaDetails = () => {
                     Processing Fee
                   </span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-[#0ea5e9] text-3xl font-black">
-                      ৳ {processingFee.toLocaleString()}
-                    </span>
+                    <span className="text-[#0ea5e9] text-3xl font-black">{formatPrice(processingFee)}</span>
                     <span className="text-gray-400 text-sm font-medium">/ person</span>
                   </div>
                 </div>
@@ -425,7 +425,7 @@ const VisaDetails = () => {
                 <div className="bg-primary p-6 text-white">
                   <p className="text-xs uppercase font-bold opacity-80 mb-1 tracking-widest">Apply Online</p>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black">৳ {processingFee.toLocaleString()}</span>
+                    <span className="text-3xl font-black">{formatPrice(processingFee)}</span>
                     <span className="text-sm opacity-80">/ Per Person</span>
                   </div>
                 </div>
@@ -449,7 +449,7 @@ const VisaDetails = () => {
                         <div className="flex flex-col justify-between py-0.5">
                           <h4 className="text-[#05073C] font-bold text-[13px] leading-snug line-clamp-2 group-hover:text-[#28b6ea] transition-colors">{item.name?.[langCode]}</h4>
                           <div className="flex items-center gap-2 mt-2">
-                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">৳ {item.price?.amount?.toLocaleString()}</span>
+                            <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">{formatPrice(item.price?.amount)}</span>
                             <span className="bg-[#28b6ea] text-white text-[11px] font-bold px-2 py-1 rounded">{item.tour_type}</span>
                           </div>
                         </div>
@@ -464,10 +464,10 @@ const VisaDetails = () => {
       </div>
 
       {/* Mobile Sticky Footer */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white p-4 border-t z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white p-4 border-t z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
         <div>
           <p className="text-xs text-gray-400 font-bold uppercase">Price Starts From</p>
-          <p className="text-xl font-black text-primary">৳ {processingFee.toLocaleString()}</p>
+          <p className="text-xl font-black text-primary">{formatPrice(processingFee)}</p>
         </div>
         <button
           onClick={() => setOpenDrawer(true)}

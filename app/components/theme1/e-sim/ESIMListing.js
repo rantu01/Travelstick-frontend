@@ -1,4 +1,5 @@
 import React from 'react';
+import { useCurrency } from '@/app/contexts/site';
 import { ChevronUp, Signal, CheckCircle2, Laptop } from 'lucide-react';
 
 const ESIMListing = () => {
@@ -8,6 +9,8 @@ const ESIMListing = () => {
     { id: 3, data: "2 GB - 15 days", operator: "Change", recharge: "Allowed", price: "875" },
     { id: 4, data: "1 GB - 10 SMS - 10 Mins - 7 days", operator: "Change+", recharge: "Allowed", price: "875" },
   ];
+
+  const { formatPrice } = useCurrency();
 
   return (
     <div className="bg-[#E9F0F7] min-h-screen p-6 font-sans">
@@ -142,7 +145,7 @@ const ESIMListing = () => {
                 
                 <div className="flex items-center gap-6">
                   <div className="text-right">
-                    <span className="text-xl font-bold text-[#1A2B49]">৳ {plan.price}</span>
+                    <span className="text-xl font-bold text-[#1A2B49]">{formatPrice(plan.price)}</span>
                   </div>
                   <button className="bg-[#1B84FF] text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-600 shadow-lg shadow-blue-200 transition-all">
                     Select

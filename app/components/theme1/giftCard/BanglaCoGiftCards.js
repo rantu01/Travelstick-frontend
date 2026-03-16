@@ -30,7 +30,7 @@ const BanglaCoGiftCards = () => {
     return (
         <div className="bg-white min-h-screen font-sans pb-10">
             {/* Banner Section */}
-            <div className="relative h-64 flex flex-col items-center justify-center text-white text-center p-4 overflow-hidden rounded-xl shadow-lg">
+            <div className="relative h-64 flex flex-col items-center justify-center text-white text-center p-4 overflow-hidden  shadow-lg">
                 <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-110"
                     style={{ backgroundImage: "url('https://img.freepik.com/free-photo/red-gift-box-with-gold-ribbon-red-background-copy-space_123827-28746.jpg?semt=ais_hybrid&w=740&q=80')" }}

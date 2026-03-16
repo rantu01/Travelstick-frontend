@@ -1,11 +1,13 @@
 "use client";
 import React, { useState } from 'react';
+import { useCurrency } from '@/app/contexts/site';
 import { LeftOutlined, MinusOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { Input, Radio, Button, Checkbox } from 'antd';
 
 const GiftCardDetails = () => {
     const [quantity, setQuantity] = useState(1);
     const [selectedService, setSelectedService] = useState('Flight');
+    const { formatPrice } = useCurrency();
 
     return (
         <div className="bg-[#f0f4f9] min-h-screen py-10 px-4">
@@ -91,7 +93,7 @@ const GiftCardDetails = () => {
                             <div>
                                 <label className="text-sm font-semibold text-gray-600 block mb-2">Select No. of Gift Card</label>
                                 <div className="flex items-center justify-between border rounded-md p-2 bg-gray-50">
-                                    <span className="font-bold text-gray-700 ml-2">0{quantity} <span className="font-normal text-gray-400 text-sm ml-2">x ৳ 500</span></span>
+                                    <span className="font-bold text-gray-700 ml-2">0{quantity} <span className="font-normal text-gray-400 text-sm ml-2">x {formatPrice(500)}</span></span>
                                     <div className="flex gap-2">
                                         <Button icon={<MinusOutlined />} size="small" onClick={() => setQuantity(Math.max(1, quantity))} />
                                         <Button icon={<PlusOutlined />} size="small" onClick={() => setQuantity(quantity + 1)} />
@@ -159,17 +161,17 @@ const GiftCardDetails = () => {
                         <div className="bg-gray-50 p-3 rounded-md mb-4 border border-gray-100">
                             <div className="flex justify-between items-center text-xs font-bold text-gray-600">
                                 <span>🎁 Gift Card ▲</span>
-                                <span>500 BDT</span>
+                                <span>{formatPrice(500)}</span>
                             </div>
                             <div className="flex justify-between text-[11px] text-gray-400 mt-2">
                                 <span>1 x 500</span>
-                                <span>৳ 500</span>
+                                <span>{formatPrice(500)}</span>
                             </div>
                         </div>
 
                         <div className="flex justify-between font-bold text-gray-800 border-t pt-4 mb-6">
                             <span>Total Price</span>
-                            <span>500 BDT</span>
+                            <span>{formatPrice(500)}</span>
                         </div>
 
                         <div className="space-y-4">
