@@ -40,11 +40,11 @@ const CustomTourRequest = () => {
   };
 
   return (
-    <div className=" min-h-screen mb-20">
+    <div className=" min-h-screen mb-20 mt-20">
       <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         
         {/* Help Banner Section */}
-        <div className="bg-[#FFF5E9] p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="bg-[#a9c7f5] p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Need More Help!</h1>
             <p className="text-gray-600 text-sm md:text-base leading-relaxed">
@@ -53,9 +53,9 @@ const CustomTourRequest = () => {
           </div>
           <a 
             href="tel:13701" 
-            className="bg-[#F38120] hover:bg-[#e67610] text-white px-8 py-3 rounded-lg flex items-center gap-2 font-bold text-lg transition-all shadow-md active:scale-95"
+            className="bg-[#1a4fa0] hover:bg-[#164080] text-white px-8 py-3 rounded-lg flex items-center gap-2 font-bold text-lg transition-all shadow-md active:scale-95"
           >
-            <PhoneOutlined rotate={90} /> 13701
+            <PhoneOutlined rotate={90} /> +880 1913-751185
           </a>
         </div>
 
