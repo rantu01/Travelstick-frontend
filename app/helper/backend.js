@@ -208,6 +208,13 @@ export const updateOffers = (data) => put('/offers', data)
 export const deleteOffers = (data) => del(`/offers/${data._id}`, data)
 export const getAllPublicOffers = (data) => get('/offers/site', data)
 
+// Gift Cards
+export const getPublicGiftCards = (data) => get('/gift-cards/site', data)
+export const getGiftCardsByAdmin = (data) => get('/gift-cards', data)
+export const createGiftCard = (data) => post('/gift-cards', data)
+export const updateGiftCard = (data) => put('/gift-cards', data)
+export const deleteGiftCard = (data) => del(`/gift-cards/${data._id}`, data)
+
 //providers
 export const CreateProvider = (data) => post('/providers', data)
 export const GetAllProviders = (data) => get('/providers', data)

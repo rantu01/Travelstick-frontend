@@ -86,7 +86,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
       icon: <Image src="/Header Icon/5.png" width={40} height={40} alt="Umrah" />
     },
     {
-      path: "/cart",
+      path: "/product",
       label: i18n.t("Shop"),
       icon: <Image src="/Header Icon/6.png" width={40} height={40} alt="Shop" />
     },
@@ -96,7 +96,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
       icon: <Image src="/Header Icon/7.png" width={40} height={40} alt="E-Sim" />
     },
     {
-      path: "/Gift Card",
+      path: "/gift-card",
       label: i18n.t("Gift Card"),
       icon: <Image src="/Header Icon/8.png" width={40} height={40} alt="Gift Card" />
     },
