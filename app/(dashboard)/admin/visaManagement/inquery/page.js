@@ -15,6 +15,7 @@ const VisaInquery = () => {
   const [data, getData, { loading }] = useFetch(getAllVisaQuery, {}, false);
   const [viewOpen, setViewOpen] = useState(false);
   const [viewData, setViewData] = useState(null);
+  const [showRaw, setShowRaw] = useState(false);
 
   useEffect(() => {
     getData({ inquiry_type: activeTab });
@@ -163,104 +164,131 @@ const VisaInquery = () => {
       {/* ── View Modal ── */}
       <Modal
         open={viewOpen}
-        onCancel={() => setViewOpen(false)}
+        onCancel={() => {
+          setViewOpen(false);
+          setShowRaw(false);
+        }}
         footer={null}
         destroyOnClose
-        width={500}
+        width={640}
         centered
       >
         {viewData && (
           <div className="max-w-4xl mx-auto bg-white rounded-xl p-6 space-y-6">
-            <h2 className="text-2xl font-bold text-[#05073C]">
-              {viewData?.full_name || "N/A"}
-            </h2>
-
-            <div className="space-y-2 text-[#05073C]">
-              <p>
-                <span className="font-semibold">Email:</span>{" "}
-                <span className="text-[#717171]">{viewData?.email || "N/A"}</span>
-              </p>
-              <p>
-                <span className="font-semibold">Phone:</span>{" "}
-                <span className="text-[#717171]">{viewData?.phone || "N/A"}</span>
-              </p>
-
-              {/* Inquiry specific */}
-              {activeTab === "inquiry" && (
-                <>
-                  <p>
-                    <span className="font-semibold">Visa Type:</span>{" "}
-                    <span className="text-[#717171]">
-                      {viewData?.visa_type?.name?.[langCode] || "N/A"}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="font-semibold">Message:</span>
-                    <span className="block mt-1 text-[#717171] whitespace-pre-line">
-                      {viewData?.message || "N/A"}
-                    </span>
-                  </p>
-                </>
-              )}
-
-              {/* Apply specific */}
-              {activeTab === "apply" && (
-                <>
-                  <p>
-                    <span className="font-semibold">Appointment Date:</span>{" "}
-                    <span className="text-[#717171]">
-                      {viewData?.appointment_date
-                        ? dayjs(viewData.appointment_date).format("DD MMM, YYYY")
-                        : "N/A"}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="font-semibold">Number of Applicants:</span>{" "}
-                    <span className="text-[#717171]">
-                      {viewData?.number_of_applicants ?? "N/A"}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="font-semibold">Price Per Person:</span>{" "}
-                    <span className="text-[#717171]">
-                      {viewData?.price_per_person !== undefined
-                        ? `৳ ${viewData.price_per_person.toLocaleString()}`
-                        : "N/A"}
-                    </span>
-                  </p>
-                  <p>
-                    <span className="font-semibold">Total Price:</span>{" "}
-                    <span className="text-[#717171]">
-                      {viewData?.total_price !== undefined
-                        ? `৳ ${viewData.total_price.toLocaleString()}`
-                        : "N/A"}
-                    </span>
-                  </p>
-                </>
-              )}
-
-              <p>
-                <span className="font-semibold">Submitted On:</span>{" "}
-                <span className="text-[#717171]">
-                  {dayjs(viewData?.createdAt).format("DD MMM, YYYY")}
-                </span>
-              </p>
+            <div className="flex items-start justify-between">
+              <div>
+                <h2 className="text-2xl font-bold text-[#05073C]">
+                  {viewData?.full_name || "N/A"}
+                </h2>
+                <p className="text-sm text-[#717171]">
+                  ID: {viewData?._id?.$oid || viewData?._id || "N/A"}
+                </p>
+              </div>
+              <div className="text-sm text-right text-[#717171]">
+                <p>{dayjs(viewData?.createdAt).format("DD MMM, YYYY")}</p>
+                <p className="mt-1">{viewData?.email || ""}</p>
+              </div>
             </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[#05073C]">
+              <div>
+                <p>
+                  <span className="font-semibold">Email:</span>{" "}
+                  <span className="text-[#717171]">{viewData?.email || "N/A"}</span>
+                </p>
+                <p className="mt-2">
+                  <span className="font-semibold">Phone:</span>{" "}
+                  <span className="text-[#717171]">{viewData?.phone || "N/A"}</span>
+                </p>
+                <p className="mt-2">
+                  <span className="font-semibold">Visa Type:</span>{" "}
+                  <span className="text-[#717171]">
+                    {(() => {
+                      const vt = viewData?.visa_type;
+                      if (!vt) return "N/A";
+                      if (typeof vt === "string") return vt;
+                      if (vt?.$oid) return vt.$oid;
+                      if (vt?.name) return vt.name?.[langCode] || JSON.stringify(vt);
+                      return JSON.stringify(vt);
+                    })()}
+                  </span>
+                </p>
+              </div>
+
+              <div>
+                <p>
+                  <span className="font-semibold">Submitted On:</span>{" "}
+                  <span className="text-[#717171]">
+                    {viewData?.createdAt
+                      ? dayjs(viewData.createdAt).format("DD MMM, YYYY HH:mm")
+                      : "N/A"}
+                  </span>
+                </p>
+                <p className="mt-2">
+                  <span className="font-semibold">Last Updated:</span>{" "}
+                  <span className="text-[#717171]">
+                    {viewData?.updatedAt
+                      ? dayjs(viewData.updatedAt).format("DD MMM, YYYY HH:mm")
+                      : "N/A"}
+                  </span>
+                </p>
+                <p className="mt-2">
+                  <span className="font-semibold">Version:</span>{" "}
+                  <span className="text-[#717171]">{viewData?.__v ?? "N/A"}</span>
+                </p>
+              </div>
+            </div>
+
+            {/* Message / Details */}
+            {activeTab === "inquiry" && (
+              <div>
+                <h3 className="font-semibold text-[#05073C] mb-2">Message</h3>
+                <div className="text-[#717171] whitespace-pre-line">
+                  {viewData?.message || "N/A"}
+                </div>
+              </div>
+            )}
 
             {/* Document - only for inquiry */}
             {activeTab === "inquiry" && viewData?.file && (
-              <div className="bg-white p-2 rounded-md border border-[#E8EAE8]">
-                <h3 className="heading-4 font-semibold text-[#05073C] mb-4">
-                  Show The Document
-                </h3>
-                <a
-                  href={encodeURI(viewData.file)}
-                  download
-                  className="inline-block px-5 py-2 bg-primary text-white rounded-lg hover:bg-[#e6491c] transition"
-                >
-                  {viewData.file.split("/").pop()}
-                </a>
+              <div className="bg-white p-3 rounded-md border border-[#E8EAE8]">
+                <h3 className="heading-4 font-semibold text-[#05073C] mb-3">Document</h3>
+                <div className="flex items-center gap-4">
+                  <a
+                    href={encodeURI(viewData.file)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-block px-4 py-2 bg-primary text-white rounded-lg hover:bg-[#e6491c] transition"
+                  >
+                    Open
+                  </a>
+                  <a
+                    href={encodeURI(viewData.file)}
+                    download
+                    className="inline-block px-4 py-2 border rounded-lg text-[#05073C] hover:bg-gray-50 transition"
+                  >
+                    Download
+                  </a>
+                  <span className="text-sm text-[#717171]">{viewData.file.split("/").pop()}</span>
+                </div>
               </div>
+            )}
+
+            {/* Toggle raw JSON - optional */}
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() => setShowRaw((s) => !s)}
+                className="text-sm text-primary underline"
+              >
+                {showRaw ? "Hide JSON" : "Show raw JSON"}
+              </button>
+              <div className="text-sm text-[#717171]">&nbsp;</div>
+            </div>
+
+            {showRaw && (
+              <pre className="bg-gray-100 p-3 rounded text-xs overflow-auto max-h-64">
+                {JSON.stringify(viewData, null, 2)}
+              </pre>
             )}
           </div>
         )}
