@@ -15,6 +15,7 @@ import { FaMinus, FaPlus, FaTimesCircle, FaSearch } from "react-icons/fa";
 
 const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation, theme }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [openSearch, setOpenSearch] = useState(false);
   const [data, getData] = useFetch(getAllPublicHotel, { limit: 100 }, false);
   const i18n = useI18n();
 
@@ -174,103 +175,112 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
     </div>
   );
 
+  const SearchBarContent = (
+    <div className="travel-container -mt-4 relative z-20 md:sticky md:top-[105px]">
+      <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
+
+        {/* Destination */}
+        <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+          <div className="flex justify-between items-center">
+            <Popover
+              open={openPopover === 'dest'}
+              onOpenChange={(v) => setOpenPopover(v ? 'dest' : null)}
+              content={<SelectionList options={filterData?.find(f => f.key === 'hotel_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => setSearchDest(v)} />}
+              trigger="click"
+              placement="bottomLeft"
+            >
+              <div className="flex-1">
+                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Destination</p>
+                <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
+                  {searchDest || "Select City"}
+                </div>
+              </div>
+            </Popover>
+            {searchDest && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setSearchDest(null); }}
+                className="text-gray-300 hover:text-red-500 transition-colors p-1"
+              >
+                <FaTimesCircle size={16} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Check In */}
+        <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+          <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Check In</p>
+          <DatePicker
+            onChange={(d) => setStartDate(d)}
+            placeholder="Select date"
+            disabledDate={disabledDate}
+            variant="borderless"
+            className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
+            value={startDate} format="DD MMM, YYYY" suffixIcon={null}
+          />
+        </div>
+
+        {/* Check Out */}
+        <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+          <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Check Out</p>
+          <div className="flex items-center justify-between">
+            <DatePicker
+              onChange={(d) => setEndDate(d)}
+              placeholder="Select date"
+              disabledDate={(current) => current && current < (startDate || dayjs().startOf('day'))}
+              variant="borderless"
+              className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
+              value={endDate} format="DD MMM, YYYY" suffixIcon={null}
+            />
+            {endDate && <FaTimesCircle className="text-gray-300 hover:text-red-400 cursor-pointer" onClick={() => setEndDate(null)} />}
+          </div>
+        </div>
+
+        {/* Room & Guests */}
+        <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+          <Popover
+            open={openPopover === 'guests'}
+            onOpenChange={(v) => setOpenPopover(v ? 'guests' : null)}
+            content={guestContent} trigger="click" placement="bottomRight"
+          >
+            <div>
+              <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Room & Guests</p>
+              <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1 truncate">
+                {rooms} Room, {adults + children} Guest
+              </h4>
+            </div>
+          </Popover>
+        </div>
+
+        {/* Search Button */}
+        <div className="md:col-span-1 flex items-center justify-center">
+          <button
+            onClick={handleSearch}
+            className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95"
+          >
+            <FaSearch size={20} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="w-full">
       {/* {theme === 'one' ? <Banner title="Hotels" /> : <Banner2 title="Hotels" />} */}
 
       {/* --- Search Section --- */}
-      <div className="hidden md:block">
-      <div className="travel-container -mt-10 relative z-20 sticky top-[92px]">
-        <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
-
-          {/* Destination */}
-          <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
-            <div className="flex justify-between items-center">
-              <Popover
-                open={openPopover === 'dest'}
-                onOpenChange={(v) => setOpenPopover(v ? 'dest' : null)}
-                content={<SelectionList options={filterData?.find(f => f.key === 'hotel_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => setSearchDest(v)} />}
-                trigger="click"
-                placement="bottomLeft"
-              >
-                <div className="flex-1">
-                  <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Destination</p>
-                  <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
-                    {searchDest || "Select City"}
-                  </div>
-                </div>
-              </Popover>
-              {searchDest && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); setSearchDest(null); }}
-                  className="text-gray-300 hover:text-red-500 transition-colors p-1"
-                >
-                  <FaTimesCircle size={16} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Check In */}
-          <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Check In</p>
-            <DatePicker
-              onChange={(d) => setStartDate(d)}
-              placeholder="Select date"
-              disabledDate={disabledDate}
-              variant="borderless"
-              className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
-              value={startDate} format="DD MMM, YYYY" suffixIcon={null}
-            />
-          </div>
-
-          {/* Check Out */}
-          <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Check Out</p>
-            <div className="flex items-center justify-between">
-              <DatePicker
-                onChange={(d) => setEndDate(d)}
-                placeholder="Select date"
-                disabledDate={(current) => current && current < (startDate || dayjs().startOf('day'))}
-                variant="borderless"
-                className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
-                value={endDate} format="DD MMM, YYYY" suffixIcon={null}
-              />
-              {endDate && <FaTimesCircle className="text-gray-300 hover:text-red-400 cursor-pointer" onClick={() => setEndDate(null)} />}
-            </div>
-          </div>
-
-          {/* Room & Guests */}
-          <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
-            <Popover
-              open={openPopover === 'guests'}
-              onOpenChange={(v) => setOpenPopover(v ? 'guests' : null)}
-              content={guestContent} trigger="click" placement="bottomRight"
-            >
-              <div>
-                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Room & Guests</p>
-                <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1 truncate">
-                  {rooms} Room, {adults + children} Guest
-                </h4>
-              </div>
-            </Popover>
-          </div>
-
-          {/* Search Button */}
-          <div className="md:col-span-1 flex items-center justify-center">
-            <button
-              onClick={handleSearch}
-              className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95"
-            >
-              <FaSearch size={20} />
-            </button>
-          </div>
-        </div>
-      </div>
-      </div>
+      <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
 
       {/* --- Content Section --- */}
       <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">
+        <div className="flex gap-2 items-center justify-start md:hidden mb-4 overflow-hidden">
+          <button onClick={() => setOpenSearch(true)} className="flex items-center gap-2 text-sm px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm">
+            <FaSearch />
+            <span>Search</span>
+          </button>
+        </div>
+
         <div className="flex gap-2 items-center justify-end md:hidden mb-4 overflow-hidden">
           <button className="text-xl p-2 border border-gray-300 rounded-md" onClick={() => setOpenDrawer(true)}>
             <Image src="/theme1/filter.png" alt="Filter" width={20} height={20} />
@@ -278,13 +288,17 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
           <p className="font-semibold text-[#000000]">{i18n.t("Filters")}</p>
         </div>
 
+        <Drawer title="Search" onClose={() => setOpenSearch(false)} open={openSearch} className="md:hidden" width="100%">
+          {SearchBarContent}
+        </Drawer>
+
         <Drawer title={i18n.t("Filters")} onClose={() => setOpenDrawer(false)} open={openDrawer} className="md:hidden" width="100%">
           <HotelFilters getData={getData} />
         </Drawer>
 
         <div className="flex flex-col md:flex-row xl:gap-8 lg:gap-6 md:gap-4 gap-3">
           <div className="w-full md:w-[30%] xl:w-[25%] hidden md:block">
-            <div className="sticky top-24">
+            <div className="md:sticky md:top-24">
               <HotelFilters getData={getData} />
             </div>
           </div>

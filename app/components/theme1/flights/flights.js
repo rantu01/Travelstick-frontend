@@ -412,7 +412,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
     );
 
     const SearchBarContent = (
-        <div className="travel-container -mt-10 relative z-30 sticky top-[92px] z-50">
+        <div className="travel-container -mt-4 relative z-30 md:sticky md:top-[105px] z-50">
             <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
 
                 {/* From */}
@@ -538,7 +538,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
             {/* <Banner title="Flights" /> */}
 
             {/* --- Flight Search Bar --- */}
-            <div className="hidden md:block">{SearchBarContent}</div>
+            <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
 
             <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">
 
@@ -569,7 +569,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                 <div className="flex flex-col md:flex-row xl:gap-8 lg:gap-6 md:gap-4 gap-3">
                     {/* Sidebar */}
                     <div className="w-full md:w-[30%] xl:w-[25%] hidden md:block">
-                        <div className="sticky top-24">
+                        <div className="md:sticky md:top-24">
                             <FlightFilters />
                         </div>
                     </div>

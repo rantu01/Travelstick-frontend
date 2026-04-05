@@ -18,6 +18,7 @@ import CustomTourCard from "./CustomTourCard";
 const PackagePage = ({ discount, discount_type, destination: initialDest, startDate: initialDate, endDate, tourType, theme }) => {
   const PACKAGE_LIST_LIMIT = 1000;
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [openSearch, setOpenSearch] = useState(false);
   const i18n = useI18n();
   const [data, getData] = useFetch(getAllPublicPackages, { limit: PACKAGE_LIST_LIMIT }, false);
 
@@ -81,6 +82,66 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
     </div>
   );
 
+  const SearchBarContent = (
+    <div className="travel-container -mt-4 relative z-20 md:sticky md:top-[105px]">
+      <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
+
+        {/* Destination */}
+        <div className="md:col-span-6 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+          <div className="flex justify-between items-center">
+            <Popover
+              open={openPopover === 'tour-dest'}
+              onOpenChange={(v) => setOpenPopover(v ? 'tour-dest' : null)}
+              content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => setSearchDest(v)} />}
+              trigger="click" placement="bottomLeft"
+            >
+              <div className="flex-1">
+                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Destination</p>
+                <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
+                  {searchDest || "Select City/Country"}
+                </div>
+              </div>
+            </Popover>
+            {searchDest && (
+              <button
+                onClick={(e) => { e.stopPropagation(); setSearchDest(null); }}
+                className="text-gray-300 hover:text-red-500 transition-colors p-1"
+              >
+                <FaTimesCircle size={16} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Preferred Date */}
+        <div className="md:col-span-5 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+          <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Preferred Date</p>
+          <div className="flex items-center justify-between">
+            <DatePicker
+              onChange={(d) => setPrefDate(d)}
+              placeholder="Select date"
+              disabledDate={disabledDate}
+              variant="borderless"
+              className={`p-0 font-bold text-lg w-full mt-1 ${prefDate ? "text-gray-700" : "text-gray-400"}`}
+              value={prefDate} format="DD MMM, YYYY" suffixIcon={null}
+            />
+            {prefDate && <FaTimesCircle className="text-gray-300 hover:text-red-400 cursor-pointer" onClick={() => setPrefDate(null)} />}
+          </div>
+        </div>
+
+        {/* Search Button */}
+        <div className="md:col-span-1 flex items-center justify-center">
+          <button
+            onClick={handleSearch}
+            className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95"
+          >
+            <FaSearch size={20} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="">
       {/* {
@@ -90,67 +151,16 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
       } */}
 
       {/* --- Search Section --- */}
-      <div className="hidden md:block">
-      <div className="travel-container -mt-10 relative z-20 sticky top-[92px]">
-        <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
-
-          {/* Destination */}
-          <div className="md:col-span-6 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
-            <div className="flex justify-between items-center">
-              <Popover
-                open={openPopover === 'tour-dest'}
-                onOpenChange={(v) => setOpenPopover(v ? 'tour-dest' : null)}
-                content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => setSearchDest(v)} />}
-                trigger="click" placement="bottomLeft"
-              >
-                <div className="flex-1">
-                  <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Destination</p>
-                  <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
-                    {searchDest || "Select City/Country"}
-                  </div>
-                </div>
-              </Popover>
-              {searchDest && (
-                <button
-                  onClick={(e) => { e.stopPropagation(); setSearchDest(null); }}
-                  className="text-gray-300 hover:text-red-500 transition-colors p-1"
-                >
-                  <FaTimesCircle size={16} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Preferred Date */}
-          <div className="md:col-span-5 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Preferred Date</p>
-            <div className="flex items-center justify-between">
-              <DatePicker
-                onChange={(d) => setPrefDate(d)}
-                placeholder="Select date"
-                disabledDate={disabledDate}
-                variant="borderless"
-                className={`p-0 font-bold text-lg w-full mt-1 ${prefDate ? "text-gray-700" : "text-gray-400"}`}
-                value={prefDate} format="DD MMM, YYYY" suffixIcon={null}
-              />
-              {prefDate && <FaTimesCircle className="text-gray-300 hover:text-red-400 cursor-pointer" onClick={() => setPrefDate(null)} />}
-            </div>
-          </div>
-
-          {/* Search Button */}
-          <div className="md:col-span-1 flex items-center justify-center">
-            <button
-              onClick={handleSearch}
-              className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95"
-            >
-              <FaSearch size={20} />
-            </button>
-          </div>
-        </div>
-      </div>
-      </div>
+      <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
 
       <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 pb-20 relative">
+        <div className="flex gap-2 items-center justify-start md:hidden mb-4">
+          <button onClick={() => setOpenSearch(true)} className="flex items-center gap-2 text-sm px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm">
+            <FaSearch />
+            <span>Search</span>
+          </button>
+        </div>
+
         <div className="flex gap-2 items-center justify-end md:hidden mb-4">
           <button
             className="text-xl p-2 border border-gray-300 rounded-md"
@@ -165,6 +175,17 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
           </button>
           <p className="heading-1 text-[#000000]">{i18n.t("Filters")}</p>
         </div>
+
+        <Drawer
+          title="Search"
+          onClose={() => setOpenSearch(false)}
+          open={openSearch}
+          className="md:hidden"
+          width="100%"
+        >
+          {SearchBarContent}
+        </Drawer>
+
         <Drawer
           title={i18n.t("Filters")}
           onClose={() => setOpenDrawer(false)}
