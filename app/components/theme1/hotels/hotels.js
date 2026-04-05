@@ -179,6 +179,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
       {/* {theme === 'one' ? <Banner title="Hotels" /> : <Banner2 title="Hotels" />} */}
 
       {/* --- Search Section --- */}
+      <div className="hidden md:block">
       <div className="travel-container -mt-10 relative z-20 sticky top-[92px]">
         <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
 
@@ -266,6 +267,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
           </div>
         </div>
       </div>
+      </div>
 
       {/* --- Content Section --- */}
       <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">
@@ -276,7 +278,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
           <p className="font-semibold text-[#000000]">{i18n.t("Filters")}</p>
         </div>
 
-        <Drawer title={i18n.t("Filters")} onClose={() => setOpenDrawer(false)} open={openDrawer} className="sm:hidden">
+        <Drawer title={i18n.t("Filters")} onClose={() => setOpenDrawer(false)} open={openDrawer} className="md:hidden" width="100%">
           <HotelFilters getData={getData} />
         </Drawer>
 

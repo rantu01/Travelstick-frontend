@@ -295,6 +295,7 @@ const FAKE_FLIGHTS = [
 const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flightClass }) => {
     const [openDrawer, setOpenDrawer] = useState(false);
     const [openPopover, setOpenPopover] = useState(null);
+    const [openSearch, setOpenSearch] = useState(false);
 
     // --- Search States ---
     const [fromLocation, setFromLocation] = useState(initialFrom || "Dhaka (DAC)");
@@ -410,131 +411,144 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
         </div>
     );
 
+    const SearchBarContent = (
+        <div className="travel-container -mt-10 relative z-30 sticky top-[92px] z-50">
+            <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
+
+                {/* From */}
+                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer relative group">
+                    <Popover
+                        open={openPopover === 'flight-from'}
+                        onOpenChange={(v) => setOpenPopover(v ? 'flight-from' : null)}
+                        content={<SelectionList options={["Dhaka (DAC)", "Chittagong (CGP)", "Sylhet (ZYL)"]} onSelect={(v) => handleSelect(setFromLocation, v)} />}
+                        trigger="click" placement="bottomLeft"
+                    >
+                        <div className="w-full">
+                            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">From</p>
+                            <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
+                                {fromLocation}
+                            </div>
+                            <p className="text-[10px] text-gray-400 truncate">Hazrat Shahjalal Int....</p>
+                        </div>
+                    </Popover>
+
+                    {/* Swap Icon */}
+                    <div
+                        onClick={handleSwapLocations}
+                        className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
+                    >
+                        <FaExchangeAlt size={10} className="rotate-90 md:rotate-0" />
+                    </div>
+                </div>
+
+                {/* To */}
+                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+                    <Popover
+                        open={openPopover === 'flight-to'}
+                        onOpenChange={(v) => setOpenPopover(v ? 'flight-to' : null)}
+                        content={<SelectionList options={["Cox's Bazar (CXB)", "Bangkok (BKK)", "Dubai (DXB)"]} onSelect={(v) => handleSelect(setToLocation, v)} />}
+                        trigger="click" placement="bottomLeft"
+                    >
+                        <div className="flex-1">
+                            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">To</p>
+                            <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
+                                {toLocation}
+                            </div>
+                            <p className="text-[10px] text-gray-400">Destination Airport</p>
+                        </div>
+                    </Popover>
+                </div>
+
+                {/* Departure Date */}
+                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Departure</p>
+                    <div className="flex flex-col">
+                        <DatePicker
+                            onChange={(d) => setStartDate(d)}
+                            disabledDate={disabledDate}
+                            variant="borderless"
+                            className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
+                            value={startDate}
+                            format="DD MMM, YYYY"
+                            placeholder="Pick a date"
+                            suffixIcon={null}
+                        />
+                        <p className="text-[10px] text-gray-400">{startDate ? startDate.format('dddd') : "Select Day"}</p>
+                    </div>
+                </div>
+
+                {/* Return Date */}
+                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
+                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Return</p>
+                    <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                            <DatePicker
+                                onChange={(d) => setEndDate(d)}
+                                placeholder="Select date"
+                                disabledDate={disabledDate}
+                                variant="borderless"
+                                className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
+                                value={endDate}
+                                format="DD MMM, YYYY"
+                                suffixIcon={null}
+                            />
+                            <p className="text-[10px] text-gray-400">{endDate ? endDate.format('dddd') : "Add return"}</p>
+                        </div>
+                        {endDate && (
+                            <FaTimesCircle
+                                className="text-gray-300 hover:text-red-400 cursor-pointer"
+                                onClick={() => setEndDate(null)}
+                            />
+                        )}
+                    </div>
+                </div>
+
+                {/* Travellers & Class */}
+                <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                    <Popover
+                        open={openPopover === 'flight-guests'}
+                        onOpenChange={(v) => setOpenPopover(v ? 'flight-guests' : null)}
+                        content={guestContent}
+                        trigger="click"
+                        placement="bottomRight"
+                    >
+                        <div className="cursor-pointer">
+                            <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Traveller, Class</p>
+                            <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">
+                                {adults + children + infants} Traveller
+                            </h4>
+                            <p className="text-[10px] text-gray-400">{bookingClass}</p>
+                        </div>
+                    </Popover>
+                </div>
+
+                {/* Search Button */}
+                <div className="md:col-span-1 flex items-center justify-center">
+                    <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95">
+                        <FaSearch size={20} />
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    );
+
     return (
         <div className="w-full">
             {/* <Banner title="Flights" /> */}
 
             {/* --- Flight Search Bar --- */}
-            <div className="travel-container -mt-10 relative z-30 sticky top-[92px] z-50">
-                <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
-
-                    {/* From */}
-                    <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer relative group">
-                        <Popover
-                            open={openPopover === 'flight-from'}
-                            onOpenChange={(v) => setOpenPopover(v ? 'flight-from' : null)}
-                            content={<SelectionList options={["Dhaka (DAC)", "Chittagong (CGP)", "Sylhet (ZYL)"]} onSelect={(v) => handleSelect(setFromLocation, v)} />}
-                            trigger="click" placement="bottomLeft"
-                        >
-                            <div className="w-full">
-                                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">From</p>
-                                <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
-                                    {fromLocation}
-                                </div>
-                                <p className="text-[10px] text-gray-400 truncate">Hazrat Shahjalal Int....</p>
-                            </div>
-                        </Popover>
-
-                        {/* Swap Icon */}
-                        <div
-                            onClick={handleSwapLocations}
-                            className="absolute right-4 md:-right-3 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
-                        >
-                            <FaExchangeAlt size={10} className="rotate-90 md:rotate-0" />
-                        </div>
-                    </div>
-
-                    {/* To */}
-                    <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
-                        <Popover
-                            open={openPopover === 'flight-to'}
-                            onOpenChange={(v) => setOpenPopover(v ? 'flight-to' : null)}
-                            content={<SelectionList options={["Cox's Bazar (CXB)", "Bangkok (BKK)", "Dubai (DXB)"]} onSelect={(v) => handleSelect(setToLocation, v)} />}
-                            trigger="click" placement="bottomLeft"
-                        >
-                            <div className="flex-1">
-                                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">To</p>
-                                <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
-                                    {toLocation}
-                                </div>
-                                <p className="text-[10px] text-gray-400">Destination Airport</p>
-                            </div>
-                        </Popover>
-                    </div>
-
-                    {/* Departure Date */}
-                    <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Departure</p>
-                        <div className="flex flex-col">
-                            <DatePicker
-                                onChange={(d) => setStartDate(d)}
-                                disabledDate={disabledDate}
-                                variant="borderless"
-                                className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
-                                value={startDate}
-                                format="DD MMM, YYYY"
-                                placeholder="Pick a date"
-                                suffixIcon={null}
-                            />
-                            <p className="text-[10px] text-gray-400">{startDate ? startDate.format('dddd') : "Select Day"}</p>
-                        </div>
-                    </div>
-
-                    {/* Return Date */}
-                    <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
-                        <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Return</p>
-                        <div className="flex items-center justify-between">
-                            <div className="flex-1">
-                                <DatePicker
-                                    onChange={(d) => setEndDate(d)}
-                                    placeholder="Select date"
-                                    disabledDate={disabledDate}
-                                    variant="borderless"
-                                    className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
-                                    value={endDate}
-                                    format="DD MMM, YYYY"
-                                    suffixIcon={null}
-                                />
-                                <p className="text-[10px] text-gray-400">{endDate ? endDate.format('dddd') : "Add return"}</p>
-                            </div>
-                            {endDate && (
-                                <FaTimesCircle
-                                    className="text-gray-300 hover:text-red-400 cursor-pointer"
-                                    onClick={() => setEndDate(null)}
-                                />
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Travellers & Class */}
-                    <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
-                        <Popover
-                            open={openPopover === 'flight-guests'}
-                            onOpenChange={(v) => setOpenPopover(v ? 'flight-guests' : null)}
-                            content={guestContent}
-                            trigger="click"
-                            placement="bottomRight"
-                        >
-                            <div className="cursor-pointer">
-                                <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Traveller, Class</p>
-                                <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">
-                                    {adults + children + infants} Traveller
-                                </h4>
-                                <p className="text-[10px] text-gray-400">{bookingClass}</p>
-                            </div>
-                        </Popover>
-                    </div>
-
-            {/* Search Button */}
-            <div className="md:col-span-1 flex items-center justify-center">
-              <button onClick={handleSearch} className="bg-[#1A4FA0] hover:bg-blue-900 text-white w-full h-full min-h-[60px] md:min-h-0 rounded-xl flex items-center justify-center shadow-lg transition-transform active:scale-95">
-                <FaSearch size={20} />
-              </button>
-            </div>
-          </div>
-        </div>
+            <div className="hidden md:block">{SearchBarContent}</div>
 
             <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">
+
+                {/* Mobile Search + Filter Buttons */}
+                <div className="flex gap-2 items-center justify-start md:hidden mb-4">
+                    <button onClick={() => setOpenSearch(true)} className="flex items-center gap-2 text-sm px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm">
+                        <FaSearch />
+                        <span>Search</span>
+                    </button>
+                </div>
 
                 {/* Mobile Filter Button */}
                 <div className="flex gap-2 items-center justify-end md:hidden mb-4 overflow-hidden">
@@ -544,7 +558,11 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                     <p className="font-semibold text-[#000000]">Filters</p>
                 </div>
 
-                <Drawer title="Filters" onClose={() => setOpenDrawer(false)} open={openDrawer} className="sm:hidden">
+                <Drawer title="Search" onClose={() => setOpenSearch(false)} open={openSearch} className="md:hidden" width="100%">
+                    {SearchBarContent}
+                </Drawer>
+
+                <Drawer title="Filters" onClose={() => setOpenDrawer(false)} open={openDrawer} className="md:hidden" width="100%">
                     <FlightFilters />
                 </Drawer>
 

@@ -160,6 +160,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
   return (
     <div className="">
       {/* --- Visa Search Bar --- */}
+      <div className="hidden md:block">
       <div className="travel-container -mt-10 relative z-30 sticky top-[92px]">
         <div className="bg-white rounded-xl shadow-sm flex flex-col md:grid md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
 
@@ -260,6 +261,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
 
         </div>
       </div>
+      </div>
 
       <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 pb-20 relative">
         {/* Filter icon for mobile */}
@@ -283,7 +285,8 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
           title={i18n.t("Filters")}
           onClose={() => setOpenDrawer(false)}
           open={openDrawer}
-          className="sm:hidden"
+          className="md:hidden"
+          width="100%"
         >
           <VisaFilters getData={getData} />
         </Drawer>
