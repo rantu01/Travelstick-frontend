@@ -205,12 +205,17 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
           <div className="flex items-center gap-2">
             {!user?._id ? (
               <div className="hidden sm:flex gap-2">
-                <button
+                {/* <button
                   onClick={() => setAuthModalOpen(true)}
                   className="bg-[#1A2B6D] text-white px-6 py-2 rounded-md text-sm font-bold hover:bg-opacity-90 transition-all"
                 >
                   Sign In
-                </button>
+                </button> */}
+                <Link href="/login">
+                  <button className="bg-[#1A2B6D] text-white px-6 py-2 rounded-md text-sm font-bold hover:bg-opacity-90 transition-all">
+                    Sign In
+                  </button>
+                </Link>
               </div>
             ) : (
               <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
