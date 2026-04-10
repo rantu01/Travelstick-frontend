@@ -267,8 +267,14 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
           <hr />
           {!user?._id && (
             <div className="flex flex-col gap-3">
-              <button onClick={() => { setAuthModalOpen(true); setIsDrawerOpen(false) }} className="bg-[#1A2B6D] text-white py-3 rounded-md font-bold">Sign In</button>
-              <button onClick={() => { setAuthModalOpen(true); setIsDrawerOpen(false) }} className="border-2 border-[#1A2B6D] text-[#1A2B6D] py-3 rounded-md font-bold">Sign Up</button>
+              {/* <button onClick={() => { setAuthModalOpen(true); setIsDrawerOpen(false) }} className="bg-[#1A2B6D] text-white py-3 rounded-md font-bold">Sign In</button> */}
+
+              <Link href="/login">
+                <button className="bg-[#1A2B6D] text-white px-6 py-2 rounded-md text-sm font-bold hover:bg-opacity-90 transition-all">
+                  Sign In
+                </button>
+              </Link>
+              {/* <button onClick={() => { setAuthModalOpen(true); setIsDrawerOpen(false) }} className="border-2 border-[#1A2B6D] text-[#1A2B6D] py-3 rounded-md font-bold">Sign Up</button> */}
             </div>
           )}
         </div>

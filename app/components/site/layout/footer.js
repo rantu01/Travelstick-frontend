@@ -3,15 +3,14 @@
 import { useI18n } from "@/app/contexts/i18n";
 import { fetchPublicSettings, postNewsletterList } from "@/app/helper/backend";
 import { useAction, useFetch } from "@/app/helper/hooks";
-import { Form, Image as ImageAntd } from "antd";
+import { Form } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { FaFacebookF, FaInstagram, FaYoutube, FaGoogle } from "react-icons/fa6";
+import { FaFacebookF, FaInstagram, FaGoogle } from "react-icons/fa6";
 
 const Footer = () => {
   const i18n = useI18n();
-  const [form] = Form.useForm();
   const [setting] = useFetch(fetchPublicSettings);
   const [currentYear, setCurrentYear] = useState(null);
 
@@ -46,7 +45,6 @@ const Footer = () => {
             ) : (
               <h2 className="text-3xl font-bold italic">Banglaco.com</h2>
             )}
-            {/* Font size bariye text-base kora hoyeche */}
             <p className="text-base leading-relaxed opacity-90 max-w-[300px]">
               {setting?.site_description || "Explore the world with ease. We provide premium travel services including flights, hotels, and holiday packages tailored for you."}
             </p>
@@ -57,7 +55,6 @@ const Footer = () => {
                 </Link>
               ))}
             </div>
-
 
             {/* Verified by */}
             <div className="flex flex-col space-y-4">
@@ -71,17 +68,32 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Column 2: Explore */}
-          <div>
-            <h4 className="text-xl font-bold mb-6">Explore</h4>
-            {/* Font size text-base kora hoyeche */}
-            <ul className="space-y-4 text-base opacity-90">
-              {exploreLinks.map((item, idx) => (
-                <li key={idx} className="hover:translate-x-2 transition-transform">
-                  <Link href={item.link}>{item.name}</Link>
-                </li>
-              ))}
-            </ul>
+          {/* Column 2: Explore & Payment Method (Moved here based on image) */}
+          <div className="flex flex-col justify-between">
+            <div>
+              <h4 className="text-xl font-bold mb-6">Explore</h4>
+              <ul className="space-y-4 text-base opacity-90">
+                {exploreLinks.map((item, idx) => (
+                  <li key={idx} className="hover:translate-x-2 transition-transform">
+                    <Link href={item.link}>{item.name}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Payment Method - Positioned at bottom of column 2 */}
+            <div className="mt-12 flex flex-col space-y-4 ml-4 md:ml-0">
+              <span className="text-lg font-semibold">Payment Method</span>
+              <div className="flex flex-wrap items-center gap-2 md:gap-3 w-full max-w-[420px]">
+                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-5 w-8 object-contain" alt="Mastercard" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Dutch-bangla-bank-ltd.svg/960px-Dutch-bangla-bank-ltd.svg.png" className="h-5 w-8 object-contain" alt="DBBL" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg/3840px-Visa_Inc._logo_%282005%E2%80%932014%29.svg.png" className="h-5 w-8 object-contain" alt="Visa" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://www.logo.wine/a/logo/Nagad/Nagad-Logo.wine.svg" className="h-5 w-8 object-contain" alt="Nagad" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://static.vecteezy.com/system/resources/thumbnails/068/764/291/small_2x/upay-logo-mobile-banking-app-icon-transparent-background-free-png.png" className="h-5 w-8 object-contain" alt="Upay" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" className="h-5 w-8 object-contain" alt="Amex" /></div>
+                <div className="bg-white rounded-md p-1.5"><img src="https://freelogopng.com/images/all_img/1656227518bkash-logo-png.png" className="h-5 w-8 object-contain" alt="bkash" /></div>
+              </div>
+            </div>
           </div>
 
           {/* Column 3: Useful Links */}
@@ -99,7 +111,6 @@ const Footer = () => {
           <div className="space-y-6">
             <h4 className="text-xl font-bold mb-6">Contact Us</h4>
             <div className="text-base space-y-4 opacity-90">
-
               <a
                 href="https://maps.google.com"
                 target="_blank"
@@ -108,7 +119,6 @@ const Footer = () => {
               >
                 <p className="leading-relaxed">House#3, Road#13, Gulshan 01, <br />Dhaka-1212, Bangladesh</p>
               </a>
-
               <p>Email: <span className="font-medium">{setting?.site_email || "ask@banglaco.com"}</span></p>
               <p>Phone: <span className="font-medium">{setting?.site_phone || "091111122221"}</span></p>
             </div>
@@ -126,36 +136,8 @@ const Footer = () => {
         </div>
 
         {/* Footer Bottom Section */}
-        <div className="mt-16 pt-8 border-t border-blue-800/50 flex flex-col items-center space-y-8 text-white">
-
-          {/* Partner & Payment Section */}
-          <div className="flex flex-wrap items-start justify-center gap-10 md:gap-16">
-
-
-
-            {/* Vertical Divider for desktop */}
-            <div className="hidden md:block h-20 w-px bg-white/20 self-end"></div>
-
-
-
-            {/* Payment Method */}
-            <div className="flex flex-col space-y-4">
-              <span className="text-lg font-semibold">Payment Method</span>
-              <div className="flex flex-wrap items-center gap-2">
-                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-5 w-8 object-contain" alt="Mastercard" /></div>
-                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Dutch-bangla-bank-ltd.svg/960px-Dutch-bangla-bank-ltd.svg.png" className="h-5 w-8 object-contain" alt="DBBL" /></div>
-                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg/3840px-Visa_Inc._logo_%282005%E2%80%932014%29.svg.png" className="h-5 w-8 object-contain" alt="Visa" /></div>
-                <div className="bg-white rounded-md p-1.5"><img src="https://www.logo.wine/a/logo/Nagad/Nagad-Logo.wine.svg" className="h-5 w-8 object-contain" alt="Nagad" /></div>
-                <div className="bg-white rounded-md p-1.5"><img src="https://static.vecteezy.com/system/resources/thumbnails/068/764/291/small_2x/upay-logo-mobile-banking-app-icon-transparent-background-free-png.png" className="h-5 w-8 object-contain" alt="Upay" /></div>
-                <div className="bg-white rounded-md p-1.5"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Mastercard_2019_logo.svg" className="h-5 w-8 object-contain" alt="Amex" /></div>
-                <div className="bg-white rounded-md p-1.5"><img src="https://freelogopng.com/images/all_img/1656227518bkash-logo-png.png" className="h-5 w-8 object-contain" alt="bkash" /></div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Copyright */}
-          <div className="text-base opacity-60 text-center pt-4">
+        <div className="mt-16 pt-8 border-t border-blue-800/50 text-white">
+          <div className="text-base opacity-60 text-center">
             © {currentYear || 2026} <span className="font-bold">{setting?.site_name || "Banglaco Ltd."}</span> All Rights Reserved
           </div>
         </div>
