@@ -394,7 +394,7 @@ const HeroFilters = () => {
   );
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans md:sticky md:top-24 md:z-40 md:shadow-md md:rounded-b-xl md:bg-white md:backdrop-blur-sm">
+    <div className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans md:sticky md:top-24 md:z-40  ">
       <div className="flex justify-center">
         <div className="grid grid-cols-4 w-full md:w-auto bg-white rounded-t-xl shadow-sm border-b overflow-hidden">
           {tabs.map((t) => (
