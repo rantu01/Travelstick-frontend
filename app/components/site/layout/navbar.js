@@ -136,8 +136,8 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
             {setting?.fav_icon ? (
               <Image
                 src={setting.fav_icon}
-                width={150}
-                height={45}
+                width={190}
+                height={50}
                 className="object-contain"
                 alt="logo"
                 priority

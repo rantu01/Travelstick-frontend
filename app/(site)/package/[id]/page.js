@@ -196,14 +196,14 @@ const PackageDetails = () => {
       <div className="bg-white">
         <div className="travel-container py-8">
           {/* Breadcrumb */}
-          <Breadcrumb
+          {/* <Breadcrumb
             className="mb-3 text-sm"
             items={[
               { title: <a href="/">Home</a> },
               { title: <a href="/package">Packages</a> },
               { title: "Package Details" },
             ]}
-          />
+          /> */}
 
           {/* Title Row */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -218,7 +218,7 @@ const PackageDetails = () => {
                     <span className="font-medium">{data?.destination?.name || "N/A"}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 border-l pl-4">
+                {/* <div className="flex items-center gap-2 border-l pl-4">
                   <Rate
                     disabled
                     defaultValue={data?.rating?.average || 0}
@@ -229,19 +229,19 @@ const PackageDetails = () => {
                       ? `(${data.rating.count} Reviews)`
                       : "No Reviews Yet"}
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
 
             {/* Share + Map Buttons */}
             <div className="flex items-center gap-3">
-              <button
+              {/* <button
                 onClick={() => setShowModal(true)}
                 title="See on map"
                 className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-200 hover:bg-blue-50 hover:text-blue-600 transition-all"
               >
                 <FiMap />
-              </button>
+              </button> */}
               <div className="relative">
                 <button
                   onClick={handleShare}

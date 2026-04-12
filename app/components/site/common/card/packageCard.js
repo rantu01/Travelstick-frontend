@@ -37,7 +37,7 @@ const PackageCard = ({ data, index }) => {
           </div>
 
           {/* Blue Gradient Overlay (Image er moto bottom section) */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#3B82F6]/90 via-[#3B82F6]/40 to-transparent flex flex-col justify-end p-5">
+          <div className="absolute inset-0  flex flex-col justify-end p-5">
             <h3 className="text-white text-xl font-bold leading-tight mb-2">
               <TextWithTooltip limit={45} text={data?.name?.[langCode]} />
             </h3>

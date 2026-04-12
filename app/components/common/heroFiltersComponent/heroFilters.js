@@ -176,7 +176,7 @@ const HeroFilters = () => {
 
     return (
       <div style={{ position: "relative", display: "inline-block", width: "100%", textAlign: "center" }}>
-        <div className="ant-picker-cell-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div className="ant-picker-cell-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center", zIndex: 10 }}>
           <div style={{
             width: 32,
             height: 32,
@@ -187,15 +187,24 @@ const HeroFilters = () => {
             backgroundColor: isEnd ? "#1a4fa0" : (isStart ? "#e6f6ff" : "transparent"),
             color: isEnd ? "#ffffff" : undefined,
             fontWeight: isEnd || isStart ? 700 : 400,
+            position: "relative",
           }}>
             {current.date()}
           </div>
         </div>
         {holiday && (
           <div style={{
-            position: "absolute", bottom: 4, left: "50%",
-            transform: "translateX(-50%)", width: 6, height: 6,
-            borderRadius: "50%", backgroundColor: "#e11d48",
+            position: "absolute",
+            bottom : -2,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            backgroundColor: "#e11d48",
+            boxShadow: "0 0 0 2px rgba(225,29,72,0.08)",
+            pointerEvents: "none",
+            zIndex: 0,
           }} />
         )}
       </div>
@@ -385,7 +394,7 @@ const HeroFilters = () => {
   );
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans">
+    <div className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans md:sticky md:top-24 md:z-40 md:shadow-md md:rounded-b-xl md:bg-white md:backdrop-blur-sm">
       <div className="flex justify-center">
         <div className="grid grid-cols-4 w-full md:w-auto bg-white rounded-t-xl shadow-sm border-b overflow-hidden">
           {tabs.map((t) => (

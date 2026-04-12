@@ -84,7 +84,7 @@ const Package = ({ theme }) => {
                 640: { slidesPerView: 2 },
                 1024: { slidesPerView: 3 },
               }}
-              className="package-swiper pb-12"
+              className=" pb-12"
             >
               {data?.docs?.map((item, index) => (
                 <SwiperSlide key={item._id || index}>

@@ -202,11 +202,11 @@ const HotelDetails = () => {
       <div className="max-w-6xl mx-auto mt-6 px-4 lg:px-0">
         <div className="flex justify-between items-start mb-2">
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <span className="bg-[#8E8E8E] text-white text-[10px] px-1 rounded-sm uppercase font-bold">{String(data?.hotel_type || "Hotel")}</span>
               <div className="flex text-yellow-400 text-xs">{renderStars}</div>
-            </div>
-            <h1 className="text-[24px] font-bold leading-tight">{hotelName}</h1>
+            </div> */}
+            <h1 className="text-4xl font-bold leading-tight">{hotelName}</h1>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -220,12 +220,12 @@ const HotelDetails = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-1 mb-4 text-[14px]">
+        {/* <div className="flex items-center gap-1 mb-4 text-[14px]">
           <CiLocationOn className="text-[#006ce4] font-bold" />
           <p className="text-[#006ce4] underline cursor-pointer font-medium">
             {destinationFullAddress || hotelAddress}
           </p>
-        </div>
+        </div> */}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
           <div className="lg:col-span-2">
@@ -248,7 +248,7 @@ const HotelDetails = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="border rounded-lg p-4">
+            {/* <div className="border rounded-lg p-4">
               {reviewData ? (
                 <div className="flex justify-between items-center mb-2">
                   <div>
@@ -258,7 +258,7 @@ const HotelDetails = () => {
                   <div className="bg-[#003580] text-white px-2 py-1 rounded font-bold">{reviewData.average}</div>
                 </div>
               ) : <p className="font-bold">No reviews yet</p>}
-            </div>
+            </div> */}
 
             {/* Map Section */}
             <div className="border rounded-lg p-4 bg-white">
@@ -332,9 +332,7 @@ const HotelDetails = () => {
                   </div>
                 )}
 
-                <button className="w-full bg-[#006ce4] hover:bg-[#005bb8] text-white py-3 rounded-md font-bold transition-all">
-                  Reserve Your Stay
-                </button>
+                
               </div>
             </div>
           </div>

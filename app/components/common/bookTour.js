@@ -89,56 +89,18 @@ const BookTour = ({ data, user }) => {
     <div className="w-full relative ">
       <div className="w-full ">
         <div className="shadow-lg rounded-[10px] lg:rounded-[20px] border-b w-full bg-white">
-          <div className="rounded-t-[10px] lg:rounded-t-[20px] border xl:p-[30px] lg:p-6 md:p-5 sm:p-4 p-3 bg-[#FEF5EE]">
-            <h3 className="heading-3">
-              {i18n.t("Book This Tour")}
-            </h3>
-          </div>
           <div className="xl:m-6 lg:m-5 md:m-4 m-3 rounded-[10px] lg:rounded-[20px] border">
             <div className="flex justify-between items-center">
               <div className="border-r flex-1 lg:p-4 md:p-3 p-2">
                 <div className="flex items-center md:gap-2 gap-1 ">
                   <FaCalendarPlus className="text-[#05073C]" />
-                  <p className="description-4 !font-semibold text-[#05073C]">{i18n.t("Check In")}</p>
+                  <p className="description-4 !font-semibold text-[#05073C]">{i18n.t("Date")}</p>
                 </div>
                 <p className="lg:mt-3 mt-2 description-4 text-[#05073C]">{dayjs(data?.check_in).format("DD MMMM YYYY")}</p>
-              </div>
-              <div className="flex-1 lg:p-4 md:p-3 p-2">
-                <div className="flex items-center md:gap-2 gap-1 ">
-                  <FaCalendarMinus className="text-[#05073C]" />
-                  <p className="description-4 !font-semibold text-[#05073C]">{i18n.t("Check Out")}</p>
-                </div>
-                <p className="lg:mt-3 mt-2 description-4 text-[#05073C]">{dayjs(data?.check_out).format("DD MMMM YYYY")}</p>
-              </div>
-            </div>
-            <div className="border-t ">
-              <div className="border-r flex-1 lg:p-4 md:p-3 p-2">
-                <div className="">
-                  <p className="description-1 text-[#05073C]">{i18n.t("Children")}</p>
-                  <p className="description-4 text-[#05073C] mt-2">{i18n.t("1 child")}</p>
-                </div>
               </div>
             </div>
           </div>
           <div className="xl:mt-6 lg:mt-5 md:mt-4 mt-4 xl:p-6 lg:p-5 md:p-4 p-3">
-
-            <div className="xl:mt-8 lg:mt-7 md:mt-6 mt-4">
-              <h3 className="description-3 !font-semibold !font-montserrat">{i18n.t("Extra Services")}</h3>
-              {
-                packageService?.map((item, index) => {
-                  return (
-                    <div key={index} className="flex items-center justify-between lg:mt-4 md:mt-3 mt-2 package">
-                      <FormCheckbox
-                        name={item?.title?.[langCode]}
-                        label={item?.title?.[langCode]}
-                        onChange={handlePackageServicePrice(item?._id)}
-                      />
-                      <p className="description-1 text-[#05073C] !font-bold">{formatPrice(item?.price)}</p>
-                    </div>
-                  );
-                })
-              }
-            </div>
             <div className="flex justify-center items-center xl:mt-6 lg:mt-5 md:mt-4 mt-4 gap-1">
               <p className="description-1 text-[#05073C] !font-bold">{i18n.t("Total Price")}: </p>
               <p className="heading-3 text-primary">{formatPrice(initialPrice)}</p>

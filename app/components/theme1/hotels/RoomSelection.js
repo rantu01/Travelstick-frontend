@@ -70,6 +70,16 @@ const RoomSelection = () => {
   }, [rooms]);
 
   const [roomCounts, setRoomCounts] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') setShowModal(false);
+    };
+    if (showModal) window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showModal]);
 
   const handleCountChange = (id, delta) => {
     const avail = availability[id]?.available ?? Infinity;
@@ -91,7 +101,7 @@ const RoomSelection = () => {
   }
 
   return (
-    <div className="p-6 bg-gray-50  flex flex-col items-center gap-6 rounded-xl">
+    <div className="flex flex-col items-center gap-6 rounded-xl">
       <h2 className="text-2xl font-bold self-start max-w-6xl w-full mx-auto">Select your room</h2>
 
       {rooms.map((room) => {
@@ -111,7 +121,8 @@ const RoomSelection = () => {
               <img
                 src={getImageUrl(room.images?.[0])}
                 alt={roomName}
-                className="w-full h-full min-h-[180px] object-cover rounded-lg"
+                onClick={() => { setSelectedRoom(room); setShowModal(true); }}
+                className="w-full h-full min-h-[180px] object-cover rounded-lg cursor-pointer"
               />
             </div>
 
@@ -239,6 +250,181 @@ const RoomSelection = () => {
           </div>
         );
       })}
+
+      {/* Modal: image on top, details below */}
+      {showModal && selectedRoom && (
+        <div className="fixed inset-0 z-50 flex items-start md:items-center justify-center pt-6 md:pt-24 p-4">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowModal(false)} />
+          <div className="relative max-w-3xl w-full mx-2 sm:mx-6 bg-white rounded-2xl overflow-hidden shadow-2xl transform transition-all duration-300 scale-100 animate-in fade-in zoom-in max-h-[90vh] md:max-h-[80vh] overflow-y-auto">
+
+            {/* Close Button */}
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute right-4 top-4 z-20 bg-white/90 backdrop-blur-sm hover:bg-white p-2 rounded-full shadow-lg transition-all duration-200 hover:scale-110"
+            >
+              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Image Section */}
+            <div className="relative w-full bg-gray-100">
+              <img
+                src={getImageUrl(selectedRoom.images?.[0])}
+                alt={selectedRoom.name?.[langCode] || selectedRoom.name?.en || 'Room image'}
+                className="w-full h-48 md:h-56 lg:h-64 object-cover cursor-pointer"
+              />
+              {/* Image overlay gradient */}
+              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/30 to-transparent" />
+            </div>
+
+            {/* Content Section */}
+            <div className="p-6 md:p-8">
+              {/* Title and Price Row */}
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
+                <div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                    {selectedRoom.name?.[langCode] || selectedRoom.name?.en || 'Room'}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-3 text-gray-600">
+                    <span className="flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                      {selectedRoom.size}
+                    </span>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full" />
+                    <span className="flex items-center gap-1">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                      </svg>
+                      {selectedRoom.bed_type}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-right bg-gradient-to-r from-[#1a4fa0]/5 to-transparent px-4 py-2 rounded-lg">
+                  <div className="text-3xl font-bold text-[#1a4fa0]">{formatPrice(selectedRoom.price?.amount || 0)}</div>
+                  <div className="text-sm text-gray-500">Per night before taxes</div>
+                </div>
+              </div>
+
+              {/* Capacity & Room Details */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-xl mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#1a4fa0]/10 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-[#1a4fa0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Adults</div>
+                    <div className="font-semibold">{selectedRoom.capacity?.adults || 0}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-[#1a4fa0]/10 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-[#1a4fa0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <div className="text-xs text-gray-500">Children</div>
+                    <div className="font-semibold">{selectedRoom.capacity?.children || 0}</div>
+                  </div>
+                </div>
+                {typeof selectedRoom.total_rooms !== 'undefined' && (
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#1a4fa0]/10 rounded-full flex items-center justify-center">
+                      <svg className="w-5 h-5 text-[#1a4fa0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500">Total Rooms</div>
+                      <div className="font-semibold">{selectedRoom.total_rooms}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Meal Plan & Refundability */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {selectedRoom.meal_plan && (
+                  <div className="flex items-start gap-3 p-3 bg-green-50 rounded-lg border border-green-100">
+                    <svg className="w-5 h-5 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                      <div className="text-xs text-green-600 uppercase font-semibold">Meal Plan</div>
+                      <div className="font-medium text-gray-800">{selectedRoom.meal_plan}</div>
+                    </div>
+                  </div>
+                )}
+
+                {selectedRoom.refundability && (
+                  <div className={`flex items-start gap-3 p-3 rounded-lg border ${selectedRoom.refundability.toLowerCase().includes('free') ? 'bg-green-50 border-green-100' : 'bg-yellow-50 border-yellow-100'}`}>
+                    <svg className={`w-5 h-5 mt-0.5 ${selectedRoom.refundability.toLowerCase().includes('free') ? 'text-green-600' : 'text-yellow-600'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                      <div className="text-xs text-gray-600 uppercase font-semibold">Refundability</div>
+                      <div className="font-medium text-gray-800">{selectedRoom.refundability}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Amenities */}
+              <div className="mb-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <svg className="w-5 h-5 text-[#1a4fa0]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                  <strong className="text-gray-900 text-lg">Amenities & Features</strong>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {(selectedRoom.amenities && selectedRoom.amenities.length > 0) ? (
+                    selectedRoom.amenities.map((a, i) => (
+                      <div key={i} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors">
+                        <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                          <AmenityIcon amenity={a} />
+                        </div>
+                        <span className="text-gray-700">{a}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-span-2 text-center py-8 text-gray-500">
+                      <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                      </svg>
+                      No amenities listed
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4 border-t border-gray-100">
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="px-6 py-2.5 text-gray-600 hover:text-gray-800 font-medium rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <Link href={`/hotel/${hotelId}/booking?room=${selectedRoom._id}&count=1`}>
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="bg-[#1a4fa0] hover:bg-[#0e3a7a] text-white px-8 py-2.5 rounded-lg font-semibold shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                  >
+                    Book Now
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
