@@ -16,10 +16,11 @@ const MultiCityRow = ({
   dateRender,
   filterData,
   langCode,
+  sideElement,
 }) => (
   <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
     {/* From */}
-    <div className="md:col-span-4 border rounded-xl p-4 hover:bg-gray-50 relative cursor-pointer bg-white">
+    <div className="md:col-span-3 border rounded-xl p-4 hover:bg-gray-50 relative cursor-pointer bg-white">
       <Popover
         open={openPopover === `mc-from-${index}`}
         onOpenChange={(v) => setOpenPopover(v ? `mc-from-${index}` : null)}
@@ -97,8 +98,10 @@ const MultiCityRow = ({
     </div>
 
     {/* Remove button */}
-    <div className="md:col-span-1 flex items-center justify-center">
-      {multiCityFlightsLength > 2 ? (
+    <div className="md:col-span-2 flex items-center justify-center">
+      {sideElement ? (
+        <div className="w-full h-full flex items-center justify-center">{sideElement}</div>
+      ) : (multiCityFlightsLength > 2 ? (
         <button
           onClick={() => handleRemoveMultiCityFlight(index)}
           className="text-red-400 hover:text-red-600 transition-colors p-2 rounded-full hover:bg-red-50 border border-red-100 w-full h-full flex items-center justify-center"
@@ -107,7 +110,7 @@ const MultiCityRow = ({
         </button>
       ) : (
         <div className="w-full h-full" />
-      )}
+      ))}
     </div>
   </div>
 );

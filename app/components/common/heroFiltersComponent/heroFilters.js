@@ -34,21 +34,7 @@ const isHoliday = (date) => {
   );
 };
 
-const dateRender = (current) => {
-  const holiday = isHoliday(current);
-  return (
-    <div style={{ position: "relative", display: "inline-block", width: "100%", textAlign: "center" }}>
-      <div className="ant-picker-cell-inner">{current.date()}</div>
-      {holiday && (
-        <div style={{
-          position: "absolute", bottom: 1, left: "50%",
-          transform: "translateX(-50%)", width: 5, height: 5,
-          borderRadius: "50%", backgroundColor: "#e11d48",
-        }} />
-      )}
-    </div>
-  );
-};
+// dateRender moved inside component so it can access startDate/endDate
 
 const HeroFilters = () => {
   const i18n = useI18n();
@@ -183,6 +169,39 @@ const HeroFilters = () => {
     setOpenPopover(null);
   };
 
+  const dateRender = (current) => {
+    const holiday = isHoliday(current);
+    const isStart = startDate && current.isSame(startDate, "day");
+    const isEnd = endDate && current.isSame(endDate, "day");
+
+    return (
+      <div style={{ position: "relative", display: "inline-block", width: "100%", textAlign: "center" }}>
+        <div className="ant-picker-cell-inner" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{
+            width: 32,
+            height: 32,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 9999,
+            backgroundColor: isEnd ? "#1a4fa0" : (isStart ? "#e6f6ff" : "transparent"),
+            color: isEnd ? "#ffffff" : undefined,
+            fontWeight: isEnd || isStart ? 700 : 400,
+          }}>
+            {current.date()}
+          </div>
+        </div>
+        {holiday && (
+          <div style={{
+            position: "absolute", bottom: 4, left: "50%",
+            transform: "translateX(-50%)", width: 6, height: 6,
+            borderRadius: "50%", backgroundColor: "#e11d48",
+          }} />
+        )}
+      </div>
+    );
+  };
+
   const handleVisaCategorySelect = (option) => {
     setVisaCategory(option.label);
     setMatchedVisaId(option.visaId);
@@ -300,55 +319,61 @@ const HeroFilters = () => {
   // ── [FIX 2] Multi City: Traveller/Class একবার উপরে, প্রতিটি row-এ আর নেই ──
   const renderMultiCity = () => (
     <div className="flex flex-col gap-3">
-      {/* Shared Traveller & Class — একবারই দেখাবে */}
-      <div className="border rounded-xl p-4 hover:bg-gray-50 bg-white w-full md:w-fit">
-        <Popover
-          open={openPopover === "multi-guests"}
-          onOpenChange={(v) => setOpenPopover(v ? "multi-guests" : null)}
-          content={guestContent}
-          trigger="click"
-          placement="bottomLeft"
-        >
-          <div className="cursor-pointer">
-            <p className="text-[11px] text-gray-400 font-bold">Traveller, Class</p>
-            <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">
-              {adults} Adult{adults > 1 ? "s" : ""}, {children} Child{children > 1 ? "ren" : ""}, {infants} Infant{infants > 1 ? "s" : ""}
-            </h4>
-            <p className="text-[10px] text-gray-400">{bookingClass}</p>
-          </div>
-        </Popover>
-      </div>
-
-      {/* Flight rows — guest selector নেই (hideGuest=true) */}
       {multiCityFlights.map((flight, index) => (
         <MultiCityRow
-          key={index} flight={flight} index={index}
-          openPopover={openPopover} setOpenPopover={setOpenPopover}
+          key={index}
+          flight={flight}
+          index={index}
+          openPopover={openPopover}
+          setOpenPopover={setOpenPopover}
           handleMultiCityChange={handleMultiCityChange}
           handleSwapMultiCity={handleSwapMultiCity}
           handleRemoveMultiCityFlight={handleRemoveMultiCityFlight}
           multiCityFlightsLength={multiCityFlights.length}
-          adults={adults} children={children} childrenAges={childrenAges}
-          infants={infants} bookingClass={bookingClass}
-          disabledDate={disabledDate} dateRender={dateRender}
-          guestContent={null}
+          adults={adults}
+          children={children}
+          childrenAges={childrenAges}
+          infants={infants}
+          bookingClass={bookingClass}
+          disabledDate={disabledDate}
+          dateRender={dateRender}
           filterData={filterData}
           langCode={i18n.langCode}
           hideGuest={true}
+          sideElement={
+            index === 0 ? (
+              <Popover
+                open={openPopover === "multi-guests"}
+                onOpenChange={(v) => setOpenPopover(v ? "multi-guests" : null)}
+                content={guestContent}
+                trigger="click"
+                placement="bottomLeft"
+              >
+                <div className="cursor-pointer p-2 w-full text-left">
+                  <p className="text-[11px] text-gray-400 font-bold">Traveller, Class</p>
+                  <h4 className="font-bold text-gray-700 text-lg leading-tight mt-1">
+                    {adults} Adult{adults > 1 ? "s" : ""}, {children} Child{children > 1 ? "ren" : ""}
+                  </h4>
+                  <p className="text-[10px] text-gray-400">{bookingClass}</p>
+                </div>
+              </Popover>
+            ) : index === 1 ? (
+              multiCityFlights.length < 5 ? (
+                <button
+                  onClick={handleAddMultiCityFlight}
+                  className="w-full flex items-center justify-center gap-2 bg-[#1A4FA0] text-white font-bold px-4 py-2 rounded-full hover:bg-[#1661a1] transition-all"
+                >
+                  <FaPlus size={12} /> Add City
+                </button>
+              ) : (
+                <span className="text-xs text-gray-400">Max 5</span>
+              )
+            ) : null
+          }
         />
       ))}
 
-      <div className="flex items-center justify-between mt-1">
-        {multiCityFlights.length < 5 ? (
-          <button
-            onClick={handleAddMultiCityFlight}
-            className="flex items-center gap-2 text-[#1A4FA0] font-bold text-sm border border-[#1A4FA0] px-4 py-2 rounded-lg hover:bg-[#E8F3FF] transition-all"
-          >
-            <FaPlus size={10} /> Add Another Flight
-          </button>
-        ) : (
-          <span className="text-xs text-gray-400">Maximum 5 flights added</span>
-        )}
+      <div className="flex justify-center mt-1">
         <button
           onClick={handleSearch}
           className="bg-[#1A4FA0] hover:bg-blue-900 text-white px-8 h-12 rounded-lg flex items-center justify-center gap-2 shadow-lg transition-transform active:scale-95 font-bold"
@@ -377,9 +402,9 @@ const HeroFilters = () => {
 
       <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm relative z-10 border border-gray-100">
         {tab === "flight" && (
-          <div className="flex flex-wrap gap-2 mb-6">
-            {["One Way", "Round Trip", "Multi City"].map((type) => (
-              <button
+          <div className="flex flex-nowrap gap-2 mb-6 overflow-x-auto">
+              {["One Way", "Round Trip", "Multi City"].map((type) => (
+                <button
                 key={type} onClick={() => setTripType(type)}
                 className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 border ${tripType === type ? "bg-[#00BCE4] border-[#00BCE4] text-white" : "bg-[#F2F4F7] border-transparent text-gray-500"}`}
               >
@@ -537,25 +562,27 @@ const HeroFilters = () => {
                     </div>
                   </Popover>
                 </div>
-                <div className="md:col-span-2 border rounded-xl p-4 hover:bg-gray-50 bg-white">
-                  <p className="text-[11px] text-gray-400 font-bold">Departure</p>
-                  <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
-                  <p className="text-[10px] text-gray-400">{startDate ? startDate.format("dddd") : ""}</p>
-                </div>
-
-                {/* ── [FIX 1] Return: শুধু Round Trip এ দেখাবে, One Way তে সম্পূর্ণ hidden ── */}
-                {tripType === "Round Trip" && (
-                  <div className="md:col-span-2 border rounded-xl p-4 hover:bg-gray-50 bg-white">
-                    <p className="text-[11px] text-gray-400 font-bold">Return</p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
-                        <p className="text-[10px] text-gray-400">{endDate ? endDate.format("dddd") : ""}</p>
-                      </div>
-                      <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
-                    </div>
+                {/* Departure + Return: keep on same row in mobile by using a responsive flex wrapper */}
+                <div className={`${tripType === "Round Trip" ? "md:col-span-4" : "md:col-span-2"} flex gap-3`}>
+                  <div className="flex-1 border rounded-xl p-4 hover:bg-gray-50 bg-white">
+                    <p className="text-[11px] text-gray-400 font-bold">Departure</p>
+                    <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
+                    <p className="text-[10px] text-gray-400">{startDate ? startDate.format("dddd") : ""}</p>
                   </div>
-                )}
+
+                  {tripType === "Round Trip" && (
+                    <div className="flex-1 border rounded-xl p-4 hover:bg-gray-50 bg-white">
+                      <p className="text-[11px] text-gray-400 font-bold">Return</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
+                          <p className="text-[10px] text-gray-400">{endDate ? endDate.format("dddd") : ""}</p>
+                        </div>
+                        <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div className={`${tripType === "Round Trip" ? "md:col-span-3" : "md:col-span-5"} border rounded-xl p-4 hover:bg-gray-50 bg-white`}>
                   <Popover open={openPopover === "flight-guests"} onOpenChange={(v) => setOpenPopover(v ? "flight-guests" : null)} content={guestContent} trigger="click" placement="bottomRight">

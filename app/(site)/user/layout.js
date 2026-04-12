@@ -102,7 +102,7 @@ const Layout = ({ children }) => {
       {user && user?.role == "user" && (
         <div className="bg-white">
           <div className="w-full h-full">
-            <Banner title="User Dashboard" />
+            {/* <Banner title="User Dashboard" /> */}
             <div className="lg:flex travel-container lg:gap-x-6 py-[60px] md:pb-[120px] ">
               <div className="lg:hidden mb-5">
                 <HiOutlineMenu
