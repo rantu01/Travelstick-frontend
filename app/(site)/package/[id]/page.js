@@ -3,14 +3,15 @@ import BookTour from "@/app/components/common/bookTour";
 import Iternary from "@/app/components/common/iternary";
 import Rating from "@/app/components/common/Rating";
 import {
+  createPackageInquiry,
   fetchPageContentTheme1,
   getAllPackageBookingByUser,
   getAllPublicPackages,
 } from "@/app/helper/backend";
-import { useFetch } from "@/app/helper/hooks";
+import { useAction, useFetch } from "@/app/helper/hooks";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef, useMemo, useCallback } from "react";
-import { Breadcrumb, Rate, Collapse } from "antd";
+import { Form } from "antd";
 import Image from "next/image";
 import { useUser } from "@/app/contexts/user";
 import { MapSelector } from "@/app/components/form/location";
@@ -29,6 +30,14 @@ const PackageDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [sidebarTab, setSidebarTab] = useState("booking");
+  const [inquiryLoading, setInquiryLoading] = useState(false);
+  const [inquiryForm, setInquiryForm] = useState({
+    full_name: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
 
   const params = useParams();
   const router = useRouter();
@@ -48,6 +57,7 @@ const PackageDetails = () => {
   const overviewRef = useRef(null);
   const itineraryRef = useRef(null);
   const otherInfoRef = useRef(null);
+  const policiesRef = useRef(null);
   const reviewRef = useRef(null);
 
   useEffect(() => {
@@ -146,6 +156,41 @@ const PackageDetails = () => {
       : (totalPrice * data?.price?.discount) / 100;
   const finalPrice = totalPrice - (discountAmount || 0);
   const { formatPrice } = useCurrency();
+
+  useEffect(() => {
+    if (user) {
+      setInquiryForm((prev) => ({
+        ...prev,
+        full_name: user?.name || prev.full_name,
+        email: user?.email || prev.email,
+        phone: user?.phone || prev.phone,
+      }));
+    }
+  }, [user]);
+
+  const handleInquirySubmit = async (e) => {
+    e.preventDefault();
+    if (!data?._id || inquiryLoading) return;
+
+    setInquiryLoading(true);
+    try {
+      await useAction(createPackageInquiry, {
+        body: {
+          package: data._id,
+          full_name: inquiryForm.full_name,
+          email: inquiryForm.email,
+          phone: inquiryForm.phone,
+          message: inquiryForm.message,
+        },
+      });
+      setInquiryForm((prev) => ({
+        ...prev,
+        message: "",
+      }));
+    } finally {
+      setInquiryLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen pb-20 isolate">
@@ -394,6 +439,7 @@ const PackageDetails = () => {
                 { label: "Overview", ref: overviewRef },
                 { label: "Itinerary", ref: itineraryRef },
                 { label: "Other Information", ref: otherInfoRef },
+                { label: "Policies", ref: policiesRef },
                 { label: "Reviews", ref: reviewRef },
               ].map((tab, idx) => (
                 <button
@@ -512,6 +558,33 @@ const PackageDetails = () => {
               )}
             </div>
 
+            {/* Policies */}
+            <div
+              ref={policiesRef}
+              className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8"
+            >
+              <h2 className="text-2xl font-bold text-[#05073C] mb-6">
+                Policies
+              </h2>
+              {(data?.policies?.length > 0 || data?.policy?.length > 0) ? (
+                <div className="space-y-3">
+                  {(data?.policies || data?.policy || []).map((item, index) => (
+                    <div
+                      key={index}
+                      className="flex items-start gap-3 p-4 rounded-xl border border-gray-100 bg-gray-50/50"
+                    >
+                      <span className="mt-[2px] text-primary font-bold">{index + 1}.</span>
+                      <p className="text-[15px] text-gray-700 leading-relaxed">
+                        {item?.[langCode] || item?.en || "N/A"}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">No policies available for this package yet.</p>
+              )}
+            </div>
+
             {/* Reviews */}
             <div
               ref={reviewRef}
@@ -534,9 +607,27 @@ const PackageDetails = () => {
             <div className="sticky top-24">
               {/* Booking Card */}
               <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden mb-6">
+                <div className="flex border-b border-gray-100">
+                  {[
+                    { key: "booking", label: "Book Now" },
+                    { key: "inquiry", label: "Inquiry" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.key}
+                      onClick={() => setSidebarTab(tab.key)}
+                      className={`flex-1 py-3 text-sm font-bold transition-all border-b-2 ${
+                        sidebarTab === tab.key
+                          ? "border-primary text-primary"
+                          : "border-transparent text-gray-400 hover:text-gray-600"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
                 <div className="bg-primary p-6 text-white">
                   <p className="text-xs uppercase font-bold opacity-80 mb-1 tracking-widest">
-                    Book This Tour
+                    {sidebarTab === "booking" ? "Book This Tour" : "Quick Inquiry"}
                   </p>
                   <div className="flex items-baseline gap-1">
                     <span className="text-3xl font-black">{formatPrice(finalPrice)}</span>
@@ -544,7 +635,77 @@ const PackageDetails = () => {
                   </div>
                 </div>
                 <div>
-                  <BookTour user={user} data={data} />
+                  {sidebarTab === "booking" ? (
+                    <BookTour user={user} data={data} />
+                  ) : (
+                    <form onSubmit={handleInquirySubmit} className="p-5 space-y-3">
+                      <Form.Item label="Full Name" className="mb-3">
+                        <input
+                          required
+                          value={inquiryForm.full_name}
+                          onChange={(e) =>
+                            setInquiryForm((prev) => ({
+                              ...prev,
+                              full_name: e.target.value,
+                            }))
+                          }
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary"
+                          placeholder="Your full name"
+                        />
+                      </Form.Item>
+                      <Form.Item label="Email" className="mb-3">
+                        <input
+                          required
+                          type="email"
+                          value={inquiryForm.email}
+                          onChange={(e) =>
+                            setInquiryForm((prev) => ({
+                              ...prev,
+                              email: e.target.value,
+                            }))
+                          }
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary"
+                          placeholder="you@example.com"
+                        />
+                      </Form.Item>
+                      <Form.Item label="Phone" className="mb-3">
+                        <input
+                          required
+                          value={inquiryForm.phone}
+                          onChange={(e) =>
+                            setInquiryForm((prev) => ({
+                              ...prev,
+                              phone: e.target.value,
+                            }))
+                          }
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary"
+                          placeholder="Phone number"
+                        />
+                      </Form.Item>
+                      <Form.Item label="Message" className="mb-3">
+                        <textarea
+                          required
+                          rows={4}
+                          value={inquiryForm.message}
+                          onChange={(e) =>
+                            setInquiryForm((prev) => ({
+                              ...prev,
+                              message: e.target.value,
+                            }))
+                          }
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary resize-none"
+                          placeholder="Tell us what you need"
+                        />
+                      </Form.Item>
+                      <button
+                        type="submit"
+                        disabled={inquiryLoading || !data?._id}
+                        className="w-full bg-primary text-white py-3 rounded-xl font-semibold disabled:opacity-70"
+                      >
+                        {inquiryLoading ? "Submitting..." : "Submit Inquiry"}
+                      </button>
+                    </form>
+                  )}
                 </div>
               </div>
 

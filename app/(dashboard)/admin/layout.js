@@ -179,6 +179,11 @@ const menu = [
         href: "/admin/packageManagement/customTourRequest",
         icon: <TbBrandGoogleBigQuery />,
       },
+      {
+        label: "Inquiries",
+        href: "/admin/packageManagement/inquiry",
+        icon: <TbMessageCog />,
+      },
     ],
   },
   {

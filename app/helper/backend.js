@@ -112,6 +112,9 @@ export const updatePackages = (data) => put('/packages', data)
 export const deletePackages = (data) => del(`/packages/${data._id}`, data)
 export const getAllPublicPackages = (data) => get('/packages/site', data)
 export const getAllSidePublicPackages = (data) => get('/packages/sidebar', data)
+export const createPackageInquiry = (data) => post('/packages/inquiries', data)
+export const getAllPackageInquiries = (data) => get('/packages/inquiries', data)
+export const deletePackageInquiry = (data) => del(`/packages/inquiries/${data._id}`, data)
 
 //Package services
 export const getAllPackageServices = (data) => get('/services?module=package', data)

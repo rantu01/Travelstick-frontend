@@ -50,10 +50,12 @@ const PackageForm = ({ isEdit = false, data }) => {
         about: data?.about || {},
         destination: data?.destination?._id,
         activities: Array.isArray(data?.activities)
-            ? data?.activities.map((a) => ({
-                label: a?.name?.[langCode], 
-                value: a?._id,
-              }))
+            ? data?.activities
+                .map((a) => ({
+                  label: a?.name?.[langCode],
+                  value: a?._id,
+                }))
+                .filter((item) => !!item?.value)
             : [],
       
         banner_image: data?.banner_image
@@ -116,6 +118,11 @@ const PackageForm = ({ isEdit = false, data }) => {
           ? data.excludes
           : Array.isArray(data?.exclude)
           ? data.exclude
+          : [],
+        policies: Array.isArray(data?.policies)
+          ? data.policies
+          : Array.isArray(data?.policy)
+          ? data.policy
           : [],
       });
     }
@@ -223,9 +230,14 @@ const PackageForm = ({ isEdit = false, data }) => {
             feathers: feathersData,
             images,
             activities: Array.isArray(values?.activities)
-              ? values.activities.map((item) =>
-                  typeof item === "object" ? item?.value : item
-                )
+              ? values.activities
+                  .map((item) =>
+                    typeof item === "object" ? item?.value : item
+                  )
+                  .filter(
+                    (activityId) =>
+                      typeof activityId === "string" && activityId.trim()
+                  )
               : [],
             check_in: values.check_in
               ? values.check_in.format("YYYY-MM-DD")
@@ -633,6 +645,59 @@ const PackageForm = ({ isEdit = false, data }) => {
             )}
           </Form.List>
         </div>
+        {/* itinerary */}
+        <div className="mt-5 border rounded-md p-3">
+          <h3 className="description-2 mb-2">{i18n.t("Policies")}</h3>
+          <Form.List name="policies" initialValue={[{}]}>
+            {(fields, { add, remove }) => (
+              <div className="mt-4">
+                <div className="flex flex-wrap gap-4">
+                  {fields.map(({ key, name: fieldName }, index) => (
+                    <div key={key} className="w-full md:w-[48%] rounded">
+                      {languages?.map((l) => (
+                        <div
+                          key={l.code}
+                          style={{
+                            display: l.code === selectedLang ? "block" : "none",
+                          }}
+                        >
+                          <FormInput
+                            name={[fieldName, l.code]}
+                            placeholder={`Input policy ${index + 1}`}
+                            type="text"
+                            required
+                            className="!w-full rounded bg-transparent p-3 dashinput"
+                            label={`Policy ${index + 1} (${l.code})`}
+                          />
+                        </div>
+                      ))}
+                      <div className="text-right mt-3">
+                        {fields.length > 1 && (
+                          <button
+                            type="button"
+                            className="text-red-500 hover:text-primary"
+                            onClick={() => remove(fieldName)}
+                          >
+                            <FaTrash />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => add({})}
+                  className="mt-4 bg-primary text-white px-4 py-2 rounded-md"
+                >
+                  {i18n.t("Add Policy")}
+                </button>
+              </div>
+            )}
+          </Form.List>
+        </div>
+
         {/* itinerary */}
         <Form.List
           name="itinerary"
