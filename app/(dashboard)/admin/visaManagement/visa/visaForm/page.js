@@ -382,14 +382,14 @@ const VisaForm = ({ isEdit = false, data }) => {
               />
             </div>
 
-            <FormInput
+            {/* <FormInput
               label="Document about"
               name={["document_about", l.code]}
               required
               textArea={true}
               className="!w-full rounded bg-transparent p-3 dashinput"
               placeholder={i18n.t("Document about")}
-            />
+            /> */}
           </div>
         ))}
 
