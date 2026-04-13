@@ -38,7 +38,7 @@ const AboutDetails = ({ data, slug }) => {
   ];
   return (
     <div className="">
-      {
+      {/* {
         slug === "package" && (
           <div className="border border-[#E8EAE8] rounded-[10px] lg:rounded-[20px] xl:p-6 lg:p-5 md:p-4 p-3 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-4">
             {packageInfo.map((item, index) => (
@@ -70,11 +70,11 @@ const AboutDetails = ({ data, slug }) => {
             ))}
           </div>
         )
-      }
+      } */}
       <div className="xl:mt-10 lg:mt-8 md:mt-7 mt-5">
-        <h3 className="heading-3">{
+        {/* <h3 className="heading-3">{
           slug === "package" ? i18n.t("About This Package") : i18n.t("About This Hotel")
-        }</h3>
+        }</h3> */}
         <p dangerouslySetInnerHTML={{ __html: data?.about?.[langCode] }} className="description-1 text-[#717171] xl:mt-6 lg:mt-5 md:mt-4 mt-4" />
       </div>
       {/* Highlights */}

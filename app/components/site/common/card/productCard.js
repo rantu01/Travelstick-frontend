@@ -72,16 +72,16 @@ const ProductCard = ({ data }) => {
 
           <div className="flex justify-between items-center mt-4">
             <Link href={`/product/${data?._id}`} className="">
-              <h1 className="description-3 text-[#05073C] group-hover:text-primary">
-                <TextWithTooltip limit={30} text={data?.name} />
+              <h1 className="description-3 text-[#05073C] group-hover:text-primary multi-line-ellipsis-2 break-words whitespace-normal">
+                <TextWithTooltip limit={60} text={data?.name} />
               </h1>
             </Link>
           </div>
-          <p className="mt-3 description-2 whitespace-pre">
-            {i18n?.t("Category")}: <TextWithTooltip limit={20} text={data?.category?.name?.[langCode]} />
+          <p className="mt-3 description-2 whitespace-normal break-words">
+            {i18n?.t("Category")}: <TextWithTooltip limit={30} text={data?.category?.name?.[langCode]} />
           </p>
           <div className="flex justify-between items-center mt-3">
-            <p className="capitalize description-1 text-[#05073C] whitespace-pre">
+            <p className="capitalize description-1 text-[#05073C] whitespace-normal break-words">
               {i18n?.t("Quantity")}: {data?.quantity}
             </p>
             <div className="flex items-center gap-1">

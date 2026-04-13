@@ -24,7 +24,7 @@ const SectionHeaderPage = ({
         }`}
       >
         {/* Title Badge Section */}
-        {title && (
+        {/* {title && (
           <div className="relative w-[271px] h-[63px] animate-bounceUpDown flex items-center justify-center">
             <Image
               src="/theme1/footer/bg.png"
@@ -37,7 +37,7 @@ const SectionHeaderPage = ({
               {i18n.t(title)}
             </p>
           </div>
-        )}
+        )} */}
 
         {/* Heading Section */}
         <div className={`w-full ${isCenter ? "flex justify-center" : ""}`}>

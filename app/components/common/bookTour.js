@@ -130,7 +130,7 @@ const BookTour = ({ data, user }) => {
                 } else {
                   setAuthModalOpen(true)
                 }
-              }} className="bg-primary common-btn text-white w-full">
+              }} className="w-full bg-primary text-white py-3 rounded-xl font-semibold disabled:opacity-70">
                 {i18n.t("Book Now")}
               </button>
             </div>

@@ -538,7 +538,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
             {/* <Banner title="Flights" /> */}
 
             {/* --- Flight Search Bar --- */}
-            <div className="hidden md:block mt-[10px] bg-white w-full border-b py-6 md:sticky md:top-[90px] z-30">
+            <div className="hidden md:block mt-[10px] bg-gray-100 w-full border-b py-6 md:sticky md:top-[90px] z-30">
                 {/* --- Flight Search Bar --- */}
                 <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
             </div>

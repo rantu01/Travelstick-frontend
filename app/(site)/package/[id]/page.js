@@ -28,6 +28,7 @@ const PackageDetails = () => {
   const { langCode, t } = useI18n();
   const [data, getData] = useFetch(getAllPublicPackages, {}, false);
   const [showModal, setShowModal] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [copied, setCopied] = useState(false);
   const [sidebarTab, setSidebarTab] = useState("booking");
@@ -590,7 +591,7 @@ const PackageDetails = () => {
           <div className="w-full lg:w-[32%]">
             <div className="sticky top-24">
               {/* Booking Card */}
-              <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden mb-6">
+              <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-6">
                 <div className="flex border-b border-gray-100">
                   {[
                     { key: "booking", label: "Book Now" },
@@ -756,11 +757,10 @@ const PackageDetails = () => {
           </p>
         </div>
         <button
-          onClick={() =>
-            document
-              .querySelector(".sticky.top-24")
-              ?.scrollIntoView({ behavior: "smooth" })
-          }
+          onClick={() => {
+            setSidebarTab("booking");
+            setShowBookingModal(true);
+          }}
           className="bg-primary text-white px-8 py-3 rounded-xl font-bold text-sm shadow-lg active:scale-95 transition-all"
         >
           Book Now
@@ -785,6 +785,123 @@ const PackageDetails = () => {
               inputHidden
             />
             <p className="text-center font-semibold mt-2">{location?.name}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Booking Modal (mobile) - tabs: Book Now / Inquiry */}
+      {showBookingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-xl max-w-3xl w-full p-0 relative mx-4">
+            <button
+              onClick={() => setShowBookingModal(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-black text-xl z-20"
+            >
+              <FiX />
+            </button>
+            <div className="border-b bg-white">
+              <div className="flex">
+                {[
+                  { key: "booking", label: "Book Now" },
+                  { key: "inquiry", label: "Inquiry" },
+                ].map((tab) => (
+                  <button
+                    key={tab.key}
+                    onClick={() => setSidebarTab(tab.key)}
+                    className={`flex-1 py-3 text-sm font-bold transition-all border-b-2 ${sidebarTab === tab.key
+                      ? "border-primary text-primary"
+                      : "border-transparent text-gray-400 hover:text-gray-600"
+                      }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="p-5 max-h-[80vh] overflow-auto">
+              {sidebarTab === "booking" ? (
+                <BookTour user={user} data={data} />
+              ) : (
+                <div className="p-0">
+                  <form onSubmit={handleInquirySubmit} className="space-y-3">
+                    <Form.Item label="Full Name" className="mb-3">
+                      <input
+                        required
+                        value={inquiryForm.full_name}
+                        onChange={(e) =>
+                          setInquiryForm((prev) => ({
+                            ...prev,
+                            full_name: e.target.value,
+                          }))
+                        }
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary"
+                        placeholder="Your full name"
+                      />
+                    </Form.Item>
+                    <Form.Item label="Email" className="mb-3">
+                      <input
+                        required
+                        type="email"
+                        value={inquiryForm.email}
+                        onChange={(e) =>
+                          setInquiryForm((prev) => ({
+                            ...prev,
+                            email: e.target.value,
+                          }))
+                        }
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary"
+                        placeholder="you@example.com"
+                      />
+                    </Form.Item>
+                    <Form.Item label="Phone" className="mb-3">
+                      <input
+                        required
+                        value={inquiryForm.phone}
+                        onChange={(e) =>
+                          setInquiryForm((prev) => ({
+                            ...prev,
+                            phone: e.target.value,
+                          }))
+                        }
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary"
+                        placeholder="Phone number"
+                      />
+                    </Form.Item>
+                    <Form.Item label="Message" className="mb-3">
+                      <textarea
+                        required
+                        rows={4}
+                        value={inquiryForm.message}
+                        onChange={(e) =>
+                          setInquiryForm((prev) => ({
+                            ...prev,
+                            message: e.target.value,
+                          }))
+                        }
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm outline-none focus:border-primary resize-none"
+                        placeholder="Tell us what you need"
+                      />
+                    </Form.Item>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setShowBookingModal(false)}
+                        className="flex-1 border border-gray-200 py-3 rounded-xl font-semibold"
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={inquiryLoading || !data?._id}
+                        className="flex-1 bg-primary text-white py-3 rounded-xl font-semibold disabled:opacity-70"
+                      >
+                        {inquiryLoading ? "Submitting..." : "Submit Inquiry"}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

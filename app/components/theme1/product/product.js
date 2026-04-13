@@ -31,11 +31,11 @@ const ProductPage = ({ theme }) => {
 
   return (
     <div className="">
-      {
+      {/* {
         theme === 'one' ?
           <Banner title="Product" /> :
           <Banner2 title="Product" />
-      }
+      } */}
       <div className="lg:py-[100px] md:py-20 sm:py-16 py-12 travel-container  overflow-hidden">
 
         {
