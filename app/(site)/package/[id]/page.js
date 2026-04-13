@@ -114,37 +114,32 @@ const PackageDetails = () => {
     {
       label: "Tour Type",
       value: data?.tour_type,
-      img: "/theme1/visa/student.png",
+      img: "/Holidays Icon/Tour Type.png",
     },
     {
       label: "Destination",
       value: data?.destination?.name,
-      img: "/theme1/visa/globe.png",
+      img: "/Holidays Icon/Destination.png",
     },
     {
       label: "Duration",
       value: data?.duration ? `${data.duration} Days` : null,
-      img: "/theme1/blog/watch.png",
+      img: "/Holidays Icon/Duration.png",
     },
     {
       label: "Group Size",
       value: data?.group_size ? `Max ${data.group_size}` : null,
-      img: "/theme1/visa/lan.png",
+      img: "/Holidays Icon/Group Size.png",
     },
-    {
-      label: "Tour Start",
-      value: data?.start_location,
-      img: "/theme1/visa/process.png",
-    },
-    ...(data?.difficulty_level
-      ? [{ label: "Difficulty", value: data.difficulty_level.charAt(0).toUpperCase() + data.difficulty_level.slice(1), img: "/theme1/visa/student.png" }]
-      : []),
-    ...(data?.min_age
-      ? [{ label: "Min Age", value: `${data.min_age}+`, img: "/theme1/visa/lan.png" }]
-      : []),
-    ...(data?.transport_type
-      ? [{ label: "Transport", value: data.transport_type, img: "/theme1/visa/process.png" }]
-      : []),
+    // ...(data?.difficulty_level
+    //   ? [{ label: "Difficulty", value: data.difficulty_level.charAt(0).toUpperCase() + data.difficulty_level.slice(1), img: "/theme1/visa/student.png" }]
+    //   : []),
+    // ...(data?.min_age
+    //   ? [{ label: "Min Age", value: `${data.min_age}+`, img: "/theme1/visa/lan.png" }]
+    //   : []),
+    // ...(data?.transport_type
+    //   ? [{ label: "Transport", value: data.transport_type, img: "/theme1/visa/process.png" }]
+    //   : []),
   ].filter((item) => item.value);
 
   const totalPrice = data?.price?.amount || 0;
@@ -253,11 +248,11 @@ const PackageDetails = () => {
           {/* Title Row */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-[#05073C] font-bold text-2xl md:text-3xl lg:text-4xl">
+              <h1 className="text-[#05073C] font-extrabold text-3xl md:text-4xl lg:text-5xl leading-tight">
                 {data?.name?.[langCode] || data?.name?.en || "Package Details"}
               </h1>
               <div className="flex items-center gap-4 mt-3">
-                <div className="flex items-center gap-2 text-[#717171] text-sm">
+                <div className="flex items-center gap-2 text-gray-500 text-sm tracking-wide">
                   <div className="flex items-center gap-1.5 bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
                     <CiLocationOn className="text-primary" />
                     <span className="font-medium">{data?.destination?.name || "N/A"}</span>
@@ -373,7 +368,7 @@ const PackageDetails = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center gap-10">
 
               {/* Left Side: Stats Grid */}
-              <div className="flex flex-wrap gap-y-8 gap-x-8 w-full lg:flex-1">
+              <div className="flex flex-wrap gap-y-8 gap-x-4 w-full lg:flex-1">
                 {packageStats.map((item, idx) => (
                   <div
                     key={idx}
@@ -392,10 +387,10 @@ const PackageDetails = () => {
                       />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-[11px] md:text-[12px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
+                      <span className="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-0.5">
                         {t(item.label)}
                       </span>
-                      <span className="text-[15px] md:text-[16px] font-bold text-[#1e293b] leading-tight">
+                      <span className="text-base md:text-lg font-semibold text-[#1e293b] leading-tight">
                         {item.value || "N/A"}
                       </span>
                     </div>
@@ -405,22 +400,12 @@ const PackageDetails = () => {
 
               {/* Right Side: Price Section */}
               <div className="w-full lg:w-auto flex-shrink-0 border-t lg:border-t-0 lg:border-l lg:border-dashed lg:border-gray-200 pt-6 lg:pt-0 lg:pl-10">
-                <div className="bg-[#f8fafc] px-8 py-5 rounded-2xl border border-gray-100 flex flex-col items-center lg:items-end min-w-[200px]">
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">
-                    Tour Price
-                  </span>
-                  {discountAmount > 0 && (
-                    <span className="text-gray-400 text-sm line-through mb-0.5">
-                      {formatPrice(totalPrice)}
-                    </span>
-                  )}
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-[#0ea5e9] text-3xl font-black">{formatPrice(finalPrice)}</span>
-                    <span className="text-gray-400 text-sm font-medium">/ person</span>
-                  </div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-gray-400 text-sm font-medium">From:</span>
+                  <span className="text-primary text-3xl lg:text-4xl font-extrabold">{formatPrice(finalPrice)}</span>
+                  <span className="text-gray-400 text-sm font-medium">/ person</span>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -434,7 +419,7 @@ const PackageDetails = () => {
           <div className="w-full lg:w-[68%]">
 
             {/* Sticky Tab Nav */}
-            <div className="sticky top-[90px] z-50 bg-white border-b flex gap-8 mb-8 overflow-x-auto no-scrollbar px-4 shadow-sm">
+            <div className="sticky top-[90px] z-50 bg-white border-b flex justify-between gap-8 mb-8 overflow-x-auto no-scrollbar px-4 shadow-sm">
               {[
                 { label: "Overview", ref: overviewRef },
                 { label: "Itinerary", ref: itineraryRef },
@@ -445,8 +430,7 @@ const PackageDetails = () => {
                 <button
                   key={idx}
                   onClick={() => scrollToSection(tab.ref)}
-                  className="py-4 text-sm font-bold text-[#05073C] whitespace-nowrap border-b-2 border-transparent hover:border-primary hover:text-primary transition-all active:text-primary"
-                >
+                  className="py-4 px-2 text-sm font-semibold text-gray-600 whitespace-nowrap border-b-2 border-transparent hover:text-primary hover:border-primary active:scale-95 transition-all duration-300 ease-in-out tracking-wide">
                   {tab.label}
                 </button>
               ))}
@@ -457,7 +441,7 @@ const PackageDetails = () => {
               ref={overviewRef}
               className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8"
             >
-              <h2 className="text-2xl font-bold text-[#05073C] mb-5">Overview</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-[#05073C] leading-snug mb-5">Overview</h2>
               <AboutDetails data={data} slug="package" />
             </div>
 
@@ -466,7 +450,7 @@ const PackageDetails = () => {
               ref={itineraryRef}
               className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8"
             >
-              <h2 className="text-2xl font-bold text-[#05073C] mb-5">Itinerary</h2>
+              {/* <h2 className="text-2xl md:text-3xl font-bold text-[#05073C] leading-snug mb-5">Itinerary</h2> */}
               <Iternary data={data} />
             </div>
 
@@ -475,10 +459,10 @@ const PackageDetails = () => {
               ref={otherInfoRef}
               className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8"
             >
-              <h2 className="text-2xl font-bold text-[#05073C] mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-[#05073C] leading-snug mb-6">
                 Other Information
               </h2>
-              <div className="text-[#717171] text-[15px] leading-relaxed mb-6">
+              <div className="text-gray-600 text-base leading-relaxed mb-6">
                 Book your{" "}
                 <span className="font-bold">
                   {data?.name?.[langCode] || data?.name?.en}
@@ -509,10 +493,10 @@ const PackageDetails = () => {
                           key={index}
                           className="border-b border-gray-200 last:border-0 hover:bg-gray-50 transition-colors"
                         >
-                          <td className="py-4 px-6 font-bold text-[#05073C] text-[15px] w-1/3 border-r border-gray-200 bg-gray-50/50">
+                          <td className="py-4 px-6 font-semibold text-sm text-[#05073C] w-1/3 border-r border-gray-200 bg-gray-50/50">
                             {info.label}
                           </td>
-                          <td className="py-4 px-6 text-gray-600 text-[15px]">
+                          <td className="py-4 px-6 text-gray-600 text-sm">
                             {info.value}
                           </td>
                         </tr>
@@ -526,7 +510,7 @@ const PackageDetails = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                   {includesList?.length > 0 && (
                     <div>
-                      <h3 className="font-bold text-[#05073C] mb-3 text-base">
+                      <h3 className="font-semibold text-[#05073C] mb-3 text-base">
                         ✅ Included
                       </h3>
                       <ul className="space-y-2">
@@ -541,7 +525,7 @@ const PackageDetails = () => {
                   )}
                   {excludesList?.length > 0 && (
                     <div>
-                      <h3 className="font-bold text-[#05073C] mb-3 text-base">
+                      <h3 className="font-semibold text-[#05073C] mb-3 text-base">
                         ❌ Excluded
                       </h3>
                       <ul className="space-y-2">
@@ -563,7 +547,7 @@ const PackageDetails = () => {
               ref={policiesRef}
               className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8"
             >
-              <h2 className="text-2xl font-bold text-[#05073C] mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-[#05073C] leading-snug mb-6">
                 Policies
               </h2>
               {(data?.policies?.length > 0 || data?.policy?.length > 0) ? (
@@ -573,8 +557,8 @@ const PackageDetails = () => {
                       key={index}
                       className="flex items-start gap-3 p-4 rounded-xl border border-gray-100 bg-gray-50/50"
                     >
-                      <span className="mt-[2px] text-primary font-bold">{index + 1}.</span>
-                      <p className="text-[15px] text-gray-700 leading-relaxed">
+                      <span className="mt-[2px] text-primary font-semibold">{index + 1}.</span>
+                      <p className="text-sm text-gray-700 leading-relaxed">
                         {item?.[langCode] || item?.en || "N/A"}
                       </p>
                     </div>
@@ -590,7 +574,7 @@ const PackageDetails = () => {
               ref={reviewRef}
               className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8"
             >
-              <h2 className="text-2xl font-bold text-[#05073C] mb-6">
+              <h2 className="text-2xl md:text-3xl font-bold text-[#05073C] leading-snug mb-6">
                 Guest Reviews
               </h2>
               <Rating
@@ -615,23 +599,24 @@ const PackageDetails = () => {
                     <button
                       key={tab.key}
                       onClick={() => setSidebarTab(tab.key)}
-                      className={`flex-1 py-3 text-sm font-bold transition-all border-b-2 ${
-                        sidebarTab === tab.key
-                          ? "border-primary text-primary"
-                          : "border-transparent text-gray-400 hover:text-gray-600"
-                      }`}
+                      className={`flex-1 py-3 text-sm font-bold transition-all border-b-2 ${sidebarTab === tab.key
+                        ? "border-primary text-primary"
+                        : "border-transparent text-gray-400 hover:text-gray-600"
+                        }`}
                     >
                       {tab.label}
                     </button>
                   ))}
                 </div>
                 <div className="bg-primary p-6 text-white">
-                  <p className="text-xs uppercase font-bold opacity-80 mb-1 tracking-widest">
-                    {sidebarTab === "booking" ? "Book This Tour" : "Quick Inquiry"}
-                  </p>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-black">{formatPrice(finalPrice)}</span>
-                    <span className="text-sm opacity-80">/ Per Person</span>
+                    
+                    {sidebarTab === "booking" && (
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-3xl font-extrabold">{formatPrice(finalPrice)}</span>
+                        <span className="text-sm opacity-80">/ Per Person</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div>
@@ -713,7 +698,7 @@ const PackageDetails = () => {
               {data?.destination?.address && (
                 <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm mb-6">
                   <div className="flex items-center gap-2 mb-4">
-                    <h3 className="text-[#05073C] font-bold text-sm uppercase tracking-wide">
+                    <h3 className="text-[#05073C] font-semibold text-sm uppercase tracking-wide">
                       Location
                     </h3>
                     <div className="h-[1px] bg-gray-100 w-full"></div>
@@ -731,7 +716,7 @@ const PackageDetails = () => {
               {/* Quick Info Card */}
               <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
-                  <h3 className="text-[#05073C] font-bold text-sm uppercase tracking-wide whitespace-nowrap">
+                  <h3 className="text-[#05073C] font-semibold text-sm uppercase tracking-wide whitespace-nowrap">
                     Quick Info
                   </h3>
                   <div className="h-[1px] bg-gray-100 w-full"></div>
@@ -765,8 +750,8 @@ const PackageDetails = () => {
       {/* Mobile Sticky Footer */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white p-4 border-t z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
         <div>
-          <p className="text-xs text-gray-400 font-bold uppercase">Price Per Person</p>
-          <p className="text-xl font-black text-primary">
+          <p className="text-xs text-gray-400 font-semibold uppercase">Price Per Person</p>
+          <p className="text-xl font-extrabold text-primary">
             {formatPrice(finalPrice)}
           </p>
         </div>

@@ -41,7 +41,7 @@ const Hero = () => {
         </video>
 
         {/* Mobile e overlay hide thakbe */}
-        <div className="absolute inset-0 bg-black/40 hidden md:block"></div>
+        {/* <div className="absolute inset-0 bg-black/40 hidden md:block"></div> */}
 
         {/* HeroFilters Section - Mobile e top e thakbe, Desktop e bottom */}
         <div className="absolute left-0 right-0 top-10 md:top-auto md:bottom-14 md:translate-y-1/2 z-[999] w-full px-4">

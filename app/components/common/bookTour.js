@@ -1,5 +1,5 @@
 'use client'
-import { message, Modal, Radio } from "antd";
+import { message, Modal, Radio, DatePicker } from "antd";
 import { FaCalendarMinus, FaCalendarPlus } from "react-icons/fa6";
 import CounterButton from "../btn/counterButton";
 import FormCheckbox from "../form/checkbox";
@@ -17,6 +17,7 @@ const BookTour = ({ data, user }) => {
   const [paymentMethod, setPaymentMethod] = useState("stripe");
   const [initialPrice, setInitialPrice] = useState(0)
   const [count, setCount] = useState(1);
+  const [selectedDate, setSelectedDate] = useState(data?.check_in ? dayjs(data?.check_in) : null);
   const { formatPrice } = useCurrency();
   const [packageService] = useFetch(getAllPublicPackageServices);
   const i18n = useI18n();
@@ -62,12 +63,21 @@ const BookTour = ({ data, user }) => {
     }
   }, [data?._id]);
 
+  useEffect(() => {
+    setSelectedDate(data?.check_in ? dayjs(data?.check_in) : null);
+  }, [data?.check_in]);
+
+  const disabledDate = (current) => {
+    return current && current < dayjs().startOf('day');
+  };
+
   const router = useRouter();
   const handlePayment = async () => {
     const payload = {
       package: data?._id,
       person: count,
       amount: initialPrice,
+      ...(selectedDate && { date: selectedDate.format('YYYY-MM-DD') }),
       method: paymentMethod,
       ...(selectedServices.length > 0 && { services: selectedServices })
     };
@@ -96,15 +106,23 @@ const BookTour = ({ data, user }) => {
                   <FaCalendarPlus className="text-[#05073C]" />
                   <p className="description-4 !font-semibold text-[#05073C]">{i18n.t("Date")}</p>
                 </div>
-                <p className="lg:mt-3 mt-2 description-4 text-[#05073C]">{dayjs(data?.check_in).format("DD MMMM YYYY")}</p>
+                <div className="lg:mt-3 mt-2">
+                  <DatePicker
+                    value={selectedDate}
+                    onChange={(date) => setSelectedDate(date)}
+                    format="DD MMMM YYYY"
+                    className="w-full"
+                    disabledDate={disabledDate}
+                  />
+                </div>
               </div>
             </div>
           </div>
           <div className="xl:mt-6 lg:mt-5 md:mt-4 mt-4 xl:p-6 lg:p-5 md:p-4 p-3">
-            <div className="flex justify-center items-center xl:mt-6 lg:mt-5 md:mt-4 mt-4 gap-1">
+            {/* <div className="flex justify-center items-center xl:mt-6 lg:mt-5 md:mt-4 mt-4 gap-1">
               <p className="description-1 text-[#05073C] !font-bold">{i18n.t("Total Price")}: </p>
               <p className="heading-3 text-primary">{formatPrice(initialPrice)}</p>
-            </div>
+            </div> */}
             <div className="xl:mt-14 lg:mt-10 md:mt-8 mt-6">
               <button onClick={() => {
                 if (user) {
