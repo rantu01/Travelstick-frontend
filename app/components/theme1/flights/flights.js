@@ -331,6 +331,9 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
         return current && current < dayjs().startOf('day');
     };
 
+    // For popovers inside the mobile drawer, return the closest drawer content element when available
+    const popupContainer = (triggerNode) => triggerNode?.closest('.ant-drawer-content') || document.body;
+
     // --- Components ---
     const SelectionList = ({ options, onSelect }) => (
         <div className="flex flex-col w-64 max-h-72 overflow-y-auto bg-white rounded-md shadow-xl border border-gray-100">
@@ -422,6 +425,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                         onOpenChange={(v) => setOpenPopover(v ? 'flight-from' : null)}
                         content={<SelectionList options={["Dhaka (DAC)", "Chittagong (CGP)", "Sylhet (ZYL)"]} onSelect={(v) => handleSelect(setFromLocation, v)} />}
                         trigger="click" placement="bottomLeft"
+                        getPopupContainer={popupContainer}
                     >
                         <div className="w-full">
                             <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">From</p>
@@ -448,6 +452,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                         onOpenChange={(v) => setOpenPopover(v ? 'flight-to' : null)}
                         content={<SelectionList options={["Cox's Bazar (CXB)", "Bangkok (BKK)", "Dubai (DXB)"]} onSelect={(v) => handleSelect(setToLocation, v)} />}
                         trigger="click" placement="bottomLeft"
+                        getPopupContainer={popupContainer}
                     >
                         <div className="flex-1">
                             <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">To</p>
@@ -511,6 +516,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                         content={guestContent}
                         trigger="click"
                         placement="bottomRight"
+                        getPopupContainer={popupContainer}
                     >
                         <div className="cursor-pointer">
                             <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Traveller, Class</p>
@@ -547,10 +553,24 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
             <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">
 
                 {/* Mobile Search + Filter Buttons */}
-                <div className="flex gap-2 items-center justify-start md:hidden mb-4">
-                    <button onClick={() => setOpenSearch(true)} className="flex items-center gap-2 text-sm px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm">
-                        <FaSearch />
-                        <span>Search</span>
+                {/* Mobile single-line search bar (no scroller) */}
+                <div className="w-full md:hidden mb-4">
+                    <button
+                        onClick={() => setOpenSearch(true)}
+                        className="w-full flex items-center justify-between gap-3 text-sm px-3 py-3 bg-white border border-gray-300 rounded-md shadow-sm overflow-hidden whitespace-nowrap"
+                    >
+                        <div className="flex items-center gap-3 min-w-0">
+                            <FaSearch className="flex-shrink-0" />
+                            <div className="min-w-0 text-left">
+                                <div className="text-xs text-gray-400 uppercase font-bold tracking-wider">From — To</div>
+                                <div className="font-bold text-gray-700 truncate text-sm">{fromLocation} → {toLocation}</div>
+                                <div className="text-[11px] text-gray-400 truncate">{startDate ? startDate.format('DD MMM') : 'Pick date'} · {adults + children + infants} Traveller · {bookingClass}</div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                            <span className="text-sm text-blue-600 font-semibold">Edit</span>
+                        </div>
                     </button>
                 </div>
 
@@ -562,9 +582,22 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                     <p className="font-semibold text-[#000000]">Filters</p>
                 </div>
 
-                <Drawer title="Search" onClose={() => setOpenSearch(false)} open={openSearch} className="md:hidden" width="100%">
-                    {SearchBarContent}
-                </Drawer>
+                {openSearch && (
+                    <div className="fixed inset-0 z-50">
+
+                        {/* Overlay */}
+                        <div
+                            className="absolute inset-0 bg-black/50"
+                            onClick={() => setOpenSearch(false)}
+                        ></div>
+
+                        {/* Drawer */}
+                        <div className="absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 animate-slideUp">
+                            {SearchBarContent}
+                        </div>
+
+                    </div>
+                )}
 
                 <Drawer title="Filters" onClose={() => setOpenDrawer(false)} open={openDrawer} className="md:hidden" width="100%">
                     <FlightFilters />
