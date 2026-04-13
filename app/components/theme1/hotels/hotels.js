@@ -270,7 +270,11 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
       {/* {theme === 'one' ? <Banner title="Hotels" /> : <Banner2 title="Hotels" />} */}
 
       {/* --- Search Section --- */}
-      <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
+      {/* --- Hotel Search Bar --- */}
+      <div className="hidden md:block mt-[10px] bg-white w-full border-b py-6 md:sticky md:top-[90px] z-30">
+        <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
+      </div>
+      
 
       {/* --- Content Section --- */}
       <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">

@@ -264,7 +264,11 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
   return (
     <div className="">
       {/* --- Visa Search Bar --- */}
-      <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
+      {/* --- Visa Search Bar --- */}
+      <div className="hidden md:block mt-[10px] bg-white w-full border-b py-6 md:sticky md:top-[90px] z-30">
+        <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
+      </div>
+      
 
       <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 pb-20 relative">
         <div className="flex gap-2 items-center justify-start md:hidden mb-4">
