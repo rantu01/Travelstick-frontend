@@ -432,7 +432,7 @@ const HeroFilters = () => {
               {["One Way", "Round Trip", "Multi City"].map((type) => (
                 <button
                 key={type} onClick={() => setTripType(type)}
-                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 border ${tripType === type ? "bg-[#00BCE4] border-[#00BCE4] text-white" : "bg-[#F2F4F7] border-transparent text-gray-500"}`}
+                className={`px-4 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-2 border ${tripType === type ? "bg-[#1a4fa0] border-[#1a4fa0] text-white" : "bg-[#F2F4F7] border-transparent text-gray-500"}`}
               >
                 <div className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${tripType === type ? "border-white" : "border-gray-400"}`}>
                   {tripType === type && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
@@ -661,7 +661,7 @@ const HeroFilters = () => {
                           </div>
                         </div>
                       )}
-                    </>
+                    </> 
                   )}
                 </div>
 
