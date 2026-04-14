@@ -68,6 +68,9 @@ const HeroFilters = () => {
   const [rooms, setRooms] = useState(1);
   const [withPets, setWithPets] = useState(false);
   const [openPopover, setOpenPopover] = useState(null);
+  const [datesOpen, setDatesOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [dateOpenTarget, setDateOpenTarget] = useState(null); // 'start' | 'end' | null
 
   const [multiCityFlights, setMultiCityFlights] = useState([
     { from: "Dhaka", to: "Cox's Bazar", date: null },
@@ -111,6 +114,20 @@ const HeroFilters = () => {
 
     fetchTravellingTo();
   }, [citizenOf]);
+
+  useEffect(() => {
+    if (tripType !== "Round Trip") {
+      setDatesOpen(false);
+      setDateOpenTarget(null);
+    }
+  }, [tripType]);
+
+  useEffect(() => {
+    const check = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     if (!citizenOf || !travellingTo) {
@@ -396,7 +413,7 @@ const HeroFilters = () => {
   return (
     <div className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans md:sticky md:top-24 md:z-40  ">
       <div className="flex justify-center">
-        <div className="grid grid-cols-4 w-full md:w-auto bg-white rounded-t-xl shadow-sm border-b overflow-hidden">
+        <div className="grid grid-cols-4 w-full md:w-auto bg-white rounded-xl shadow-sm border-b overflow-hidden relative z-50 top-3 p-2">
           {tabs.map((t) => (
             <button
               key={t.id} onClick={() => setTab(t.id)}
@@ -571,25 +588,80 @@ const HeroFilters = () => {
                     </div>
                   </Popover>
                 </div>
-                {/* Departure + Return: keep on same row in mobile by using a responsive flex wrapper */}
+                {/* Departure + Return: use RangePicker on desktop (side-by-side), single pickers on mobile (one at a time) */}
                 <div className={`${tripType === "Round Trip" ? "md:col-span-4" : "md:col-span-2"} flex gap-3`}>
-                  <div className="flex-1 border rounded-xl p-4 hover:bg-gray-50 bg-white">
-                    <p className="text-[11px] text-gray-400 font-bold">Departure</p>
-                    <DatePicker onChange={(d) => setStartDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`} value={startDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
-                    <p className="text-[10px] text-gray-400">{startDate ? startDate.format("dddd") : ""}</p>
-                  </div>
-
-                  {tripType === "Round Trip" && (
-                    <div className="flex-1 border rounded-xl p-4 hover:bg-gray-50 bg-white">
-                      <p className="text-[11px] text-gray-400 font-bold">Return</p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <DatePicker onChange={(d) => setEndDate(d)} placeholder="Select date" disabledDate={disabledDate} variant="borderless" className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`} value={endDate} format="DD MMM, YYYY" suffixIcon={null} dateRender={dateRender} />
-                          <p className="text-[10px] text-gray-400">{endDate ? endDate.format("dddd") : ""}</p>
-                        </div>
-                        <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
-                      </div>
+                  {tripType === "Round Trip" && !isMobile ? (
+                    <div className="flex-1 md:col-span-4 border rounded-xl p-4 hover:bg-gray-50 bg-white">
+                      <p className="text-[11px] text-gray-400 font-bold">Departure & Return</p>
+                      <DatePicker.RangePicker
+                        value={[startDate, endDate]}
+                        onChange={(vals) => {
+                          setStartDate(vals?.[0] || null);
+                          setEndDate(vals?.[1] || null);
+                        }}
+                        placement="bottomLeft"
+                        getPopupContainer={(trigger) => trigger?.parentElement || document.body}
+                        popupStyle={{ zIndex: 10000 }}
+                        disabledDate={disabledDate}
+                        variant="borderless"
+                        className={`p-0 font-bold text-lg w-full mt-1 ${startDate || endDate ? "text-gray-700" : "text-gray-400"}`}
+                        format="DD MMM, YYYY"
+                        suffixIcon={null}
+                        dateRender={dateRender}
+                      />
+                      <p className="text-[10px] text-gray-400 mt-1">{startDate ? startDate.format("dddd") : ""} {startDate && endDate ? `— ${endDate.format("dddd")}` : ""}</p>
                     </div>
+                  ) : (
+                    <>
+                      <div className="flex-1 border rounded-xl p-4 hover:bg-gray-50 bg-white">
+                        <p className="text-[11px] text-gray-400 font-bold">Departure</p>
+                        <DatePicker
+                          onChange={(d) => setStartDate(d)}
+                          onOpenChange={(open) => { if (tripType === "Round Trip") setDateOpenTarget(open ? 'start' : null); }}
+                          open={tripType === "Round Trip" ? (dateOpenTarget === 'start') : undefined}
+                          placement="bottomLeft"
+                          getPopupContainer={(trigger) => trigger?.parentElement || document.body}
+                          popupStyle={{ zIndex: 10000 }}
+                          placeholder="Select date"
+                          disabledDate={disabledDate}
+                          variant="borderless"
+                          className={`p-0 font-bold text-lg w-full mt-1 ${startDate ? "text-gray-700" : "text-gray-400"}`}
+                          value={startDate}
+                          format="DD MMM, YYYY"
+                          suffixIcon={null}
+                          dateRender={dateRender}
+                        />
+                        <p className="text-[10px] text-gray-400">{startDate ? startDate.format("dddd") : ""}</p>
+                      </div>
+
+                      {tripType === "Round Trip" && (
+                        <div className="flex-1 border rounded-xl p-4 hover:bg-gray-50 bg-white">
+                          <p className="text-[11px] text-gray-400 font-bold">Return</p>
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <DatePicker
+                                onChange={(d) => setEndDate(d)}
+                                onOpenChange={(open) => { if (tripType === "Round Trip") setDateOpenTarget(open ? 'end' : null); }}
+                                open={tripType === "Round Trip" ? (dateOpenTarget === 'end') : undefined}
+                                placement="bottomLeft"
+                                getPopupContainer={(trigger) => trigger?.parentElement || document.body}
+                                popupStyle={{ zIndex: 10000 }}
+                                placeholder="Select date"
+                                disabledDate={disabledDate}
+                                variant="borderless"
+                                className={`p-0 font-bold text-lg w-full mt-1 ${endDate ? "text-gray-700" : "text-gray-400"}`}
+                                value={endDate}
+                                format="DD MMM, YYYY"
+                                suffixIcon={null}
+                                dateRender={dateRender}
+                              />
+                              <p className="text-[10px] text-gray-400">{endDate ? endDate.format("dddd") : ""}</p>
+                            </div>
+                            <FaTimesCircle className="text-gray-400 cursor-pointer" onClick={() => setEndDate(null)} />
+                          </div>
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
 
