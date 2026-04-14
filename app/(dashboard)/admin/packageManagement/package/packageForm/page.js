@@ -43,6 +43,11 @@ const PackageForm = ({ isEdit = false, data }) => {
         name: data?.name,
         check_in: data?.check_in ? dayjs(data.check_in) : null,
         check_out: data?.check_out ? dayjs(data.check_out) : null,
+        available_dates: Array.isArray(data?.available_dates)
+          ? data.available_dates
+              .map((date) => (date ? dayjs(date) : null))
+              .filter(Boolean)
+          : [],
         group_size: data?.group_size,
         tour_type: data?.tour_type,
         section: data?.section || [],
@@ -245,6 +250,11 @@ const PackageForm = ({ isEdit = false, data }) => {
             check_out: values.check_out
               ? values.check_out.format("YYYY-MM-DD")
               : null,
+            available_dates: Array.isArray(values?.available_dates)
+              ? values.available_dates
+                  .filter(Boolean)
+                  .map((date) => date.format("YYYY-MM-DD"))
+              : [],
           };
 
           setSubmitLoading(true);
@@ -434,6 +444,45 @@ const PackageForm = ({ isEdit = false, data }) => {
             />
           </Form.Item>
         </div>
+
+        <div className="mt-5 border rounded-md p-3">
+          <h3 className="description-2 mb-2">{i18n.t("Available Booking Dates")}</h3>
+          <Form.List name="available_dates">
+            {(fields, { add, remove }) => (
+              <div className="space-y-3">
+                {fields.map(({ key, name: fieldName }) => (
+                  <div key={key} className="flex items-center gap-3">
+                    <Form.Item name={fieldName} className="package-date-picker !mb-0 flex-1">
+                      <DatePicker
+                        disabledDate={(current) =>
+                          current && current < dayjs().startOf("day")
+                        }
+                        format="YYYY-MM-DD"
+                        className="w-full rounded p-3 !border bg-transparent"
+                      />
+                    </Form.Item>
+                    <button
+                      type="button"
+                      className="text-red-500 hover:text-primary"
+                      onClick={() => remove(fieldName)}
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => add()}
+                  className="bg-primary text-white px-4 py-2 rounded-md"
+                >
+                  {i18n.t("Add Available Date")}
+                </button>
+              </div>
+            )}
+          </Form.List>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
           <FormSelect
             label={i18n.t("Trending")}

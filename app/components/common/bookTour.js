@@ -8,9 +8,12 @@ import dayjs from "dayjs";
 import { useCurrency } from "@/app/contexts/site";
 import { useFetch } from "@/app/helper/hooks";
 import { createPackageBookingPayment, getAllPublicPackageServices, postPackageBookingCalculation } from "@/app/helper/backend";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import AuthModal from "../site/common/component/authModal";
+
+const toDateKey = (value) => dayjs(value).format("YYYY-MM-DD");
+
 const BookTour = ({ data, user }) => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +26,11 @@ const BookTour = ({ data, user }) => {
   const i18n = useI18n();
   const { langCode } = useI18n();
   const [selectedServices, setSelectedServices] = useState([]);
+  const availableDateKeys = useMemo(() => {
+    if (!Array.isArray(data?.available_dates)) return new Set();
+    return new Set(data.available_dates.filter(Boolean).map((date) => toDateKey(date)));
+  }, [data?.available_dates]);
+
   const handlePackageServicePrice = (serviceId) => async (e) => {
     const checked = e.target.checked;
     let updatedServices;
@@ -38,6 +46,7 @@ const BookTour = ({ data, user }) => {
         package: data?._id,
         person: count,
         services: updatedServices,
+        ...(selectedDate && { date: selectedDate.format("YYYY-MM-DD") }),
       },
     });
 
@@ -52,6 +61,7 @@ const BookTour = ({ data, user }) => {
         body: {
           package: data?._id,
           person: 1,
+          ...(selectedDate && { date: selectedDate.format("YYYY-MM-DD") }),
         },
       });
       if (packageData?.success) {
@@ -61,18 +71,47 @@ const BookTour = ({ data, user }) => {
     if (data?._id) {
       fetchInitialPrice();
     }
-  }, [data?._id]);
+  }, [data?._id, selectedDate]);
 
   useEffect(() => {
-    setSelectedDate(data?.check_in ? dayjs(data?.check_in) : null);
-  }, [data?.check_in]);
+    const fallbackDate = data?.check_in ? dayjs(data?.check_in) : null;
+
+    if (Array.isArray(data?.available_dates) && data.available_dates.length > 0) {
+      const firstAvailableDate = data.available_dates[0] ? dayjs(data.available_dates[0]) : null;
+      setSelectedDate(firstAvailableDate || fallbackDate);
+      return;
+    }
+
+    setSelectedDate(fallbackDate);
+  }, [data?.available_dates, data?.check_in]);
 
   const disabledDate = (current) => {
-    return current && current < dayjs().startOf('day');
+    if (!current) return false;
+    if (current < dayjs().startOf('day')) return true;
+
+    if (availableDateKeys.size > 0) {
+      return !availableDateKeys.has(current.format("YYYY-MM-DD"));
+    }
+
+    return false;
   };
 
   const router = useRouter();
   const handlePayment = async () => {
+    if (availableDateKeys.size > 0 && !selectedDate) {
+      message.error(i18n.t("Please select an available date."));
+      return;
+    }
+
+    if (
+      selectedDate &&
+      availableDateKeys.size > 0 &&
+      !availableDateKeys.has(selectedDate.format("YYYY-MM-DD"))
+    ) {
+      message.error(i18n.t("Selected date is not available."));
+      return;
+    }
+
     const payload = {
       package: data?._id,
       person: count,
