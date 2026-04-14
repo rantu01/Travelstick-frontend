@@ -2,6 +2,30 @@ import axios from "axios";
 
 const API_URL = process.env.BACKEND_URL+"/api/v1/";
 // const API_URL = 'https://api.agency.appstick.com.bd/'+"api/v1/";
+let pendingUploadRequestCount = 0;
+const uploadLoadingSubscribers = new Set();
+
+const notifyUploadLoadingSubscribers = () => {
+  const isLoading = pendingUploadRequestCount > 0;
+  uploadLoadingSubscribers.forEach((subscriber) => {
+    subscriber(isLoading);
+  });
+};
+
+const updateUploadRequestCount = (delta) => {
+  pendingUploadRequestCount = Math.max(0, pendingUploadRequestCount + delta);
+  notifyUploadLoadingSubscribers();
+};
+
+export const subscribeUploadLoading = (subscriber) => {
+  uploadLoadingSubscribers.add(subscriber);
+  subscriber(pendingUploadRequestCount > 0);
+
+  return () => {
+    uploadLoadingSubscribers.delete(subscriber);
+  };
+};
+
 const axiosApi = axios.create({
   baseURL: API_URL,
   validateStatus: function (status) {
@@ -47,9 +71,14 @@ export async function postForm(url, data, config = {}) {
     }`;
   axiosApi.defaults.headers.common["Content-Type"] = "multipart/form-data";
   let formData = convertObjectToFormData(data);
-  return axiosApi
-    .post(url, formData, { ...config })
-    .then((response) => response.data);
+  updateUploadRequestCount(1);
+  try {
+    return await axiosApi
+      .post(url, formData, { ...config })
+      .then((response) => response.data);
+  } finally {
+    updateUploadRequestCount(-1);
+  }
 }
 
 export async function patchForm(url, data, config = {}) {
@@ -57,9 +86,14 @@ export async function patchForm(url, data, config = {}) {
     }`;
   axiosApi.defaults.headers.common["Content-Type"] = "multipart/form-data";
   let formData = convertObjectToFormData(data);
-  return axiosApi
-    .patch(url, formData, { ...config })
-    .then((response) => response.data);
+  updateUploadRequestCount(1);
+  try {
+    return await axiosApi
+      .patch(url, formData, { ...config })
+      .then((response) => response.data);
+  } finally {
+    updateUploadRequestCount(-1);
+  }
 }
 
 

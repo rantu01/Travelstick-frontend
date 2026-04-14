@@ -1,7 +1,8 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from "framer-motion";
 import { usePathname } from 'next/navigation';
+import { subscribeUploadLoading } from '@/app/helper/api';
 
 const Button = ({
   disabled = false,
@@ -9,22 +10,36 @@ const Button = ({
   onClick,
   className = '',
   type = 'button',
+  loading = false,
   loadingText = 'Loading...',
   pathName,
   whileTapScale = 0.85  
 }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isInternalLoading, setIsInternalLoading] = useState(false);
+  const [isUploadLoading, setIsUploadLoading] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    if (type !== 'submit') {
+      return undefined;
+    }
+
+    return subscribeUploadLoading(setIsUploadLoading);
+  }, [type]);
+
+  const isLoading = Boolean(loading || isInternalLoading || (type === 'submit' && isUploadLoading));
+  const effectiveLoadingText = type === 'submit' && isUploadLoading ? 'Uploading...' : loadingText;
+
   const handleClick = async (event) => {
-    if (type === 'submit') {
-      setIsLoading(true); 
+    if (!onClick || loading) {
+      return;
     }
-    if (onClick) {
-      await onClick(event); 
-    }
-    if (type === 'submit') {
-      setIsLoading(false); 
+
+    setIsInternalLoading(true);
+    try {
+      await onClick(event);
+    } finally {
+      setIsInternalLoading(false);
     }
   };
 
@@ -45,7 +60,7 @@ const Button = ({
       disabled={isLoading || disabled} 
       aria-label={isLoading ? 'Submitting...' : 'Click to submit'} 
     >
-      {isLoading ? loadingText : children}
+      {isLoading ? effectiveLoadingText : children}
     </motion.button>
   );
 };
