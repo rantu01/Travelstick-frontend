@@ -72,6 +72,8 @@ const RoomSelection = () => {
   const [roomCounts, setRoomCounts] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [imageIndexMap, setImageIndexMap] = useState({});
+  const [modalImageIndex, setModalImageIndex] = useState(0);
 
   useEffect(() => {
     const onKey = (e) => {
@@ -117,13 +119,48 @@ const RoomSelection = () => {
           <div key={room._id} className="w-full max-w-6xl bg-white border border-gray-300 rounded-[20px] overflow-hidden flex flex-col md:flex-row p-4 gap-4 shadow-sm font-sans mb-6">
 
             {/* Left: Image Section */}
-            <div className="md:w-[240px] w-full shrink-0">
+              <div className="md:w-[240px] w-full shrink-0 relative">
               <img
-                src={getImageUrl(room.images?.[0])}
+                src={getImageUrl(room.images?.[imageIndexMap[room._id] ?? 0])}
                 alt={roomName}
-                onClick={() => { setSelectedRoom(room); setShowModal(true); }}
+                onClick={() => { setSelectedRoom(room); setModalImageIndex(imageIndexMap[room._id] ?? 0); setShowModal(true); }}
                 className="w-full h-full min-h-[180px] object-cover rounded-lg cursor-pointer"
               />
+              {/* Prev/Next buttons */}
+              {room.images && room.images.length > 1 && (
+                <>
+                  <button
+                    onClick={() => {
+                      setImageIndexMap(prev => {
+                        const cur = prev[room._id] ?? 0;
+                        const next = (cur - 1 + room.images.length) % room.images.length;
+                        return { ...prev, [room._id]: next };
+                      });
+                    }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+                    aria-label="Previous image"
+                  >
+                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setImageIndexMap(prev => {
+                        const cur = prev[room._id] ?? 0;
+                        const next = (cur + 1) % room.images.length;
+                        return { ...prev, [room._id]: next };
+                      });
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-md"
+                    aria-label="Next image"
+                  >
+                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Right: Content Section */}
@@ -184,17 +221,27 @@ const RoomSelection = () => {
                   </div>
 
                   {/* Book Now Button */}
-                  {isUnavailable ? (
-                    <button disabled className="bg-gray-400 cursor-not-allowed text-white px-8 py-2.5 rounded-lg text-[16px] font-bold shadow-sm opacity-60">
-                      Sold Out
-                    </button>
-                  ) : (
-                    <Link href={`/hotel/${hotelId}/booking?room=${room._id}&count=${count}`}>
-                      <button className="bg-[#1e3a8a] hover:bg-[#172554] text-white px-8 py-2.5 rounded-lg text-[16px] font-bold transition-all shadow-sm">
-                        Book Now
+                  <div className="flex flex-col items-end gap-2">
+                    {isUnavailable ? (
+                      <button disabled className="bg-gray-400 cursor-not-allowed text-white px-8 py-2.5 rounded-lg text-[16px] font-bold shadow-sm opacity-60">
+                        Sold Out
                       </button>
-                    </Link>
-                  )}
+                    ) : (
+                      <Link href={`/hotel/${hotelId}/booking?room=${room._id}&count=${count}`}>
+                        <button className="bg-[#1e3a8a] hover:bg-[#172554] text-white px-8 py-2.5 rounded-lg text-[16px] font-bold transition-all shadow-sm">
+                          Book Now
+                        </button>
+                      </Link>
+                    )}
+
+                    {/* View Details button opens modal */}
+                    <button
+                      onClick={() => { setSelectedRoom(room); setModalImageIndex(imageIndexMap[room._id] ?? 0); setShowModal(true); }}
+                      className="bg-white border border-gray-300 text-gray-800 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
+                    >
+                      View Details
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -270,10 +317,33 @@ const RoomSelection = () => {
             {/* Image Section */}
             <div className="relative w-full bg-gray-100">
               <img
-                src={getImageUrl(selectedRoom.images?.[0])}
+                src={getImageUrl(selectedRoom.images?.[modalImageIndex] ?? selectedRoom.images?.[0])}
                 alt={selectedRoom.name?.[langCode] || selectedRoom.name?.en || 'Room image'}
                 className="w-full h-48 md:h-56 lg:h-64 object-cover cursor-pointer"
               />
+              {/* Prev/Next on modal image */}
+              {selectedRoom.images && selectedRoom.images.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setModalImageIndex(i => (i - 1 + selectedRoom.images.length) % selectedRoom.images.length)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-md z-10"
+                    aria-label="Previous image"
+                  >
+                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => setModalImageIndex(i => (i + 1) % selectedRoom.images.length)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-md z-10"
+                    aria-label="Next image"
+                  >
+                    <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </>
+              )}
               {/* Image overlay gradient */}
               <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-black/30 to-transparent" />
             </div>

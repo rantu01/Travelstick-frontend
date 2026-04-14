@@ -35,6 +35,7 @@ export const fetchUserList = (data) => get('/users', data)
 export const fetchUserDetailsByAdmin = (data) => get('/user/details/admin-panel', data)
 export const deleteUserByAdmin = (data) => del(`/users/${data._id}`)
 export const updatePasswordByAdmin = (data) => patch('/users/password-update', data)
+export const updateUserRoleByAdmin = (data) => patch('/users/role', data)
 export const updateUserStatusByAdmin = (data) => patch('/user/accountant-activation', data)
 export const fetchUser = (data) => get("/users/profile", data);
 export const postResetPassword = (data) => post("/auth/forget-password/submit", data, { headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${data.accessToken ? data.accessToken : ''}` } });
@@ -352,9 +353,9 @@ export const deleteNotificationByAdmin = (data) => del(`/notifications/${data._i
 // Umrah Inquiry
 export const getAllUmrahInquiries = (data) => get('/umrah-inquiry', data)
 export const getSingleUmrahInquiry = (data) => get(`/umrah-inquiry/${data._id}`, data)
-export const updateUmrahInquiry = (data) => put(`/umrah-inquiry/${data._id}`, data)
+export const updateUmrahInquiry = (data) => put(`/umrah-inquiry/${data._id}`, { body: data })
 export const deleteUmrahInquiry = (data) => del(`/umrah-inquiry/${data._id}`, data)
-export const createUmrahInquiry = (data) => post('/umrah-inquiry', data)
+export const createUmrahInquiry = (data) => post('/umrah-inquiry', { body: data })
 
 // Custom Tour Request
 export const createCustomTourRequest = (data) => post('/custom-tour-requests', { body: data })

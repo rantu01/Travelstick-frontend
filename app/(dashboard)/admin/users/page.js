@@ -9,23 +9,32 @@ import {
   deleteUserByAdmin,
   fetchUserList,
   updatePasswordByAdmin,
+  updateUserRoleByAdmin,
 } from "@/app/helper/backend";
 import { Form, Modal } from "antd";
 import { HiddenInput } from "@/app/components/form/input";
 import FormPassword, {
   PasswordInputField,
 } from "@/app/components/form/password";
+import FormSelect from "@/app/components/form/select";
 import Button from "../../components/common/button";
 import Image from "next/image";
 
 const UserList = () => {
-  const [form] = Form.useForm();
+  const [passwordForm] = Form.useForm();
+  const [roleForm] = Form.useForm();
   const i18n = useI18n();
   const [data, getData, { loading }] = useFetch(fetchUserList);
   const [isReset, setIsReset] = useState(false);
-  const [employeId, setEmployeId] = useState("");
+  const [isRoleEdit, setIsRoleEdit] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState("");
   const [viewOpen, setViewOpen] = useState(false);
   const [viewData, setViewData] = useState(null);
+  const roleOptions = [
+    { value: "user", label: "User" },
+    { value: "employee", label: "Employee" },
+    { value: "admin", label: "Admin" },
+  ];
 
   const columns = [
     {
@@ -64,6 +73,13 @@ const UserList = () => {
         <span>{dayjs(d?.createdAt).format("DD MMM, YYYY")}</span>
       ),
     },
+    {
+      text: "Role",
+      dataField: "role",
+      formatter: (_, d) => (
+        <span className="capitalize">{d?.role || "user"}</span>
+      ),
+    },
 
     {
       text: i18n.t("Password"),
@@ -75,7 +91,7 @@ const UserList = () => {
               className="rounded bg-primary !duration-500 text-[#fff] hover:text-[#fff] !py-3 !px-4 !text-sm "
               onClick={() => {
                 setIsReset(true);
-                setEmployeId(d?._id);
+                setSelectedUserId(d?._id);
               }}
             >
               {i18n.t("Reset Password")}
@@ -87,7 +103,7 @@ const UserList = () => {
   ];
 
   const handleResetPassword = async (values) => {
-    values._id = employeId;
+    values._id = selectedUserId;
     const submitData = {
       body: {
         ...values,
@@ -99,9 +115,38 @@ const UserList = () => {
       () => {
         setIsReset(false);
         getData();
-        form.resetFields();
+        passwordForm.resetFields();
       },
       i18n.t("Password Changed Successfully")
+    );
+  };
+
+  const handleRoleEdit = (user) => {
+    setSelectedUserId(user?._id);
+    setIsRoleEdit(true);
+    roleForm.setFieldsValue({
+      _id: user?._id,
+      role: user?.role || "user",
+    });
+  };
+
+  const handleRoleUpdate = async (values) => {
+    const submitData = {
+      body: {
+        _id: selectedUserId,
+        role: values?.role,
+      },
+    };
+
+    return useAction(
+      updateUserRoleByAdmin,
+      submitData,
+      () => {
+        setIsRoleEdit(false);
+        getData();
+        roleForm.resetFields();
+      },
+      i18n.t("User role updated successfully")
     );
   };
 
@@ -122,6 +167,7 @@ const UserList = () => {
           loading={loading}
           onReload={getData}
           onView={handleView}
+          onEdit={handleRoleEdit}
           onDelete={deleteUserByAdmin}
           indexed
           pagination
@@ -134,7 +180,7 @@ const UserList = () => {
         open={isReset}
         onCancel={() => {
           setIsReset(false);
-          form.resetFields();
+          passwordForm.resetFields();
         }}
         footer={null}
         title={
@@ -144,7 +190,7 @@ const UserList = () => {
         }
       >
         <Form
-          form={form}
+          form={passwordForm}
           onFinish={handleResetPassword}
           layout="vertical"
           className="space-y-4"
@@ -202,6 +248,57 @@ const UserList = () => {
           <div className="flex justify-end space-x-2">
             <Button
               onClick={() => setIsReset(false)}
+              className="bg-primary text-[#2b2b2b] px-4 py-2 rounded"
+            >
+              {i18n?.t("Close")}
+            </Button>
+
+            <Button
+              type="submit"
+              loading={loading}
+              className="bg-primary text-[#2b2b2b] px-4 py-2 !rounded"
+            >
+              {i18n?.t("Save")}
+            </Button>
+          </div>
+        </Form>
+      </Modal>
+      <Modal
+        open={isRoleEdit}
+        onCancel={() => {
+          setIsRoleEdit(false);
+          roleForm.resetFields();
+        }}
+        footer={null}
+        destroyOnClose
+        title={
+          <h2 className="text-[#05073C] heading-3">
+            {i18n?.t("Change User Role")}
+          </h2>
+        }
+      >
+        <Form
+          form={roleForm}
+          onFinish={handleRoleUpdate}
+          layout="vertical"
+          className="space-y-4"
+        >
+          <HiddenInput name="_id" />
+
+          <FormSelect
+            name="role"
+            label={i18n.t("Role")}
+            placeholder={i18n.t("Select Role")}
+            required
+            options={roleOptions}
+          />
+
+          <div className="flex justify-end space-x-2">
+            <Button
+              onClick={() => {
+                setIsRoleEdit(false);
+                roleForm.resetFields();
+              }}
               className="bg-primary text-[#2b2b2b] px-4 py-2 rounded"
             >
               {i18n?.t("Close")}

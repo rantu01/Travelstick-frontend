@@ -9,12 +9,14 @@ import { MdArrowOutward } from "react-icons/md";
 
 const DestinationCard2 = ({ item }) => {
   const { langCode } = useI18n();
+  const destinationImage =
+    item?.image || item?.banner_image || item?.card_image || item?.images?.[0];
 
   return (
     <div className="relative mx-auto flex items-center justify-center group transform transition-transform duration-1000 ease-in-out hover:scale-105 pt-10">
       {/* Default Banner Image */}
       <Image
-        src={item?.banner_image}
+        src={destinationImage || "/placeholder.jpg"}
         width={1000}
         height={1000}
         alt={item?.name || "Destination"}
@@ -24,7 +26,7 @@ const DestinationCard2 = ({ item }) => {
       {/* Hover Card Image */}
       <div className="w-full xl:h-[530px] lg:h-[340px] md:h-[280px] h-[280px] transition-all duration-1000 ease-in-out hidden group-hover:flex">
         <Image
-          src={item?.card_image}
+          src={destinationImage || "/placeholder.jpg"}
           width={1000}
           height={1000}
           alt={item?.name || "Destination"}

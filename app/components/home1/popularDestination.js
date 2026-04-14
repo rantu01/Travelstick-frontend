@@ -48,7 +48,7 @@ const PopularDestination = () => {
                     key={index}
                     className={`col-span-1 md:col-span-1 ${colSpan} w-full bg-cover bg-center rounded-[20px] relative`}
                     style={{
-                      backgroundImage: `url(${destination?.banner_image})`,
+                      backgroundImage: `url(${destination?.image || destination?.banner_image || destination?.card_image || destination?.images?.[0] || "/placeholder.jpg"})`,
                     }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-b from-[#05073C1A] to-[#00000099] rounded-[20px] z-10"></div>

@@ -21,6 +21,7 @@ const STATUS_COLORS = {
 
 const UmrahInquiryList = () => {
     const [data, getData, { loading }] = useFetch(getAllUmrahInquiries);
+    console.log("Umrah inquiries data:", data);
     const i18n = useI18n();
     const router = useRouter();
 
@@ -150,7 +151,7 @@ const UmrahInquiryList = () => {
                     onReload={getData}
                     onView={(values) =>
                         router.push(
-                            `/admin/umrahManagement/inquiry/view?_id=${values._id}`
+                            `/admin/umrahManagement/view?_id=${values._id}`
                         )
                     }
                     onDelete={deleteUmrahInquiry}

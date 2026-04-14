@@ -6,6 +6,14 @@ import { Modal } from "antd";
 
 const ImageVideo = ({ data }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const primaryImage =
+    data?.image || data?.banner_image || data?.card_image || data?.images?.[0];
+  const galleryImages =
+    data?.images?.length > 0
+      ? data.images
+      : primaryImage
+        ? [primaryImage]
+        : [];
 
   const getEmbedUrl = (url) => {
     if (!url) return "";
@@ -21,8 +29,8 @@ const ImageVideo = ({ data }) => {
         {/* Left Side: Image Slider */}
         <div className="w-full lg:w-[60%]">
           <ProductImageSlider
-            banner_image={data?.banner_image}
-            images={data?.images}
+            banner_image={primaryImage}
+            images={galleryImages}
           />
         </div>
 
@@ -30,9 +38,9 @@ const ImageVideo = ({ data }) => {
         <div className="w-full lg:w-[40%] flex flex-col gap-4">
           {/* Video Thumbnail Section */}
           <div className="relative w-full h-[220px] md:h-[290px] lg:h-[240px] xl:h-[290px] rounded-2xl overflow-hidden shadow-sm">
-            {data?.card_image && (
+            {primaryImage && (
               <Image
-                src={data?.card_image}
+                src={primaryImage}
                 alt="Video Thumbnail"
                 fill
                 className="object-cover"
@@ -56,7 +64,7 @@ const ImageVideo = ({ data }) => {
             {/* First Small Image - fallback to banner_image if images[0] is missing */}
             <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-sm">
               <Image
-                src={data?.images?.[0] || data?.banner_image || "/placeholder.jpg"}
+                src={galleryImages?.[0] || primaryImage || "/placeholder.jpg"}
                 alt="Gallery 1"
                 fill
                 className="object-cover hover:scale-105 transition-transform duration-500"
@@ -66,7 +74,7 @@ const ImageVideo = ({ data }) => {
             {/* Second Small Image - fallback to banner_image or placeholder if images[1] is missing */}
             <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-sm">
               <Image
-                src={data?.images?.[1] || data?.banner_image || "/placeholder.jpg"}
+                src={galleryImages?.[1] || galleryImages?.[0] || primaryImage || "/placeholder.jpg"}
                 alt="Gallery 2"
                 fill
                 className="object-cover hover:scale-105 transition-transform duration-500"

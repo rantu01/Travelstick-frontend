@@ -104,16 +104,16 @@ export default function UmrahHeroGallery() {
       </AnimatePresence>
 
       {/* ── Gallery Grid ── */}
-      <div className="grid grid-cols-4 grid-rows-2 gap-2 h-[420px] rounded-2xl overflow-hidden">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 lg:h-[420px] rounded-2xl overflow-hidden">
         {/* Main large image */}
         <div
-          className="col-span-2 row-span-2 relative group cursor-zoom-in overflow-hidden"
+          className="sm:col-span-2 sm:row-span-2 relative group cursor-zoom-in overflow-hidden rounded-xl min-h-[220px] sm:min-h-0"
           onClick={() => setLightboxIndex(0)}
         >
           <img
             src={GALLERY_IMAGES[0].src}
             alt={GALLERY_IMAGES[0].alt}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            className="w-full h-[220px] sm:h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
         </div>
@@ -122,13 +122,13 @@ export default function UmrahHeroGallery() {
         {GALLERY_IMAGES.slice(1, 5).map((img, i) => (
           <div
             key={i}
-            className="relative group cursor-zoom-in overflow-hidden rounded-lg"
+            className="relative group cursor-zoom-in overflow-hidden rounded-xl min-h-[150px] sm:min-h-0"
             onClick={() => setLightboxIndex(i + 1)}
           >
             <img
               src={img.src}
               alt={img.alt}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              className="w-full h-[150px] sm:h-full object-cover group-hover:scale-110 transition-transform duration-500"
             />
             {i === 3 && GALLERY_IMAGES.length > 5 && (
               <div className="absolute inset-0 bg-black/55 flex flex-col items-center justify-center text-white gap-1">

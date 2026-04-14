@@ -85,7 +85,7 @@ const AboutDetails = ({ data, slug }) => {
             {data?.highlight?.map((item, index) => (
               <li key={index} className="description-1 text-[#717171] xl:mt-4 md:mt-3 mt-2 first:mt-0 flex items-center lg:gap-3 gap-2">
                 <Image
-                  src="/theme1/package/check.png"
+                  src="/theme1/package/check (1).png"
                   alt="Check"
                   width={24}
                   height={24}

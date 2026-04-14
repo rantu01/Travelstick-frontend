@@ -61,7 +61,7 @@ const TIPS = [
 export default function UmrahSpirit() {
   return (
     <div
-      className="bg-white rounded-2xl border border-gray-100 p-7 shadow-sm"
+      className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-7 shadow-sm w-full"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
       {/* Header */}
@@ -75,16 +75,16 @@ export default function UmrahSpirit() {
       </p>
 
       {/* Rites Grid */}
-      <div className="grid grid-cols-4 gap-3 mb-7">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 mb-7">
         {RITES.map((r) => (
           <div
             key={r.label}
-            className="flex flex-col items-center text-center bg-[#f7f3ec] border border-[#ede7d9] rounded-xl py-4 px-2 hover:bg-[#eef2fb] hover:border-[#1a4fa0]/20 transition-all duration-200 group"
+            className="flex flex-col items-center text-center bg-[#f7f3ec] border border-[#ede7d9] rounded-xl py-4 px-2 hover:bg-[#eef2fb] hover:border-[#1a4fa0]/20 transition-all duration-200 group min-w-0"
           >
             <span className="text-2xl mb-2 group-hover:scale-110 transition-transform duration-200">
               {r.icon}
             </span>
-            <span className="text-[12px] font-bold text-[#1a4fa0] block mb-0.5">{r.label}</span>
+            <span className="text-[12px] font-bold text-[#1a4fa0] block mb-0.5 leading-tight">{r.label}</span>
             <span className="text-[10.5px] text-[#9a8e80] leading-snug">{r.sub}</span>
           </div>
         ))}
@@ -100,7 +100,7 @@ export default function UmrahSpirit() {
             >
               {i + 1}
             </div>
-            <div>
+            <div className="min-w-0">
               <span className="text-[13.5px] font-bold text-[#2d2822]">{s.title}</span>{" "}
               <span className="text-[13.5px] text-[#7a7060] leading-relaxed">{s.desc}</span>
             </div>

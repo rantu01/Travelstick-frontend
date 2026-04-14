@@ -34,7 +34,7 @@ const Iternary = ({ data }) => {
                   header={
                     <div className="flex items-center pl-3 justify-between">
                       <Image
-                        src="/theme1/package/it.png"
+                        src="/theme1/package/it (1).png"
                         alt="icon"
                         width={1000}
                         height={1000}

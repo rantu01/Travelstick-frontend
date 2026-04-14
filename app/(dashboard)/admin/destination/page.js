@@ -29,10 +29,12 @@ const Destination = () => {
   const columns = [
     {
       text: "Image",
-      dataField: "card_image",
-      formatter: (value) => (
+      dataField: "image",
+      formatter: (value, row) => (
         <div>
-          <TableImage url={value || "/man.png"} />
+          <TableImage
+            url={value || row?.card_image || row?.banner_image || row?.images?.[0] || "/man.png"}
+          />
         </div>
       ),
     },
@@ -63,30 +65,13 @@ const Destination = () => {
       ),
     },
     {
-      text: "Capital",
-      dataField: "capital",
-      formatter: (status) => <p className="capitalize">{status}</p>,
-    },
-    {
-      text: "Language",
-      dataField: "language",
-      formatter: (status) => <p className="capitalize">{status}</p>,
-    },
-    {
-      text: "Currency",
-      dataField: "currency",
-      formatter: (status) => <p className="capitalize">{status}</p>,
-    },
-    {
-      text: "Address",
-      dataField: "address",
+      text: "Country",
+      dataField: "country",
       formatter: (title) => (
         <span>
-          <Tooltip title={title?.name?.length > 30 ? title?.name : undefined}>
+          <Tooltip title={title?.length > 30 ? title : undefined}>
             <span className="cursor-help">
-              {title?.name?.length > 30
-                ? title?.name?.slice(0, 30) + "..."
-                : title?.name}
+              {title?.length > 30 ? title?.slice(0, 30) + "..." : title}
             </span>
           </Tooltip>
         </span>

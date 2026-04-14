@@ -8,15 +8,18 @@ import { useI18n } from "@/app/contexts/i18n";
 
 const DestinationCard = ({ data, index }) => {
   const { langCode } = useI18n();
+  const destinationImage =
+    data?.image || data?.card_image || data?.banner_image || data?.images?.[0];
+
   return (
     <div key={index}>
       <Link href={`/destination/${data?._id}`}>
         <div className="group w-full rounded-[20px] lg:rounded-[20px] border border-[#E8EAE8]">
           <div className="relative w-full overflow-hidden group">
-            {data?.card_image && (
+            {destinationImage && (
               <Image
                 className="w-full xl:max-w-[424px] h-[258px] object-cover rounded-t-[20px]"
-                src={data?.card_image}
+                src={destinationImage}
                 width={424}
                 height={380}
                 alt="images"

@@ -5,7 +5,7 @@ import PackageCard from "@/app/components/site/common/card/packageCard";
 import Banner from "@/app/components/site/common/component/Banner";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFetch } from "@/app/helper/hooks";
 import { fetchPageContentTheme1, getAllPublicDestination } from "@/app/helper/backend";
 import { useParams } from "next/navigation";
@@ -32,28 +32,27 @@ const DestinationDetails = () => {
     },
     {
       id: 2,
-      title: "Language",
-      value: data?.language,
+      title: "Country",
+      value: data?.country,
       icon: "/theme1/destination/lan.png",
       bgColor: "#FFF3ECEC",
     },
     {
       id: 3,
-      title: "Capital",
-      value: data?.capital,
+      title: "Packages",
+      value: data?.packages?.length || 0,
       icon: "/theme1/destination/loc.png",
       bgColor: "#2125291A",
     },
     {
       id: 4,
-      title: "Currency",
-      value: data?.currency,
+      title: "Hotels",
+      value: data?.hotels?.length || 0,
       icon: "/theme1/destination/cur.png",
       bgColor: "#2125290A",
     },
   ];
   const location = data?.address;
-  const [googleAddress, setGoogleAddress] = useState(location);
 
   const [data1] = useFetch(fetchPageContentTheme1, {
     status: true,
@@ -117,9 +116,6 @@ const DestinationDetails = () => {
                   <MapSelector
                     height={400}
                     isGoogleMap={true}
-                    onChange={(e) => {
-                      setGoogleAddress(e);
-                    }}
                     value={location}
                     inputHidden
                   />

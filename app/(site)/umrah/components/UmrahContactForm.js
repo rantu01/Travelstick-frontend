@@ -1,17 +1,23 @@
 "use client";
 import { useState } from "react";
+import { createUmrahInquiry } from "@/app/helper/backend";
+import { useAction } from "@/app/helper/hooks";
 
 const TOPICS = ["Tawaf", "Sa'i", "Ihram", "Duas", "Packing", "Visa Info"];
 
+const INITIAL_FORM = {
+  name: "",
+  email: "",
+  phone: "",
+  reachBy: "WhatsApp",
+  question: "",
+};
+
 export default function UmrahContactForm() {
   const [selectedTopics, setSelectedTopics] = useState([]);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    reachBy: "WhatsApp (fastest)",
-    question: "",
-  });
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [loading, setLoading] = useState(false);
+  const [submittedData, setSubmittedData] = useState(null);
   const [submitted, setSubmitted] = useState(false);
 
   const toggleTopic = (t) =>
@@ -22,14 +28,34 @@ export default function UmrahContactForm() {
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
+
+    setLoading(true);
+    try {
+      await useAction(
+        createUmrahInquiry,
+        {
+          ...form,
+          topics: selectedTopics,
+        },
+        () => {
+          setSubmittedData({ name: form.name, reachBy: form.reachBy });
+          setForm(INITIAL_FORM);
+          setSelectedTopics([]);
+          setSubmitted(true);
+        },
+        true,
+        "Your Umrah inquiry has been submitted successfully"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div
-      className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-lg sticky top-6"
+      className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-lg lg:sticky lg:top-6 w-full max-w-full"
       style={{ fontFamily: "'DM Sans', sans-serif" }}
     >
       {/* Header */}
@@ -55,7 +81,7 @@ export default function UmrahContactForm() {
             <div className="text-4xl mb-3">✅</div>
             <p className="font-bold text-[#1a4fa0] text-[15px] mb-1">Message Sent!</p>
             <p className="text-[13px] text-[#9a8e80]">
-              We'll reach out to you soon via {form.reachBy}.
+              We'll reach out to you soon via {submittedData?.reachBy ?? form.reachBy}.
             </p>
           </div>
         ) : (
@@ -119,7 +145,7 @@ export default function UmrahContactForm() {
                   onChange={handleChange}
                   className="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-[13.5px] text-[#2d2822] bg-[#faf9f7] appearance-none focus:outline-none focus:border-[#1a4fa0] focus:ring-2 focus:ring-[#1a4fa0]/10 transition-all pr-9"
                 >
-                  <option>WhatsApp (fastest)</option>
+                  <option value="WhatsApp">WhatsApp (fastest)</option>
                   <option>Phone Call</option>
                   <option>Email</option>
                 </select>
@@ -168,10 +194,11 @@ export default function UmrahContactForm() {
             {/* Submit */}
             <button
               type="submit"
-              className="w-full text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-[14px] mt-1 transition-all duration-200 hover:opacity-90 active:scale-[0.98] shadow-md"
+              disabled={loading}
+              className="w-full text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-[14px] mt-1 transition-all duration-200 hover:opacity-90 active:scale-[0.98] shadow-md disabled:cursor-not-allowed disabled:opacity-70"
               style={{ background: "#1a4fa0" }}
             >
-              <span>📨</span> Send &amp; connect · فريقنا
+              <span>📨</span> {loading ? "Sending..." : "Send & connect · فريقنا"}
             </button>
           </form>
         )}
