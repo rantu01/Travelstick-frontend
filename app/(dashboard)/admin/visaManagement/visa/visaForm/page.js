@@ -145,6 +145,14 @@ const VisaForm = ({ isEdit = false, data }) => {
     }
   }, [data, form, isEdit]);
 
+  const buildLocalizedTextPayload = (value = {}) => {
+    const payload = {};
+    languages?.forEach((lang) => {
+      payload[lang.code] = value?.[lang.code] || "";
+    });
+    return payload;
+  };
+
   return (
     <div className="">
       {/* ── Language Switcher ── */}
@@ -233,6 +241,7 @@ const VisaForm = ({ isEdit = false, data }) => {
               card_image: cardImageUrl,
               feathers: feathersData,
               images,
+              document_about: buildLocalizedTextPayload(values?.document_about),
             };
 
             await useAction(

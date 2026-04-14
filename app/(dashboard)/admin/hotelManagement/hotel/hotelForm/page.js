@@ -186,6 +186,10 @@ const HotelForm = ({ isEdit = false, data }) => {
     { label: "Phra Khanong", value: "phra_khanong" },
     { label: "Thonglor", value: "thonglor" },
   ];
+
+  const getDestinationLabel = (item) =>
+    item?.name?.[langCode] || item?.name || item?.address?.name || item?._id;
+
   return (
     <div className="">
       <div className="flex justify-start flex-wrap gap-3 mt-4">
@@ -359,7 +363,7 @@ const HotelForm = ({ isEdit = false, data }) => {
                 required
                 className="!w-full rounded bg-transparent py-6 px-2 dashinput"
                 options={destination?.docs?.map((cat) => ({
-                  label: cat?.address?.name,
+                  label: getDestinationLabel(cat),
                   value: cat?._id,
                 }))}
               />

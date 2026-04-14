@@ -132,6 +132,10 @@ const PackageForm = ({ isEdit = false, data }) => {
       });
     }
   }, [data, form, isEdit]);
+
+  const getDestinationLabel = (item) =>
+    item?.name?.[langCode] || item?.name || item?.address?.name || item?._id;
+
   return (
     <div className="">
       <div className="flex justify-start flex-wrap gap-3 mt-4">
@@ -317,7 +321,7 @@ const PackageForm = ({ isEdit = false, data }) => {
                 required
                 className="!w-full rounded bg-transparent py-6 px-2 dashinput"
                 options={destination?.docs?.map((cat) => ({
-                  label: cat?.address?.name,
+                  label: getDestinationLabel(cat),
                   value: cat?._id,
                 }))}
               />
