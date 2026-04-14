@@ -91,7 +91,7 @@ const Layout = ({ children }) => {
       <I18nProvider>
         <SkeletonTheme color="#0F172A" highlightColor="#444">
           <Providers>
-            <MaintenancePage></MaintenancePage>
+            
             {theme === "one" ? (
               <Navbar
                 textColor={isTextMain ? "text-[#05073C]" : "text-white"}
