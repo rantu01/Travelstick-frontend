@@ -278,10 +278,23 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
 
       {/* --- Content Section --- */}
       <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 relative pb-20">
-        <div className="flex gap-2 items-center justify-start md:hidden mb-4 overflow-hidden">
-          <button onClick={() => setOpenSearch(true)} className="flex items-center gap-2 text-sm px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm">
-            <FaSearch />
-            <span>Search</span>
+        <div className="w-full md:hidden mb-4">
+          <button
+            onClick={() => setOpenSearch(true)}
+            className="w-full flex items-center justify-between gap-3 text-sm px-3 py-3 bg-white border border-gray-300 rounded-md shadow-sm overflow-hidden whitespace-nowrap"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <FaSearch className="flex-shrink-0" />
+              <div className="min-w-0 text-left">
+                <div className="text-xs text-gray-400 uppercase font-bold tracking-wider">Destination</div>
+                <div className="font-bold text-gray-700 truncate text-sm">{searchDest || "Select City"}</div>
+                <div className="text-[11px] text-gray-400 truncate">{startDate ? startDate.format('DD MMM') : 'Pick date'} · {rooms} Room · {adults + children} Guest</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-blue-600 font-semibold">Edit</span>
+            </div>
           </button>
         </div>
 
@@ -292,9 +305,24 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
           <p className="font-semibold text-[#000000]">{i18n.t("Filters")}</p>
         </div>
 
-        <Drawer title="Search" onClose={() => setOpenSearch(false)} open={openSearch} className="md:hidden" width="100%">
-          {SearchBarContent}
-        </Drawer>
+        <div className={`fixed inset-0 z-50 ${openSearch ? "visible" : "invisible"}`}>
+
+          {/* Overlay */}
+          <div
+            onClick={() => setOpenSearch(false)}
+            className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"}`}
+          ></div>
+
+          {/* Bottom drawer */}
+          <div
+            className={`absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 
+                            transform transition-transform duration-300 ease-out
+                            ${openSearch ? "translate-y-0" : "translate-y-full"}`}
+          >
+            {SearchBarContent}
+          </div>
+
+        </div>
 
         <Drawer title={i18n.t("Filters")} onClose={() => setOpenDrawer(false)} open={openDrawer} className="md:hidden" width="100%">
           <HotelFilters getData={getData} />

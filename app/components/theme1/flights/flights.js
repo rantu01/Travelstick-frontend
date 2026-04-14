@@ -582,22 +582,25 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                     <p className="font-semibold text-[#000000]">Filters</p>
                 </div>
 
-                {openSearch && (
-                    <div className="fixed inset-0 z-50">
+                <div className={`fixed inset-0 z-50 ${openSearch ? "visible" : "invisible"}`}>
 
-                        {/* Overlay */}
-                        <div
-                            className="absolute inset-0 bg-black/50"
-                            onClick={() => setOpenSearch(false)}
-                        ></div>
+                    {/* Overlay */}
+                    <div
+                        onClick={() => setOpenSearch(false)}
+                        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"
+                            }`}
+                    ></div>
 
-                        {/* Drawer */}
-                        <div className="absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 animate-slideUp">
-                            {SearchBarContent}
-                        </div>
-
+                    {/* Drawer */}
+                    <div
+                        className={`absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 
+                            transform transition-transform duration-300 ease-out
+                            ${openSearch ? "translate-y-0" : "translate-y-full"}`}
+                    >
+                        {SearchBarContent}
                     </div>
-                )}
+
+                </div>
 
                 <Drawer title="Filters" onClose={() => setOpenDrawer(false)} open={openDrawer} className="md:hidden" width="100%">
                     <FlightFilters />
