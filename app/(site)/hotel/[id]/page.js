@@ -33,7 +33,7 @@ const HotelDetails = () => {
     } catch (err) {
       try {
         window.prompt("Copy to clipboard: Ctrl+C, Enter", window.location.href);
-      } catch (e) {}
+      } catch (e) { }
     }
   }, []);
 
@@ -247,7 +247,7 @@ const HotelDetails = () => {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div className="flex flex-col h-[450px] space-y-4 min-h-0">
             {/* <div className="border rounded-lg p-4">
               {reviewData ? (
                 <div className="flex justify-between items-center mb-2">
@@ -263,7 +263,7 @@ const HotelDetails = () => {
             {/* Map Section */}
             <div className="border rounded-lg p-4 bg-white">
               <p className="font-semibold mb-2 text-sm">Location</p>
-              <div className="relative h-[200px] w-full overflow-hidden rounded-md mb-3 border bg-gray-100">
+              <div className="relative h-1/2 w-full overflow-hidden rounded-md mb-3 border bg-gray-100">
                 <iframe
                   width="100%"
                   height="100%"
@@ -283,11 +283,40 @@ const HotelDetails = () => {
                 View on Google Maps
               </a>
             </div>
+            <div className="space-y-4 min-h-0">
+              <div className="bg-[#f0f6ff] p-5 rounded-lg border border-blue-100 flex-1 overflow-auto">
+                <h3 className="font-bold text-lg mb-2">Property Highlights</h3>
+
+                <div className="space-y-4 text-[14px]">
+
+                  {/* Meal Plans Section */}
+                  {data?.meal_plans && data.meal_plans.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="font-bold text-[#1a1a1a] flex items-center gap-2">
+                        <IoFastFoodOutline className="text-lg" /> Meal Options:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {data.meal_plans.map((meal, index) => (
+                          <span
+                            key={index}
+                            className="bg-white border border-blue-200 px-2 py-1 rounded-md text-[12px] font-medium text-blue-700"
+                          >
+                            {meal}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-3 space-y-8">
             <div>
               <h2 className="text-xl font-bold mb-4">About this property</h2>
               <div className="text-[15px] text-gray-700 leading-relaxed" dangerouslySetInnerHTML={{ __html: aboutContent }} />
@@ -307,35 +336,7 @@ const HotelDetails = () => {
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="bg-[#f0f6ff] p-5 rounded-lg border border-blue-100 sticky top-4">
-              <h3 className="font-bold text-lg mb-2">Property Highlights</h3>
 
-              <div className="space-y-4 text-[14px]">
-              
-                {/* Meal Plans Section */}
-                {data?.meal_plans && data.meal_plans.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="font-bold text-[#1a1a1a] flex items-center gap-2">
-                      <IoFastFoodOutline className="text-lg" /> Meal Options:
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {data.meal_plans.map((meal, index) => (
-                        <span
-                          key={index}
-                          className="bg-white border border-blue-200 px-2 py-1 rounded-md text-[12px] font-medium text-blue-700"
-                        >
-                          {meal}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                
-              </div>
-            </div>
-          </div>
         </div>
         <RoomSelection />
       </div>
