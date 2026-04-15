@@ -50,10 +50,27 @@ export const noSelected = ({ form, setSelectedLang }) => {
   const emptyLanguages = new Set();
 
   for (let key in data) {
-    // Skip date fields
     if (["check_in", "check_out"].includes(key)) continue;
-    for (let lang in data[key]) {
-      if (!data[key][lang]) {
+
+    const fieldValue = data[key];
+    if (
+      !fieldValue ||
+      typeof fieldValue !== "object" ||
+      Array.isArray(fieldValue) ||
+      Object.getPrototypeOf(fieldValue) !== Object.prototype
+    ) {
+      continue;
+    }
+
+    const fieldKeys = Object.keys(fieldValue);
+    const hasLanguageKeys =
+      fieldKeys.length > 0 &&
+      fieldKeys.every((item) => /^[a-z]{2}(-[A-Z]{2})?$/.test(item));
+
+    if (!hasLanguageKeys) continue;
+
+    for (let lang of fieldKeys) {
+      if (!fieldValue[lang]) {
         emptyLanguages.add(lang);
       }
     }

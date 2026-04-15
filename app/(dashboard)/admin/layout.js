@@ -75,6 +75,36 @@ const Layout = ({ children }) => {
     });
   }, [user?._id]);
 
+  useEffect(() => {
+    const focusFirstErrorField = (formEl) => {
+      if (!(formEl instanceof HTMLFormElement)) return;
+
+      const errorItem = formEl.querySelector(".ant-form-item-has-error");
+      if (!errorItem) return;
+
+      errorItem.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      const field = errorItem.querySelector(
+        "input, textarea, .ant-select-selector, [contenteditable='true']"
+      );
+      if (field instanceof HTMLElement) {
+        field.focus({ preventScroll: true });
+      }
+    };
+
+    const handleSubmitCapture = (event) => {
+      const formEl = event.target;
+      setTimeout(() => focusFirstErrorField(formEl), 0);
+      setTimeout(() => focusFirstErrorField(formEl), 150);
+    };
+
+    document.addEventListener("submit", handleSubmitCapture, true);
+
+    return () => {
+      document.removeEventListener("submit", handleSubmitCapture, true);
+    };
+  }, []);
+
   if (loading) {
     return <MainLoader />;
   }

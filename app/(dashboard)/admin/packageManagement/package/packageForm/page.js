@@ -55,13 +55,10 @@ const PackageForm = ({ isEdit = false, data }) => {
         about: data?.about || {},
         destination: data?.destination?._id,
         activities: Array.isArray(data?.activities)
-            ? data?.activities
-                .map((a) => ({
-                  label: a?.name?.[langCode],
-                  value: a?._id,
-                }))
-                .filter((item) => !!item?.value)
-            : [],
+          ? data.activities
+              .map((a) => (typeof a === "string" ? a : a?._id))
+              .filter((id) => typeof id === "string" && id.trim())
+          : [],
       
         banner_image: data?.banner_image
           ? [
@@ -156,6 +153,7 @@ const PackageForm = ({ isEdit = false, data }) => {
       <Form
         form={form}
         layout="vertical"
+        scrollToFirstError={{ behavior: "smooth", block: "center" }}
         onFinish={async (values) => {
           let bannerImageUrl = "";
           let cardImageUrl = "";
@@ -262,15 +260,18 @@ const PackageForm = ({ isEdit = false, data }) => {
           };
 
           setSubmitLoading(true);
-          await useAction(
-            isEdit ? updatePackages : createPackages,
-            { body: requestData },
-            () => {
-              form.resetFields();
-              setSubmitLoading(false);
-              router.push("/admin/packageManagement/package");
-            }
-          );
+          try {
+            await useAction(
+              isEdit ? updatePackages : createPackages,
+              { body: requestData },
+              () => {
+                form.resetFields();
+                router.push("/admin/packageManagement/package");
+              }
+            );
+          } finally {
+            setSubmitLoading(false);
+          }
         }}
         className="mt-2"
       >
@@ -333,7 +334,11 @@ const PackageForm = ({ isEdit = false, data }) => {
                 required
                 className="w-full rounded bg-transparent py-2 dashinput"
                 options={activity?.docs?.map((cat) => ({
-                  label: cat?.name?.[langCode],
+                  label:
+                    cat?.name?.[selectedLang] ||
+                    cat?.name?.[langCode] ||
+                    Object.values(cat?.name || {})[0] ||
+                    cat?._id,
                   value: cat?._id,
                 }))}
               />
