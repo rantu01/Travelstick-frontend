@@ -17,7 +17,7 @@ const WhatsappChat = () => {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-5 right-5 z-50">
+    <div className="fixed bottom-[80px] right-5 z-50">
       {open && (
         <div className="mb-2 w-64 bg-white shadow-lg rounded-xl p-4 flex flex-col gap-2 animate-fadeIn">
           <div className="flex justify-between items-center">
