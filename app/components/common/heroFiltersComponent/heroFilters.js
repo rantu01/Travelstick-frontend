@@ -71,6 +71,7 @@ const HeroFilters = () => {
   const [datesOpen, setDatesOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [dateOpenTarget, setDateOpenTarget] = useState(null); // 'start' | 'end' | null
+  const [rangeOpen, setRangeOpen] = useState(false);
 
   const [multiCityFlights, setMultiCityFlights] = useState([
     { from: "Dhaka", to: "Cox's Bazar", date: null },
@@ -591,25 +592,50 @@ const HeroFilters = () => {
                 {/* Departure + Return: use RangePicker on desktop (side-by-side), single pickers on mobile (one at a time) */}
                 <div className={`${tripType === "Round Trip" ? "md:col-span-4" : "md:col-span-2"} flex gap-3`}>
                   {tripType === "Round Trip" && !isMobile ? (
-                    <div className="flex-1 md:col-span-4 border rounded-xl p-4 hover:bg-gray-50 bg-white">
-                      <p className="text-[11px] text-gray-400 font-bold">Departure & Return</p>
-                      <DatePicker.RangePicker
-                        value={[startDate, endDate]}
-                        onChange={(vals) => {
-                          setStartDate(vals?.[0] || null);
-                          setEndDate(vals?.[1] || null);
-                        }}
-                        placement="bottomLeft"
-                        getPopupContainer={(trigger) => trigger?.parentElement || document.body}
-                        popupStyle={{ zIndex: 10000 }}
-                        disabledDate={disabledDate}
-                        variant="borderless"
-                        className={`p-0 font-bold text-lg w-full mt-1 ${startDate || endDate ? "text-gray-700" : "text-gray-400"}`}
-                        format="DD MMM, YYYY"
-                        suffixIcon={null}
-                        dateRender={dateRender}
-                      />
-                      <p className="text-[10px] text-gray-400 mt-1">{startDate ? startDate.format("dddd") : ""} {startDate && endDate ? `— ${endDate.format("dddd")}` : ""}</p>
+                    <div className="flex-1 md:col-span-4 border rounded-xl p-4 hover:bg-gray-50 bg-white relative">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          <p className="text-[11px] text-gray-400 font-bold">Departure</p>
+                          <button onClick={() => setRangeOpen(true)} className={`w-full text-left mt-1 p-0 font-bold text-lg ${startDate ? "text-gray-700" : "text-gray-400"}`}>
+                            {startDate ? startDate.format("DD MMM, YYYY") : "Select date"}
+                          </button>
+                          <p className="text-[10px] text-gray-400">{startDate ? startDate.format("dddd") : ""}</p>
+                        </div>
+
+                        <div className="w-[1px] bg-gray-200 self-stretch" />
+
+                        <div className="flex-1">
+                          <p className="text-[11px] text-gray-400 font-bold">Return</p>
+                          <button onClick={() => setRangeOpen(true)} className={`w-full text-left mt-1 p-0 font-bold text-lg ${endDate ? "text-gray-700" : "text-gray-400"}`}>
+                            {endDate ? endDate.format("DD MMM, YYYY") : "Select date"}
+                          </button>
+                          <p className="text-[10px] text-gray-400">{endDate ? endDate.format("dddd") : ""}</p>
+                        </div>
+                      </div>
+
+                      {/* Hidden RangePicker kept for calendar logic/positioning. Open controlled by `rangeOpen`. */}
+                      <div className="mt-16" style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
+                        <div style={{ position: 'relative', pointerEvents: 'auto' }}>
+                          <DatePicker.RangePicker
+                            value={[startDate, endDate]}
+                            onChange={(vals) => {
+                              setStartDate(vals?.[0] || null);
+                              setEndDate(vals?.[1] || null);
+                            }}
+                            open={rangeOpen}
+                            onOpenChange={(open) => setRangeOpen(open)}
+                            placement="bottomLeft"
+                            getPopupContainer={(trigger) => trigger?.parentElement || document.body}
+                            popupStyle={{ zIndex: 10000 }}
+                            disabledDate={disabledDate}
+                            variant="borderless"
+                            className={`opacity-0 h-0 w-0 p-0`}
+                            format="DD MMM, YYYY"
+                            suffixIcon={null}
+                            dateRender={dateRender}
+                          />
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <>
