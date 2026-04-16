@@ -400,8 +400,8 @@ const PackageDetails = () => {
               </div>
 
               {/* Right Side: Price Section */}
-              <div className="w-full lg:w-auto flex-shrink-0 border-t lg:border-t-0 lg:border-l lg:border-dashed lg:border-gray-200 pt-6 lg:pt-0 lg:pl-10">
-                <div className="flex items-baseline gap-2">
+              <div className="w-full text lg:w-auto flex-shrink-0 border-t lg:border-t-0 lg:border-l lg:border-dashed lg:border-gray-200 pt-6 lg:pt-0 lg:pl-10">
+                <div className="flex items-baseline gap-2 justify-center lg:justify-end">
                   <span className="text-gray-400 text-sm font-medium">From:</span>
                   <span className="text-primary text-3xl lg:text-4xl font-extrabold">{formatPrice(finalPrice)}</span>
                   <span className="text-gray-400 text-sm font-medium">/ person</span>
@@ -420,7 +420,7 @@ const PackageDetails = () => {
           <div className="w-full lg:w-[68%]">
 
             {/* Sticky Tab Nav */}
-            <div className="sticky top-[90px] z-50 bg-white border-b flex justify-between gap-8 mb-8 overflow-x-auto no-scrollbar px-4 shadow-sm">
+            <div className="sticky top-[90px] z-50 justify-start md:justify-between bg-white border-b flex flex-wrap gap-4 mb-8 px-4 shadow-sm">
               {[
                 { label: "Overview", ref: overviewRef },
                 { label: "Itinerary", ref: itineraryRef },
@@ -791,8 +791,8 @@ const PackageDetails = () => {
 
       {/* Booking Modal (mobile) - tabs: Book Now / Inquiry */}
       {showBookingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white rounded-xl max-w-3xl w-full p-0 relative mx-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 rounded-lg p-4">
+          <div className="bg-white rounded-xl max-w-3xl w-full p-5 relative mx-4">
             <button
               onClick={() => setShowBookingModal(false)}
               className="absolute top-2 right-2 text-gray-500 hover:text-black text-xl z-20"

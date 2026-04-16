@@ -107,24 +107,13 @@ const VisaDetails = () => {
   // visaStats array টা এভাবে replace করো
 
   const visaStats = [
-    { label: "Visa Type", value: data?.visa_type?.name?.[langCode], img: "/theme1/visa/student.png" },
-    { label: "Travelling To", value: data?.travelling_to, img: "/theme1/visa/globe.png" },
-    { label: "Citizen Of", value: data?.citizen_of, img: "/theme1/visa/lan.png" },
-    { label: "Validity", value: data?.validity, img: "/theme1/blog/watch.png" },
-    { label: "Processing", value: data?.processing_type, img: "/theme1/visa/process.png" },
-    ...(data?.visa_code
-      ? [{ label: "Visa Code", value: data.visa_code, img: "/theme1/visa/student.png" }]
-      : []),
+    { label: "Visa Type", value: data?.visa_type?.name?.[langCode], img: "/Holidays Icon/Tour Type.png" },
+    { label: "Destination", value: data?.travelling_to, img: "/Holidays Icon/Destination.png" },
+    { label: "Validity", value: data?.validity, img: "/Holidays Icon/Duration.png" },
     ...(data?.max_stay_days
-      ? [{ label: "Max Stay", value: `${data.max_stay_days} Days`, img: "/theme1/blog/watch.png" }]
+      ? [{ label: "Max Stay", value: `${data.max_stay_days} Days`, img: "/Holidays Icon/Group Size.png" }]
       : []),
-    ...(data?.entry_type
-      ? [{ label: "Entry Type", value: data.entry_type.charAt(0).toUpperCase() + data.entry_type.slice(1), img: "/theme1/visa/process.png" }]
-      : []),
-    ...(data?.visa_category
-      ? [{ label: "Visa Category", value: data.visa_category.charAt(0).toUpperCase() + data.visa_category.slice(1), img: "/theme1/visa/lan.png" }]
-      : []),
-  ];
+  ].filter((item) => item.value);
 
   const totalPrice = data?.price?.amount || 0;
   const discountAmount = data?.price?.discount_type === "flat"
@@ -189,16 +178,16 @@ const VisaDetails = () => {
 
       <div className="bg-white">
         <div className="travel-container py-8">
-          <Breadcrumb className="mb-3 text-sm"
+          {/* <Breadcrumb className="mb-3 text-sm"
             items={[
               { title: <a href="/">Home</a> },
               { title: <a href="/visa">Visa</a> },
               { title: "Visa Details" },
             ]}
-          />
+          /> */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-[#05073C] font-bold text-2xl md:text-3xl lg:text-4xl">
+              <h1 className="text-[#05073C] font-extrabold text-3xl md:text-4xl lg:text-5xl leading-tight">
                 {data?.title?.[langCode] || `${data?.travelling_to} Visa`} From {data?.citizen_of || "Bangladesh"}
               </h1>
               <div className="flex items-center gap-4 mt-3">
@@ -211,15 +200,15 @@ const VisaDetails = () => {
                       height={14}
                       className="object-contain rounded-sm shadow-sm"
                     />
-                    <span className="font-medium uppercase">{data?.travelling_to}</span>
+                    <span className="font-semibold uppercase">{data?.travelling_to}</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 border-l pl-4">
+                {/* <div className="flex items-center gap-2 border-l pl-4">
                   <Rate disabled defaultValue={data?.rating?.average || 0} className="text-xs text-orange-400" />
                   <span className="text-sm text-gray-500">
                     {data?.rating?.count ? `(${data.rating.count} Reviews)` : "No Reviews Yet"}
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -285,7 +274,7 @@ const VisaDetails = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center gap-10">
 
               {/* Left Side: Stats Grid */}
-              <div className="flex flex-wrap gap-y-8 gap-x-8 w-full lg:flex-1">
+              <div className="flex flex-wrap gap-y-8 gap-x-4 w-full lg:flex-1">
                 {visaStats.map((item, idx) => (
                   <div
                     key={idx}
@@ -305,10 +294,10 @@ const VisaDetails = () => {
                     </div>
 
                     <div className="flex flex-col">
-                      <span className="text-[11px] md:text-[12px] uppercase tracking-wider text-gray-400 font-semibold mb-0.5">
+                      <span className="text-xs uppercase tracking-wide text-gray-400 font-semibold mb-0.5">
                         {t(item.label)}
                       </span>
-                      <span className="text-[15px] md:text-[16px] font-bold text-[#1e293b] leading-tight">
+                      <span className="text-base md:text-lg font-semibold text-[#1e293b] leading-tight">
                         {item.value || "N/A"}
                       </span>
                     </div>
@@ -318,14 +307,10 @@ const VisaDetails = () => {
 
               {/* Right Side: Price Section */}
               <div className="w-full lg:w-auto flex-shrink-0 border-t lg:border-t-0 lg:border-l lg:border-dashed lg:border-gray-200 pt-6 lg:pt-0 lg:pl-10">
-                <div className="bg-[#f8fafc] px-8 py-5 rounded-2xl border border-gray-100 flex flex-col items-center lg:items-end min-w-[200px]">
-                  <span className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">
-                    Processing Fee
-                  </span>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-[#0ea5e9] text-3xl font-black">{formatPrice(processingFee)}</span>
-                    <span className="text-gray-400 text-sm font-medium">/ person</span>
-                  </div>
+                <div className="flex items-baseline gap-2 justify-center lg:justify-end">
+                  <span className="text-gray-400 text-sm font-medium">From:</span>
+                  <span className="text-primary text-3xl lg:text-4xl font-extrabold">{formatPrice(processingFee)}</span>
+                  <span className="text-gray-400 text-sm font-medium">/ person</span>
                 </div>
               </div>
 
@@ -338,7 +323,7 @@ const VisaDetails = () => {
       <div className="travel-container mt-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="w-full lg:w-[68%]">
-            <div className="sticky top-[90px] z-50 bg-white border-b flex gap-8 mb-8 overflow-x-auto no-scrollbar px-4 shadow-sm">
+            <div className="sticky top-[90px] z-50 bg-white justify-between border-b flex gap-8 mb-8 overflow-x-auto no-scrollbar px-4 shadow-sm">
               {[
                 { label: "Details", ref: overviewRef },
                 { label: "Other Information", ref: otherInfoRef },
@@ -348,7 +333,7 @@ const VisaDetails = () => {
                 <button
                   key={idx}
                   onClick={() => scrollToSection(tab.ref)}
-                  className="py-4 text-sm font-bold text-[#05073C] whitespace-nowrap border-b-2 border-transparent hover:border-primary hover:text-primary transition-all active:text-primary"
+                  className="py-4 text-sm font-semibold text-[#05073C] whitespace-nowrap border-b-2 border-transparent hover:border-primary hover:text-primary transition-all active:text-primary"
                 >
                   {tab.label}
                 </button>
@@ -421,7 +406,7 @@ const VisaDetails = () => {
 
           <div className="w-full lg:w-[32%]">
             <div className="sticky top-24">
-              <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden mb-6">
+              <div className="bg-white rounded-2xl  border border-gray-100 overflow-hidden mb-6">
                 <div className="bg-primary p-6 text-white">
                   <p className="text-xs uppercase font-bold opacity-80 mb-1 tracking-widest">Apply Online</p>
                   <div className="flex items-baseline gap-1">
@@ -464,7 +449,7 @@ const VisaDetails = () => {
       </div>
 
       {/* Mobile Sticky Footer */}
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white p-4 border-t z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white p-4 border-t z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
         <div>
           <p className="text-xs text-gray-400 font-bold uppercase">Price Starts From</p>
           <p className="text-xl font-black text-primary">{formatPrice(processingFee)}</p>

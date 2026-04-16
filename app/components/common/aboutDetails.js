@@ -97,7 +97,7 @@ const AboutDetails = ({ data, slug }) => {
         </div>
       </div>
       {/* Included and Excluded */}
-      <div className="xl:mt-10 lg:mt-8 md:mt-7 mt-5">
+      {/* <div className="xl:mt-10 lg:mt-8 md:mt-7 mt-5">
         <h3 className="heading-3">{i18n.t("Included and Excluded")}</h3>
         <div className="xl:mt-6 lg:mt-5 md:mt-4 mt-4 flex flex-col xl:flex-row gap-4 md:gap-6 lg:gap-28 xl:gap-40">
           <div className="">
@@ -131,7 +131,7 @@ const AboutDetails = ({ data, slug }) => {
             </ul>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

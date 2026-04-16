@@ -46,7 +46,7 @@ const Button = ({
   const isHomePage = pathName === 'home3' && pathname === '/'; 
   const buttonClasses = `
     border-2 description border-primary bg-primary lg:px-4 text-lg text-white !font-poppins md:px-4 py-[6px] px-4 capitalize rounded transition-colors duration-300 ease-in-out 
-    ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'hover:bg-[#EB662B] hover:text-white'}
+    ${isLoading ? 'bg-gray-400 cursor-not-allowed' : 'hover:bg-[#15438a] hover:text-white'}
     ${isHomePage ? 'hover:bg-primary text-white' : ''}
     ${className}
   `;
