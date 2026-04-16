@@ -12,10 +12,12 @@ import { getAllPublicHotel, getHeroFilterData } from "@/app/helper/backend";
 import Banner2 from "../../site/common/component/Banner2";
 import dayjs from "dayjs";
 import { FaMinus, FaPlus, FaTimesCircle, FaSearch } from "react-icons/fa";
+import SelectionList from "@/app/components/common/heroFiltersComponent/SelectionList";
 
 const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation, theme }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [data, getData] = useFetch(getAllPublicHotel, { limit: 100 }, false);
   const i18n = useI18n();
 
@@ -31,6 +33,16 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
 
   const [filterData] = useFetch(getHeroFilterData);
 
+  const resolveFilterValue = (label, key) => {
+    const block = filterData?.find((f) => f.key === key);
+    if (!block?.values) return label;
+    const found = block.values.find((v) => {
+      const name = v.name?.[i18n.langCode] || v.name?.en || v.name;
+      return String(name) === String(label);
+    });
+    return found?._id || label;
+  };
+
   useEffect(() => {
     getData({
       destination: searchDest,
@@ -40,34 +52,43 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
     });
   }, [searchDest, hotelType, roomType, reputation]);
 
+  useEffect(() => {
+    const check = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   const disabledDate = (current) => {
     return current && current < dayjs().startOf('day');
   };
 
+  const buildSearchQuery = () => ({
+    destination: searchDest,
+    hotel_type: hotelType,
+    room_type: roomType,
+    star: reputation,
+    check_in: startDate ? startDate.format("YYYY-MM-DD") : undefined,
+    check_out: endDate ? endDate.format("YYYY-MM-DD") : undefined,
+    adults,
+    children,
+    rooms,
+  });
+
   const handleSearch = () => {
-    getData({
-      destination: searchDest,
-      check_in: startDate ? startDate.format("YYYY-MM-DD") : undefined,
-      check_out: endDate ? endDate.format("YYYY-MM-DD") : undefined,
-      adults: adults,
-      children: children,
-      rooms: rooms,
-    });
+    getData(buildSearchQuery());
+    setOpenSearch(false);
   };
 
-  const SelectionList = ({ options, onSelect }) => (
-    <div className="flex flex-col w-60 max-h-64 overflow-y-auto bg-white rounded-md shadow-lg border border-gray-100">
-      {options.map((opt, idx) => (
-        <button
-          key={idx}
-          onClick={() => { onSelect(opt); setOpenPopover(null); }}
-          className="text-left px-4 py-3 hover:bg-gray-50 text-sm font-semibold text-gray-700 border-b border-gray-50 last:border-none transition-colors"
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  );
+  // auto-search when date/guest values change so UI updates immediately
+  useEffect(() => {
+    // only trigger if a destination or other meaningful filter exists
+    if (searchDest || startDate || endDate || adults || children || rooms) {
+      getData(buildSearchQuery());
+    }
+  }, [startDate, endDate, adults, children, rooms]);
+
+  // use shared SelectionList component (imported above)
 
   const guestContent = (
     <div className="w-80 p-5 bg-white rounded-lg shadow-2xl border border-gray-100">
@@ -185,7 +206,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
             <Popover
               open={openPopover === 'dest'}
               onOpenChange={(v) => setOpenPopover(v ? 'dest' : null)}
-              content={<SelectionList options={filterData?.find(f => f.key === 'hotel_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => setSearchDest(v)} />}
+              content={<SelectionList options={filterData?.find(f => f.key === 'hotel_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => { setSearchDest(resolveFilterValue(v, 'hotel_destination')); setOpenPopover(null); }} />}
               trigger="click"
               placement="bottomLeft"
             >
@@ -271,7 +292,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
 
       {/* --- Search Section --- */}
       {/* --- Hotel Search Bar --- */}
-      <div className="hidden md:block mt-[10px] bg-gray-100 w-full border-b py-6 md:sticky md:top-[90px] z-30">
+      <div className="hidden md:block bg-gray-100 w-full border-b py-6 md:sticky md:top-[90px] z-30">
         <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
       </div>
       
@@ -305,24 +326,27 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
           <p className="font-semibold text-[#000000]">{i18n.t("Filters")}</p>
         </div>
 
-        <div className={`fixed inset-0 z-50 ${openSearch ? "visible" : "invisible"}`}>
+        {isMobile && (
+          <div className={`fixed inset-0 z-50 ${openSearch ? "visible" : "invisible"}`}>
 
-          {/* Overlay */}
-          <div
-            onClick={() => setOpenSearch(false)}
-            className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"}`}
-          ></div>
+            {/* Overlay */}
+            <div
+              onClick={() => setOpenSearch(false)}
+              className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"}`}
+            ></div>
 
-          {/* Bottom drawer */}
-          <div
-            className={`absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 
-                            transform transition-transform duration-300 ease-out
-                            ${openSearch ? "translate-y-0" : "translate-y-full"}`}
-          >
-            {SearchBarContent}
+            {/* Bottom drawer */}
+            <div
+              className={`absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 
+                              transform transition-transform duration-300 ease-out
+                              overflow-y-auto
+                              ${openSearch ? "translate-y-0" : "translate-y-full"}`}
+            >
+              {SearchBarContent}
+            </div>
+
           </div>
-
-        </div>
+        )}
 
         <Drawer title={i18n.t("Filters")} onClose={() => setOpenDrawer(false)} open={openDrawer} className="md:hidden" width="100%">
           <HotelFilters getData={getData} />

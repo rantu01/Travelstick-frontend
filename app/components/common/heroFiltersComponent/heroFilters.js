@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { FaPlane, FaHotel, FaUmbrellaBeach, FaPassport, FaSearch, FaExchangeAlt, FaMinus, FaPlus, FaTimesCircle, FaUser, FaTrash } from "react-icons/fa";
 import { DatePicker, Popover } from "antd";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useI18n } from "@/app/contexts/i18n";
 import { useFetch } from "@/app/helper/hooks";
 import { getHeroFilterData, getAllPublicVisa } from "@/app/helper/backend";
@@ -69,6 +69,9 @@ const HeroFilters = () => {
   const [withPets, setWithPets] = useState(false);
   const [openPopover, setOpenPopover] = useState(null);
   const [datesOpen, setDatesOpen] = useState(false);
+  const pathname = usePathname();
+  const isHotelPage = pathname?.startsWith("/hotel");
+  const isPackagePage = pathname?.startsWith("/package");
   const [isMobile, setIsMobile] = useState(false);
   const [dateOpenTarget, setDateOpenTarget] = useState(null); // 'start' | 'end' | null
   const [rangeOpen, setRangeOpen] = useState(false);
@@ -446,7 +449,7 @@ const HeroFilters = () => {
 
         {tab === "flight" && tripType === "Multi City" ? renderMultiCity() : (
           <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-            {tab === "hotel" ? (
+            {tab === "hotel" && !isHotelPage ? (
               <>
                 <div className="md:col-span-3 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
                   <Popover open={openPopover === "hotel-dest"} onOpenChange={(v) => setOpenPopover(v ? "hotel-dest" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'hotel_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setDestination, v)} />} trigger="click" placement="bottomLeft">
@@ -550,7 +553,7 @@ const HeroFilters = () => {
                   </Popover>
                 </div>
               </>
-            ) : tab === "tour" ? (
+            ) : tab === "tour" && !isPackagePage ? (
               <>
                 <div className="md:col-span-6 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
                   <Popover open={openPopover === "tour-dest"} onOpenChange={(v) => setOpenPopover(v ? "tour-dest" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setDestination, v)} />} trigger="click" placement="bottomLeft">

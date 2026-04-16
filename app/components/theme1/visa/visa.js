@@ -133,19 +133,20 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
   const handleSearch = () => {
     if (citizenOf && travellingTo && visaCategory && matchedVisaId) {
       router.push(`/visa/${matchedVisaId}`);
+      setOpenSearch(false);
       return;
     }
-    const query = new URLSearchParams();
-    if (citizenOf) query.append("citizen_of", citizenOf);
-    if (travellingTo) query.append("travelling_to", travellingTo);
     getData({
+      visa_type: initialType,
       citizen_of: citizenOf || undefined,
       travelling_to: travellingTo || undefined,
-      visa_type: visaCategory || undefined,
+      visa_type: visaCategory || initialType || undefined,
       visa_mode: visaMode,
+      country: initialCountry,
       validity: validity,
       limit: 100,
     });
+    setOpenSearch(false);
   };
 
   // Initial data load
@@ -265,7 +266,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
     <div className="">
       {/* --- Visa Search Bar --- */}
       {/* --- Visa Search Bar --- */}
-      <div className="hidden md:block mt-[10px] bg-gray-100 w-full border-b py-6 md:sticky md:top-[90px] z-30">
+      <div className="hidden md:block bg-gray-100 w-full border-b py-6 md:sticky md:top-[90px] z-30">
         <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
       </div>
       
@@ -319,6 +320,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
           <div
             className={`absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 
                             transform transition-transform duration-300 ease-out
+                            overflow-y-auto
                             ${openSearch ? "translate-y-0" : "translate-y-full"}`}
           >
             {SearchBarContent}

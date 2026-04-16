@@ -1,6 +1,7 @@
 "use client";
 import { Drawer, Empty, Popover, DatePicker, Pagination } from "antd"; // Pagination import kora hoyeche
 import { useEffect, useState } from "react";
+import SelectionList from "@/app/components/common/heroFiltersComponent/SelectionList";
 import Banner from "@/app/components/site/common/component/Banner";
 import React from "react";
 import PackageCard from "../../site/common/card/packageCard";
@@ -19,6 +20,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
   const PACKAGE_LIST_LIMIT = 1000;
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const i18n = useI18n();
   const [data, getData] = useFetch(getAllPublicPackages, { limit: PACKAGE_LIST_LIMIT }, false);
 
@@ -28,6 +30,16 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
   const [openPopover, setOpenPopover] = useState(null);
 
   const [filterData] = useFetch(getHeroFilterData);
+
+  const resolveFilterValue = (label, key) => {
+    const block = filterData?.find((f) => f.key === key);
+    if (!block?.values) return label;
+    const found = block.values.find((v) => {
+      const name = v.name?.[i18n.langCode] || v.name?.en || v.name;
+      return String(name) === String(label);
+    });
+    return found?._id || label;
+  };
 
   useEffect(() => {
     getData({
@@ -41,16 +53,35 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
     });
   }, [discount, discount_type, searchDest, prefDate, endDate, tourType]);
 
+  useEffect(() => {
+    const check = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  // ensure selecting destination immediately triggers search
+  useEffect(() => {
+    if (searchDest) getData(buildSearchQuery());
+  }, [searchDest]);
+
   const disabledDate = (current) => {
     return current && current < dayjs().startOf('day');
   };
 
+  const buildSearchQuery = () => ({
+    limit: PACKAGE_LIST_LIMIT,
+    discount: discount,
+    discount_type: discount_type,
+    destination: searchDest,
+    check_in: prefDate ? prefDate.format("YYYY-MM-DD") : null,
+    check_out: endDate,
+    tour_type: tourType,
+  });
+
   const handleSearch = () => {
-    getData({
-      limit: PACKAGE_LIST_LIMIT,
-      destination: searchDest,
-      check_in: prefDate ? prefDate.format("YYYY-MM-DD") : null,
-    });
+    getData(buildSearchQuery());
+    setOpenSearch(false);
   };
 
   // --- Pagination Handler ---
@@ -68,19 +99,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const SelectionList = ({ options, onSelect }) => (
-    <div className="flex flex-col w-60 max-h-64 overflow-y-auto bg-white rounded-md shadow-lg border border-gray-100">
-      {options.map((opt, idx) => (
-        <button
-          key={idx}
-          onClick={() => { onSelect(opt); setOpenPopover(null); }}
-          className="text-left px-4 py-3 hover:bg-gray-50 text-sm font-semibold text-gray-700 border-b border-gray-50 last:border-none"
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
-  );
+  // using shared SelectionList component
 
   const SearchBarContent = (
     <div className="travel-container -mt-4 relative z-20 md:sticky md:top-[105px]">
@@ -89,10 +108,10 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
         {/* Destination */}
         <div className="md:col-span-6 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
           <div className="flex justify-between items-center">
-            <Popover
+              <Popover
               open={openPopover === 'tour-dest'}
               onOpenChange={(v) => setOpenPopover(v ? 'tour-dest' : null)}
-              content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => setSearchDest(v)} />}
+              content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => { setSearchDest(resolveFilterValue(v, 'package_destination')); setOpenPopover(null); }} />}
               trigger="click" placement="bottomLeft"
             >
               <div className="flex-1">
@@ -151,7 +170,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
       } */}
 
       {/* --- Package Search Bar --- */}
-      <div className="hidden md:block mt-[10px] bg-gray-100 w-full border-b py-6 md:sticky md:top-[90px] z-30">
+      <div className="hidden md:block bg-gray-100 w-full border-b py-6 md:sticky md:top-[90px] z-30">
         <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
       </div>
       
@@ -192,24 +211,27 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
           <p className="heading-1 text-[#000000]">{i18n.t("Filters")}</p>
         </div>
 
-        <div className={`fixed inset-0 z-50 ${openSearch ? "visible" : "invisible"}`}>
+        {isMobile && (
+          <div className={`fixed inset-0 z-50 ${openSearch ? "visible" : "invisible"}`}>
 
-          {/* Overlay */}
-          <div
-            onClick={() => setOpenSearch(false)}
-            className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"}`}
-          ></div>
+            {/* Overlay */}
+            <div
+              onClick={() => setOpenSearch(false)}
+              className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"}`}
+            ></div>
 
-          {/* Bottom drawer */}
-          <div
-            className={`absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 
-                            transform transition-transform duration-300 ease-out
-                            ${openSearch ? "translate-y-0" : "translate-y-full"}`}
-          >
-            {SearchBarContent}
+            {/* Bottom drawer */}
+            <div
+              className={`absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 
+                              transform transition-transform duration-300 ease-out
+                              overflow-y-auto
+                              ${openSearch ? "translate-y-0" : "translate-y-full"}`}
+            >
+              {SearchBarContent}
+            </div>
+
           </div>
-
-        </div>
+        )}
 
         <Drawer
           title={i18n.t("Filters")}
@@ -218,7 +240,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
           className="md:hidden"
           width="100%"
         >
-          {data && <Filters getData={getData} />}
+          <Filters getData={getData} />
         </Drawer>
         <div className="flex flex-col sm:flex-row xl:gap-6 lg:gap-5 md:gap-4 gap-3">
           <div className="w-full md:w-[30%] xl:w-[25%] hidden md:block">

@@ -24,7 +24,12 @@ const SelectionList = ({ options, onSelect }) => (
       return (
         <button
           key={idx}
-          onClick={() => onSelect(value)}
+          type="button"
+          onPointerDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onSelect(value);
+          }}
           className="text-left px-4 py-3 hover:bg-gray-50 text-sm font-semibold text-gray-700 border-b border-gray-50 last:border-none flex items-center gap-3"
         >
           {countryCode ? (
