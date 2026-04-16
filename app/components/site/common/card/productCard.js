@@ -84,11 +84,13 @@ const ProductCard = ({ data }) => {
             <p className="capitalize description-1 text-[#05073C] whitespace-normal break-words">
               {i18n?.t("Quantity")}: {data?.quantity}
             </p>
-            <div className="flex items-center gap-1">
-              <p className="heading-3 text-primary ">{formatPrice(data?.final_price)}</p>
-              <p className="description-1 text-red-400 line-through">
-                <del>{formatPrice(data?.regular_price)}</del>
-              </p>
+            <div className="flex items-baseline gap-2 whitespace-nowrap">
+              <p className="heading-3 text-primary leading-none inline-block">{formatPrice(data?.final_price)}</p>
+              {data?.regular_price && (
+                <p className="description-1 text-red-400 line-through ml-2">
+                  <del className="inline-block">{formatPrice(data?.regular_price)}</del>
+                </p>
+              )}
             </div>
           </div>
         </div>
