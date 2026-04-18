@@ -588,7 +588,7 @@ const PackageDetails = () => {
           </div>
 
           {/* Right: Sticky Sidebar */}
-          <div className="w-full lg:w-[32%]">
+          <div className="w-full lg:w-[32%] hidden lg:block">
             <div className="sticky top-24">
               {/* Booking Card */}
               <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden mb-6">
@@ -622,7 +622,9 @@ const PackageDetails = () => {
                 </div>
                 <div>
                   {sidebarTab === "booking" ? (
-                    <BookTour user={user} data={data} />
+                    <div className="">
+                      <BookTour user={user} data={data} />
+                    </div>
                   ) : (
                     <form onSubmit={handleInquirySubmit} className="p-5 space-y-3">
                       <Form.Item label="Full Name" className="mb-3">

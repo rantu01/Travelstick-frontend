@@ -404,9 +404,9 @@ const VisaDetails = () => {
             </div>
           </div>
 
-          <div className="w-full lg:w-[32%]">
+          <div className="w-full lg:w-[32%] hidden lg:block">
             <div className="sticky top-24">
-              <div className="bg-white rounded-2xl  border border-gray-100 overflow-hidden mb-6">
+              <div className="bg-white rounded-3xl  border border-gray-100 overflow-hidden mb-6 ">
                 <div className="bg-primary p-6 text-white">
                   <p className="text-xs uppercase font-bold opacity-80 mb-1 tracking-widest">Apply Online</p>
                   <div className="flex items-baseline gap-1">
@@ -414,7 +414,7 @@ const VisaDetails = () => {
                     <span className="text-sm opacity-80">/ Per Person</span>
                   </div>
                 </div>
-                <div>
+                <div className="">
                   <VisaForm id={data?._id} pricePerPerson={processingFee} />
                 </div>
               </div>
