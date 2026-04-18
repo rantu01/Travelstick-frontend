@@ -593,7 +593,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
 
                     {/* Drawer */}
                     <div
-                        className={`absolute bottom-0 left-0 w-full h-[520px] bg-white rounded-t-2xl p-4 
+                        className={`absolute bottom-0 left-0 w-full h-[620px] bg-white rounded-t-2xl py-10 
                             transform transition-transform duration-300 ease-out
                             ${openSearch ? "translate-y-0" : "translate-y-full"}`}
                     >
