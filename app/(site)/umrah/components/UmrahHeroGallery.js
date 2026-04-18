@@ -122,7 +122,7 @@ export default function UmrahHeroGallery() {
         {GALLERY_IMAGES.slice(1, 5).map((img, i) => (
           <div
             key={i}
-            className="relative group cursor-zoom-in overflow-hidden rounded-xl min-h-[150px] sm:min-h-0"
+            className="relative group cursor-zoom-in overflow-hidden rounded-xl min-h-[150px] sm:min-h-0 hidden sm:block"
             onClick={() => setLightboxIndex(i + 1)}
           >
             <img

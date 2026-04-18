@@ -1,15 +1,13 @@
+"use client";
 import UmrahContactForm from "./components/UmrahContactForm";
 import UmrahHeroGallery from "./components/UmrahHeroGallery";
 import UmrahSpirit from "./components/UmrahSpirit";
+import { useState } from "react";
 
 
-export const metadata = {
-  title: "Umrah Guidance — Banglaco",
-  description:
-    "Pure Umrah guidance & spiritual connection. No packages — just heartfelt help for your sacred journey.",
-};
 
 export default function UmrahPage() {
+  const [showBookingModal, setShowBookingModal] = useState(false);
   return (
     <main
       className="min-h-screen bg-[#f9f6f1]"
@@ -58,6 +56,37 @@ export default function UmrahPage() {
           </div>
         </div>
       </div>
+
+      {/* Mobile Sticky Footer: Book Now (opens modal) */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white p-4 border-t z-50 flex items-center justify-between shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+        <div>
+          <p className="text-xs text-gray-400 font-semibold uppercase">Need help?</p>
+          <p className="text-sm font-semibold">Reach our Umrah team</p>
+        </div>
+        <button
+          onClick={() => setShowBookingModal(true)}
+          className="bg-[#1a4fa0] text-white px-6 py-3 rounded-full font-bold text-sm shadow-lg active:scale-95 transition-all"
+        >
+          Book Now
+        </button>
+      </div>
+
+      {/* Booking Modal (mobile) - shows UmrahContactForm but page form remains visible */}
+      {showBookingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl max-w-lg w-full p-4 relative">
+            <button
+              onClick={() => setShowBookingModal(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-black text-xl"
+            >
+              ✕
+            </button>
+            <div className="p-2 max-h-[80vh] overflow-auto">
+              <UmrahContactForm />
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
