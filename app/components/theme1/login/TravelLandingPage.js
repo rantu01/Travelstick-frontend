@@ -2,7 +2,7 @@
 import React, { useRef, useState } from 'react';
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { app, requestPermissionAndGetToken } from "@/firebase.config";
-import { googleLogin, postLogin, sendOtp, postSignup } from "@/app/helper/backend";
+import { fetchPublicSettings, googleLogin, postLogin, sendOtp, postSignup } from "@/app/helper/backend";
 import { useUser } from "@/app/contexts/user";
 import { useRouter } from "next/navigation";
 import { message } from "antd";
@@ -10,6 +10,7 @@ import { Modal, Form, Input } from "antd";
 import FormInput from "@/app/components/form/input";
 import FormPassword from "@/app/components/form/password";
 import { useTimer } from "use-timer";
+import { useFetch } from "@/app/helper/hooks";
 
 const TravelLandingPage = () => {
     // Scroll korar jonno reference
@@ -29,12 +30,21 @@ const TravelLandingPage = () => {
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
     const [signUpForm] = Form.useForm();
+    const [publicSettings] = useFetch(fetchPublicSettings);
     const { time, start, pause, reset } = useTimer({
         initialTime: 120,
         timerType: "DECREMENTAL",
     });
     const { setUser } = useUser();
     const router = useRouter();
+
+    const resolveBgImage = (imageUrl, fallbackUrl) => {
+        if (typeof imageUrl !== "string" || !imageUrl.trim()) return fallbackUrl;
+        return imageUrl.replace(/\\/g, "/");
+    };
+
+    const upperSectionBg = resolveBgImage(publicSettings?.login_upper_bg_image, "/theme1/loginBG.png");
+    const lowerSectionBg = resolveBgImage(publicSettings?.login_lower_bg_image, "/theme1/cityimage.jpg");
 
     const signInWithGoogle = async () => {
         try {
@@ -175,7 +185,7 @@ const TravelLandingPage = () => {
                 ref={topSectionRef}
                 className="relative min-h-screen flex items-center justify-center p-4 bg-cover bg-center"
                 style={{
-                    backgroundImage: "url('/theme1/loginBG.png')",
+                    backgroundImage: `url('${upperSectionBg}')`,
                 }}
             >
                 {/* Mock Illustration Background elements (Simplified) */}
@@ -388,7 +398,7 @@ const TravelLandingPage = () => {
             <div
                 className="relative h-screen bg-cover bg-center flex flex-col items-center justify-center text-white text-center p-6"
                 style={{
-                    backgroundImage: "linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/theme1/cityimage.jpg')",
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('${lowerSectionBg}')`,
                 }}
             >
                 <h1 className="text-4xl md:text-6xl font-bold mb-8 drop-shadow-lg">

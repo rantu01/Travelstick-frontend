@@ -53,6 +53,8 @@ export default function Setting() {
     const site_logo = await processSingleFile(values?.site_logo);
     const fav_icon = await processSingleFile(values?.fav_icon);
     const banner_image = await processSingleFile(values?.banner_image);
+    const login_upper_bg_image = await processSingleFile(values?.login_upper_bg_image);
+    const login_lower_bg_image = await processSingleFile(values?.login_lower_bg_image);
 
     // ২. পার্টনার ইমেজ হ্যান্ডেল করা (অবজেক্ট ফরম্যাট: {url, text})
     let partnerImages = [];
@@ -120,6 +122,8 @@ export default function Setting() {
         site_logo: site_logo,
         fav_icon: fav_icon,
         banner_image: banner_image,
+        login_upper_bg_image: login_upper_bg_image,
+        login_lower_bg_image: login_lower_bg_image,
         currency_code: values?.currency_code || "",
         currency_symbol: values?.currency_symbol || "",
         file_upload_type: values?.file_upload_type || "local",
@@ -181,6 +185,28 @@ export default function Setting() {
                 name: "image.png",
                 status: "done",
                 url: data?.banner_image,
+              },
+            ]
+            : [],
+        login_upper_bg_image:
+          data?.login_upper_bg_image?.length > 0
+            ? [
+              {
+                uid: "-1",
+                name: "image.png",
+                status: "done",
+                url: data?.login_upper_bg_image,
+              },
+            ]
+            : [],
+        login_lower_bg_image:
+          data?.login_lower_bg_image?.length > 0
+            ? [
+              {
+                uid: "-1",
+                name: "image.png",
+                status: "done",
+                url: data?.login_lower_bg_image,
               },
             ]
             : [],
@@ -425,6 +451,18 @@ export default function Setting() {
 
                 max={1}
               />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                <MultipleImageInput
+                  name="login_upper_bg_image"
+                  label="Login Upper Section BG"
+                  max={1}
+                />
+                <MultipleImageInput
+                  name="login_lower_bg_image"
+                  label="Login Lower Section BG"
+                  max={1}
+                />
+              </div>
               <Button className="mt-10 border border-red-600" children={i18n.t("Submit")} type="submit" />
             </Form>
           </div>
