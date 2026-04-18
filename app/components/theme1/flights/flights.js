@@ -544,7 +544,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
             {/* <Banner title="Flights" /> */}
 
             {/* --- Flight Search Bar --- */}
-            <div className="hidden md:block mt-[10px] bg-gray-100 w-full border-b py-6 md:sticky md:top-[90px] z-30">
+            <div className="hidden md:block bg-gray-100 w-full border-b py-6 md:sticky md:top-[90px] z-30">
                 {/* --- Flight Search Bar --- */}
                 <div className="hidden md:block mt-[20px]">{SearchBarContent}</div>
             </div>
@@ -554,7 +554,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
 
                 {/* Mobile Search + Filter Buttons */}
                 {/* Mobile single-line search bar (no scroller) */}
-                <div className="w-full md:hidden mb-4">
+                <div className="w-full md:hidden mb-4 sticky top-20 z-50 bg-white">
                     <button
                         onClick={() => setOpenSearch(true)}
                         className="w-full flex items-center justify-between gap-3 text-sm px-3 py-3 bg-white border border-gray-300 rounded-md shadow-sm overflow-hidden whitespace-nowrap"
