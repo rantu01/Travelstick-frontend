@@ -22,6 +22,7 @@ import { CiLocationOn, CiClock2, CiCalendar } from "react-icons/ci";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCurrency } from "@/app/contexts/site";
 import AboutDetails from "@/app/components/common/aboutDetails";
+import CustomTourCard from "@/app/components/theme1/package/CustomTourCard";
 
 const PackageDetails = () => {
   const { user } = useUser();
@@ -584,6 +585,11 @@ const PackageDetails = () => {
                 data={data}
                 getData={getData}
               />
+              {/* Custom tour card placed under Guest Reviews - responsive */}
+
+            </div>
+            <div className="mt-6">
+              <CustomTourCard />
             </div>
           </div>
 
@@ -611,7 +617,7 @@ const PackageDetails = () => {
                 </div>
                 <div className="bg-primary p-6 text-white">
                   <div className="flex items-baseline gap-1">
-                    
+
                     {sidebarTab === "booking" && (
                       <div className="flex items-baseline gap-2">
                         <span className="text-3xl font-extrabold">{formatPrice(finalPrice)}</span>
