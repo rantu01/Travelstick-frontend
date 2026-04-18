@@ -272,6 +272,25 @@ const TravelLandingPage = () => {
             >
                 <div className="px-6 md:px-12 pb-6 pt-4">
                     <h2 className="text-2xl font-bold text-gray-800 mb-2 text-center">Signup</h2>
+                    <div className="flex flex-col gap-4 mb-4">
+                        <div className="flex items-center gap-2 mb-2 text-gray-400 text-sm">
+                            <div className="h-[1px] bg-gray-200 flex-1"></div>
+                            <span>Or Signup with</span>
+                            <div className="h-[1px] bg-gray-200 flex-1"></div>
+                        </div>
+
+                        <button onClick={signInWithGoogle} disabled={googleLoading} className="w-full p-2 border rounded-full hover:bg-gray-50 flex items-center justify-center px-4">
+                            {googleLoading ? (
+                                'Loading...'
+                            ) : (
+                                <>
+                                    <img src="/googleLogo.png" alt="Google Logo" className="h-5 w-5 mr-2" />
+                                    Log in with Google
+                                </>
+                            )}
+                        </button>
+                    </div>
+
                     <Form form={signUpForm} layout="vertical" onFinish={handleSignUpSubmit} initialValues={{ name: "", email: "" }}>
                         <div>
                             <FormInput
