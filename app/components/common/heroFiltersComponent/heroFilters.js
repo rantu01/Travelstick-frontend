@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { FaPlane, FaHotel, FaUmbrellaBeach, FaPassport, FaSearch, FaExchangeAlt, FaMinus, FaPlus, FaTimesCircle, FaUser, FaTrash } from "react-icons/fa";
 import { DatePicker, Popover } from "antd";
 import { useRouter, usePathname } from "next/navigation";
@@ -36,7 +36,7 @@ const isHoliday = (date) => {
 
 // dateRender moved inside component so it can access startDate/endDate
 
-const HeroFilters = () => {
+const HeroFilters = (props, ref) => {
   const i18n = useI18n();
   const router = useRouter();
 
@@ -415,7 +415,7 @@ const HeroFilters = () => {
   );
 
   return (
-    <div className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans md:sticky md:top-24 md:z-40  ">
+    <div ref={ref} className="w-full max-w-[1200px] mx-auto px-4 mt-10 font-sans md:sticky md:top-24 md:z-40  ">
       <div className="flex justify-center">
         <div className="grid grid-cols-4 w-full md:w-auto bg-white rounded-xl shadow-sm border-b overflow-hidden relative z-50 top-3 p-2">
           {tabs.map((t) => (
@@ -731,4 +731,4 @@ const HeroFilters = () => {
   );
 };
 
-export default HeroFilters;
+export default forwardRef(HeroFilters);

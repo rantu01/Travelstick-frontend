@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useFetch } from "@/app/helper/hooks";
 import { fetchPageContentTheme1 } from "@/app/helper/backend";
@@ -18,9 +18,45 @@ const Hero = () => {
     getData();
   }, []);
 
+  const heroRef = useRef(null);
+  const filterRef = useRef(null);
+  const [spacerHeight, setSpacerHeight] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const update = () => {
+      try {
+        if (!filterRef.current || !heroRef.current) {
+          setSpacerHeight(0);
+          return;
+        }
+        const fRect = filterRef.current.getBoundingClientRect();
+        const hRect = heroRef.current.getBoundingClientRect();
+        const overlap = Math.max(0, fRect.bottom - hRect.bottom);
+        setSpacerHeight(Math.ceil(overlap));
+      } catch (e) {
+        setSpacerHeight(0);
+      }
+    };
+
+    update();
+
+    const ro = new ResizeObserver(update);
+    if (filterRef.current) ro.observe(filterRef.current);
+    if (heroRef.current) ro.observe(heroRef.current);
+    window.addEventListener('resize', update);
+
+    return () => {
+      try { ro.disconnect(); } catch (e) {}
+      window.removeEventListener('resize', update);
+    };
+  }, []);
+
   return (
     <>
       <div
+        ref={heroRef}
         className="
           relative 
           h-[450px] sm:h-[500px] md:h-[350px]
@@ -46,12 +82,15 @@ const Hero = () => {
         {/* HeroFilters Section - Mobile e top e thakbe, Desktop e bottom */}
         <div className="absolute left-0 right-0 top-10 md:top-auto md:bottom-14 md:translate-y-1/2 z-[999] w-full px-4">
           <div className="max-w-[1200px] mx-auto">
-            <HeroFilters />
+            <HeroFilters ref={filterRef} />
           </div>
         </div>
       </div>
 
-      <div className="h-[250px] sm:h-[300px] md:h-[80px] lg:h-[70px]"></div>
+      <div
+        style={spacerHeight ? { height: `${spacerHeight}px` } : undefined}
+        className={spacerHeight ? "" : "h-[250px] sm:h-[300px] md:h-[80px] lg:h-[70px]"}
+      />
     </>
   );
 };
