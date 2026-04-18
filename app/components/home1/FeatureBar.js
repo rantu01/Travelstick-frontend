@@ -6,7 +6,7 @@ import { FaBolt } from "react-icons/fa";
 
 const FeatureBar = () => {
   return (
-    <div className="w-full pt-28 md:pt-10">
+    <div className="w-full pt-28 pb-16 md:pt-10 ">
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
 

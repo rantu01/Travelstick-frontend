@@ -76,6 +76,13 @@ const Hero = () => {
           <source src="/tiny.webm" type="video/webm" />
         </video>
 
+        {/* Mobile gradient overlay: top #1a4fa0 to white at bottom */}
+        <div
+          className="absolute inset-0 md:hidden z-10"
+          style={{ background: "linear-gradient(to bottom, #1a4fa0 0%, #ffffff 100%)" }}
+          aria-hidden="true"
+        />
+
         {/* Mobile e overlay hide thakbe */}
         {/* <div className="absolute inset-0 bg-black/40 hidden md:block"></div> */}
 
