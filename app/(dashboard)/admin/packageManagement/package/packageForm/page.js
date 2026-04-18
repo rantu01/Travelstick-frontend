@@ -122,10 +122,10 @@ const PackageForm = ({ isEdit = false, data }) => {
           ? data.exclude
           : [],
         policies: Array.isArray(data?.policies)
-          ? data.policies
+          ? data.policies[0] || {}
           : Array.isArray(data?.policy)
-          ? data.policy
-          : [],
+          ? data.policy[0] || {}
+          : data?.policies || data?.policy || {},
       });
     }
   }, [data, form, isEdit]);
@@ -219,7 +219,7 @@ const PackageForm = ({ isEdit = false, data }) => {
             images = await Promise.all(uploadPromises);
           }
 
-          const multiLangFields = ["name", "about"];
+          const multiLangFields = ["name", "about", "policies"];
           const formattedData = multiLangFields.reduce((acc, field) => {
             acc[field] = {};
             languages?.forEach((lang) => {
@@ -227,6 +227,10 @@ const PackageForm = ({ isEdit = false, data }) => {
             });
             return acc;
           }, {});
+
+          const hasPolicies = Object.values(
+            formattedData?.policies || {}
+          ).some((value) => Boolean(value?.trim?.()));
 
           const requestData = {
             ...values,
@@ -257,6 +261,7 @@ const PackageForm = ({ isEdit = false, data }) => {
                   .filter(Boolean)
                   .map((date) => date.format("YYYY-MM-DD"))
               : [],
+            policies: hasPolicies ? [formattedData.policies] : [],
           };
 
           setSubmitLoading(true);
@@ -312,6 +317,15 @@ const PackageForm = ({ isEdit = false, data }) => {
               value={form.getFieldValue(["about", l.code]) || ""}
               onChange={(newDescription) =>
                 form.setFieldValue(["about", l.code], newDescription)
+              }
+            />
+            <JodiEditor
+              name={["policies", l.code]}
+              label={i18n?.t("Policies")}
+              className="w-full rounded bg-transparent p-3 dashinput"
+              value={form.getFieldValue(["policies", l.code]) || ""}
+              onChange={(newDescription) =>
+                form.setFieldValue(["policies", l.code], newDescription)
               }
             />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
@@ -703,59 +717,6 @@ const PackageForm = ({ isEdit = false, data }) => {
             )}
           </Form.List>
         </div>
-        {/* itinerary */}
-        <div className="mt-5 border rounded-md p-3">
-          <h3 className="description-2 mb-2">{i18n.t("Policies")}</h3>
-          <Form.List name="policies" initialValue={[{}]}>
-            {(fields, { add, remove }) => (
-              <div className="mt-4">
-                <div className="flex flex-wrap gap-4">
-                  {fields.map(({ key, name: fieldName }, index) => (
-                    <div key={key} className="w-full md:w-[48%] rounded">
-                      {languages?.map((l) => (
-                        <div
-                          key={l.code}
-                          style={{
-                            display: l.code === selectedLang ? "block" : "none",
-                          }}
-                        >
-                          <FormInput
-                            name={[fieldName, l.code]}
-                            placeholder={`Input policy ${index + 1}`}
-                            type="text"
-                            required
-                            className="!w-full rounded bg-transparent p-3 dashinput"
-                            label={`Policy ${index + 1} (${l.code})`}
-                          />
-                        </div>
-                      ))}
-                      <div className="text-right mt-3">
-                        {fields.length > 1 && (
-                          <button
-                            type="button"
-                            className="text-red-500 hover:text-primary"
-                            onClick={() => remove(fieldName)}
-                          >
-                            <FaTrash />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => add({})}
-                  className="mt-4 bg-primary text-white px-4 py-2 rounded-md"
-                >
-                  {i18n.t("Add Policy")}
-                </button>
-              </div>
-            )}
-          </Form.List>
-        </div>
-
         {/* itinerary */}
         <Form.List
           name="itinerary"

@@ -147,6 +147,13 @@ const PackageDetails = () => {
   const totalPrice = data?.price?.amount || 0;
   const includesList = data?.includes || data?.include || [];
   const excludesList = data?.excludes || data?.exclude || [];
+  const policiesData = Array.isArray(data?.policies)
+    ? data.policies?.[0]
+    : Array.isArray(data?.policy)
+    ? data.policy?.[0]
+    : data?.policies || data?.policy;
+  const policyContent =
+    policiesData?.[langCode] || policiesData?.en || Object.values(policiesData || {})?.[0] || "";
   const discountAmount =
     data?.price?.discount_type === "flat"
       ? data?.price?.discount
@@ -552,20 +559,11 @@ const PackageDetails = () => {
               <h2 className="text-2xl md:text-3xl font-bold text-[#05073C] leading-snug mb-6">
                 Policies
               </h2>
-              {(data?.policies?.length > 0 || data?.policy?.length > 0) ? (
-                <div className="space-y-3">
-                  {(data?.policies || data?.policy || []).map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start gap-3 p-4 rounded-xl border border-gray-100 bg-gray-50/50"
-                    >
-                      <span className="mt-[2px] text-primary font-semibold">{index + 1}.</span>
-                      <p className="text-sm text-gray-700 leading-relaxed">
-                        {item?.[langCode] || item?.en || "N/A"}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+              {policyContent ? (
+                <div
+                  className="prose prose-sm max-w-none text-gray-700"
+                  dangerouslySetInnerHTML={{ __html: policyContent }}
+                />
               ) : (
                 <p className="text-sm text-gray-500">No policies available for this package yet.</p>
               )}
