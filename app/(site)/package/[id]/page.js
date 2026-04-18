@@ -421,7 +421,7 @@ const PackageDetails = () => {
           <div className="w-full lg:w-[68%]">
 
             {/* Sticky Tab Nav */}
-            <div className="sticky top-[90px] z-50 justify-start md:justify-between bg-white border-b flex flex-wrap gap-4 mb-8 px-4 shadow-sm">
+            <div className="sticky top-[90px] z-50 justify-start md:justify-between bg-white border-b flex overflow-hidden flex-nowrap md:flex-wrap gap-0 mb-8 px-0 shadow-sm">
               {[
                 { label: "Overview", ref: overviewRef },
                 { label: "Itinerary", ref: itineraryRef },
@@ -432,7 +432,7 @@ const PackageDetails = () => {
                 <button
                   key={idx}
                   onClick={() => scrollToSection(tab.ref)}
-                  className="py-4 px-2 text-sm font-semibold text-gray-600 whitespace-nowrap border-b-2 border-transparent hover:text-primary hover:border-primary active:scale-95 transition-all duration-300 ease-in-out tracking-wide">
+                  className="py-3 px-2 md:py-4 md:px-2 text-xs md:text-sm font-semibold text-gray-600 whitespace-nowrap border-b-2 border-transparent hover:text-primary hover:border-primary active:scale-95 transition-all duration-300 ease-in-out tracking-wide flex-shrink-0">
                   {tab.label}
                 </button>
               ))}
