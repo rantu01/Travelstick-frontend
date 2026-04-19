@@ -579,7 +579,7 @@ const HeroFilters = (props, ref) => {
                       <p className="text-[10px] text-gray-400 truncate">DAC, Hazrat Shahjalal Int....</p>
                     </div>
                   </Popover>
-                  <div onClick={handleSwapLocations} className="absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors">
+                  <div onClick={handleSwapLocations} className="absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-20 bg-[#1A4FA0] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#0d4394] transition-colors">
                     <FaExchangeAlt size={20} className="rotate-90 md:rotate-0" />
                   </div>
                 </div>
