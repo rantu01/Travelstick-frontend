@@ -308,7 +308,7 @@ const VisaDetails = () => {
               {/* Right Side: Price Section */}
               <div className="w-full lg:w-auto flex-shrink-0 border-t lg:border-t-0 lg:border-l lg:border-dashed lg:border-gray-200 pt-6 lg:pt-0 lg:pl-10">
                 <div className="flex items-baseline gap-2 justify-center lg:justify-end">
-                  <span className="text-gray-400 text-sm font-medium">From:</span>
+                  <span className="text-gray-400 text-sm font-medium">Processing Fee:</span>
                   <span className="text-primary text-3xl lg:text-4xl font-extrabold">{formatPrice(processingFee)}</span>
                   <span className="text-gray-400 text-sm font-medium">/ person</span>
                 </div>

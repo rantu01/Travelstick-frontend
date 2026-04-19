@@ -111,7 +111,7 @@ const ProductPage = ({ theme }) => {
       } */}
       <div className="lg:py-[100px] md:py-20 sm:py-16 py-12 travel-container  overflow-hidden">
 
-        {
+        {/* {
           theme === 'one' ?
             <SectionHeader
               align="right"
@@ -127,7 +127,7 @@ const ProductPage = ({ theme }) => {
               heading={productData?.title?.[langCode]}
               description={productData?.offer_description?.[langCode]}
             />
-        }
+        } */}
 
         {/* Search / Filters */}
         <div className="mt-6 flex flex-col sm:flex-row items-stretch gap-3 mb-4">
