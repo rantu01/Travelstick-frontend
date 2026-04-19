@@ -41,6 +41,17 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
     return found?._id || label;
   };
 
+  const getDestLabel = (dest) => {
+    if (!dest) return null;
+    const block = filterData?.find((f) => f.key === 'package_destination');
+    if (!block?.values) return dest;
+    const found = block.values.find((v) => {
+      const name = v.name?.[i18n.langCode] || v.name?.en || v.name;
+      return v._id === dest || String(name) === String(dest);
+    });
+    return found ? (found.name?.[i18n.langCode] || found.name?.en || found.name) : dest;
+  };
+
   useEffect(() => {
     getData({
       limit: PACKAGE_LIST_LIMIT,
@@ -117,7 +128,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
               <div className="flex-1">
                 <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Destination</p>
                 <div className="mt-1 font-bold text-gray-700 text-lg leading-tight truncate">
-                  {searchDest || "Select City/Country"}
+                  {getDestLabel(searchDest) || "Select City/Country"}
                 </div>
               </div>
             </Popover>
@@ -188,7 +199,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
               <FaSearch className="flex-shrink-0" />
               <div className="min-w-0 text-left">
                 <div className="text-xs text-gray-400 uppercase font-bold tracking-wider">Destination</div>
-                <div className="font-bold text-gray-700 truncate text-sm">{searchDest || "Select City/Country"}</div>
+                <div className="font-bold text-gray-700 truncate text-sm">{getDestLabel(searchDest) || "Select City/Country"}</div>
                 <div className="text-[11px] text-gray-400 truncate">{prefDate ? prefDate.format('DD MMM') : 'Pick date'}</div>
               </div>
             </div>

@@ -8,6 +8,7 @@ import Image from "next/image";
 import VisaFilters from "../../common/visaFilters";
 import { getAllPublicVisa, getHeroFilterData } from "@/app/helper/backend";
 import { useFetch } from "@/app/helper/hooks";
+import { countries } from "countries-list";
 import VisaCard1 from "../../site/common/card/visaCard1";
 import VisaCard2 from "../../site/common/card/visaCard2";
 import Banner2 from "../../site/common/component/Banner2";
@@ -38,10 +39,23 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
   const [loadingVisaCategory, setLoadingVisaCategory] = useState(false);
 
   // ✅ citizen_of options from filterData
-  const visaCitizenOptions =
-    filterData?.find(f => f.key === "visa_citizen_of")?.values?.map(v => v.name) ||
-    filterData?.find(f => f.key === "visa_country")?.values?.map(v => v.name) ||
-    [];
+  const findCountryNameFromKey = (input) => {
+    if (!input) return null;
+    const raw = String(input).trim();
+    if (countries[raw.toUpperCase()]) return countries[raw.toUpperCase()].name;
+    const candidate = raw.split(",").pop().trim().toLowerCase();
+    for (const [, country] of Object.entries(countries)) {
+      if (!country || !country.name) continue;
+      const cName = country.name.toLowerCase();
+      if (cName === candidate || cName.includes(candidate) || candidate.includes(cName)) return country.name;
+    }
+    return raw;
+  };
+
+  const visaCitizenOptions = (() => {
+    const raw = filterData?.find(f => f.key === "visa_citizen_of")?.values?.map(v => v.name) || filterData?.find(f => f.key === "visa_country")?.values?.map(v => v.name) || [];
+    return raw.map(v => ({ value: v, label: findCountryNameFromKey(v) || v }));
+  })();
 
   // ✅ Step 2: citizenOf select হলে → travelling_to fetch
   useEffect(() => {
@@ -63,7 +77,8 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
         const { data } = await getAllPublicVisa({ citizen_of: citizenOf, limit: 100 });
         const docs = data?.docs || [];
         const unique = [...new Set(docs.map(v => v.travelling_to).filter(Boolean))];
-        setTravellingToOptions(unique);
+        const mapped = unique.map(raw => ({ value: raw, label: findCountryNameFromKey(raw) || raw }));
+        setTravellingToOptions(mapped);
       } catch {
         setTravellingToOptions([]);
       } finally {
@@ -169,17 +184,17 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
             open={openPopover === "visa-cit"}
             onOpenChange={(v) => setOpenPopover(v ? "visa-cit" : null)}
             content={
-              <SelectionList
-                options={visaCitizenOptions}
-                onSelect={(v) => handleSelect(setCitizenOf, v)}
-              />
+                  <SelectionList
+                    options={visaCitizenOptions}
+                    onSelect={(v) => handleSelect(setCitizenOf, v)}
+                  />
             }
             trigger="click" placement="bottomLeft"
           >
             <div className="w-full">
               <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Citizen of")}</p>
               <div className={`mt-1 font-bold text-lg leading-tight truncate ${!citizenOf ? "text-gray-400" : "text-gray-700"}`}>
-                {citizenOf || i18n.t("Select country")}
+                        {findCountryNameFromKey(citizenOf) || i18n.t("Select country")}
               </div>
             </div>
           </Popover>
@@ -206,7 +221,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
               <div className="flex-1">
                 <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Travelling to")}</p>
                 <div className={`mt-1 font-bold text-lg leading-tight truncate ${!travellingTo ? "text-gray-400" : "text-gray-700"}`}>
-                  {loadingTravellingTo ? "Loading..." : travellingTo || i18n.t("Select destination")}
+                        {loadingTravellingTo ? "Loading..." : (findCountryNameFromKey(travellingTo) || travellingTo || i18n.t("Select destination"))}
                 </div>
               </div>
             </Popover>
@@ -284,7 +299,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
               <FaSearch className="flex-shrink-0" />
               <div className="min-w-0 text-left">
                 <div className="text-xs text-gray-400 uppercase font-bold tracking-wider">Citizen — To</div>
-                <div className="font-bold text-gray-700 truncate text-sm">{citizenOf || 'Select Country'} {travellingTo ? `→ ${travellingTo}` : ''}</div>
+                <div className="font-bold text-gray-700 truncate text-sm">{findCountryNameFromKey(citizenOf) || 'Select Country'} {travellingTo ? `→ ${findCountryNameFromKey(travellingTo) || travellingTo}` : ''}</div>
                 <div className="text-[11px] text-gray-400 truncate">{visaCategory || 'Select category'}</div>
               </div>
             </div>

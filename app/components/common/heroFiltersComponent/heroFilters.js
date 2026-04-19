@@ -84,6 +84,24 @@ const HeroFilters = (props, ref) => {
 
   const [filterData] = useFetch(getHeroFilterData);
 
+  const resolveFilterValueToId = (label, key) => {
+    const block = filterData?.find((f) => f.key === key);
+    if (!block?.values) return label;
+    const found = block.values.find((v) => {
+      const name = v.name?.[i18n.langCode] || v.name?.en || v.name;
+      return String(name) === String(label) || String(v._id) === String(label);
+    });
+    return found?._id || label;
+  };
+
+  const getFilterLabel = (value, key) => {
+    if (!value) return null;
+    const block = filterData?.find((f) => f.key === key);
+    if (!block?.values) return value;
+    const found = block.values.find((v) => v._id === value || String(v.name?.[i18n.langCode] || v.name?.en || v.name) === String(value));
+    return found ? (found.name?.[i18n.langCode] || found.name?.en || found.name) : value;
+  };
+
   const findCountryNameFromKey = (input) => {
     if (!input) return null;
     const raw = String(input).trim();
@@ -471,10 +489,15 @@ const HeroFilters = (props, ref) => {
             {tab === "hotel" && !isHotelPage ? (
               <>
                 <div className="md:col-span-3 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
-                  <Popover open={openPopover === "hotel-dest"} onOpenChange={(v) => setOpenPopover(v ? "hotel-dest" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'hotel_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setDestination, v)} />} trigger="click" placement="bottomLeft">
+                  <Popover
+                    open={openPopover === "hotel-dest"}
+                    onOpenChange={(v) => setOpenPopover(v ? "hotel-dest" : null)}
+                    content={<SelectionList options={filterData?.find(f => f.key === 'hotel_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => { const id = resolveFilterValueToId(v, 'hotel_destination'); handleSelect(setDestination, id); }} />}
+                    trigger="click" placement="bottomLeft"
+                  >
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Destination")}</p>
-                      <div className="mt-1 font-bold text-gray-500 text-lg leading-tight truncate">{destination}</div>
+                      <div className="mt-1 font-bold text-gray-500 text-lg leading-tight truncate">{getFilterLabel(destination, 'hotel_destination') || destination}</div>
                     </div>
                   </Popover>
                 </div>
@@ -575,10 +598,15 @@ const HeroFilters = (props, ref) => {
             ) : tab === "tour" && !isPackagePage ? (
               <>
                 <div className="md:col-span-6 border rounded-xl p-4 hover:bg-gray-50 cursor-pointer bg-white">
-                  <Popover open={openPopover === "tour-dest"} onOpenChange={(v) => setOpenPopover(v ? "tour-dest" : null)} content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => handleSelect(setDestination, v)} />} trigger="click" placement="bottomLeft">
+                  <Popover
+                    open={openPopover === "tour-dest"}
+                    onOpenChange={(v) => setOpenPopover(v ? "tour-dest" : null)}
+                    content={<SelectionList options={filterData?.find(f => f.key === 'package_destination')?.values?.map(v => v.name?.[i18n.langCode] || v.name?.en || v.name) || []} onSelect={(v) => { const id = resolveFilterValueToId(v, 'package_destination'); handleSelect(setDestination, id); }} />}
+                    trigger="click" placement="bottomLeft"
+                  >
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">{i18n.t("Destination")}</p>
-                      <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{destination}</div>
+                      <div className="mt-1 font-bold text-gray-700 text-lg leading-tight">{getFilterLabel(destination, 'package_destination') || destination}</div>
                     </div>
                   </Popover>
                 </div>
