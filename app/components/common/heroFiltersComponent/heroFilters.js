@@ -10,6 +10,7 @@ import dayjs from "dayjs";
 import Image from "next/image";
 
 import SelectionList from "./SelectionList";
+import { countries } from "countries-list";
 import GuestContent from "./GuestContent";
 import HotelGuestContent from "./HotelGuestContent";
 import MultiCityRow from "./MultiCityRow";
@@ -83,10 +84,27 @@ const HeroFilters = (props, ref) => {
 
   const [filterData] = useFetch(getHeroFilterData);
 
-  const visaCitizenOptions =
-    filterData?.find(f => f.key === "visa_citizen_of")?.values?.map(v => v.name) ||
-    filterData?.find(f => f.key === "visa_country")?.values?.map(v => v.name) ||
-    [];
+  const findCountryNameFromKey = (input) => {
+    if (!input) return null;
+    const raw = String(input).trim();
+    if (countries[raw.toUpperCase()]) return countries[raw.toUpperCase()].name;
+    const candidate = raw.split(",").pop().trim().toLowerCase();
+    for (const [, country] of Object.entries(countries)) {
+      if (!country || !country.name) continue;
+      const cName = country.name.toLowerCase();
+      if (cName === candidate || cName.includes(candidate) || candidate.includes(cName)) return country.name;
+    }
+    return raw;
+  };
+
+  const visaCitizenOptions = (() => {
+    const raw = filterData?.find(f => f.key === "visa_citizen_of")?.values || filterData?.find(f => f.key === "visa_country")?.values || [];
+    return raw.map(v => {
+      const value = v.name;
+      const label = findCountryNameFromKey(value) || value;
+      return { label, value };
+    });
+  })();
 
   useEffect(() => {
     if (!citizenOf) {
@@ -108,7 +126,8 @@ const HeroFilters = (props, ref) => {
         const { data } = await getAllPublicVisa({ citizen_of: citizenOf, limit: 100 });
         const docs = data?.docs || [];
         const unique = [...new Set(docs.map(v => v.travelling_to).filter(Boolean))];
-        setTravellingToOptions(unique);
+        const mapped = unique.map(raw => ({ value: raw, label: findCountryNameFromKey(raw) || raw }));
+        setTravellingToOptions(mapped);
       } catch {
         setTravellingToOptions([]);
       } finally {
@@ -496,7 +515,7 @@ const HeroFilters = (props, ref) => {
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Citizen of")}</p>
                       <div className={`mt-1 font-bold text-lg leading-tight ${!citizenOf ? "text-gray-400" : "text-gray-700"}`}>
-                        {citizenOf || i18n.t("Select country")}
+                        {citizenOf ? (findCountryNameFromKey(citizenOf) || citizenOf) : i18n.t("Select country")}
                       </div>
                     </div>
                   </Popover>
@@ -520,7 +539,7 @@ const HeroFilters = (props, ref) => {
                     <div>
                       <p className="text-[11px] text-gray-400 font-bold">{i18n.t("Travelling to")}</p>
                       <div className={`mt-1 font-bold text-lg leading-tight ${!travellingTo ? "text-gray-400" : "text-gray-700"}`}>
-                        {loadingTravellingTo ? "Loading..." : travellingTo || i18n.t("Select destination")}
+                        {loadingTravellingTo ? "Loading..." : (travellingTo ? (findCountryNameFromKey(travellingTo) || travellingTo) : i18n.t("Select destination"))}
                       </div>
                     </div>
                   </Popover>
