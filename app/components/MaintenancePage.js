@@ -21,7 +21,7 @@ const MaintenancePage = () => {
       {!isVisible && (
         <button 
           onClick={handleOpen}
-          className="fixed top-24 right-5 z-[9999] bg-[#00BCE4] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center gap-2 group"
+          className="fixed top-16 right-5 z-[9999] bg-[#00BCE4] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-all flex items-center gap-2 group"
         >
           <Settings className="animate-spin-slow" size={24} />
           <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 whitespace-nowrap font-bold">
