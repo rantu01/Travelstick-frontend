@@ -16,18 +16,15 @@ const MainLoader = () => {
 export default MainLoader;
 export const LayoutLoader = () => {
    return (
-      <div
-         style={{ zIndex: 99999 }}
-         className="left-0 w-full top-0 h-screen flex justify-center items-center bg-white"
-         id="main-loader"
-      >
-         <div className="relative">
-            <Image
-               width={100}
-               height={100}
-               src="/loader.gif"
-               alt="GIF"
-               className="xl:w-[800px] h-[350px] w-[350px] sm:w-[500px] sm:h-[500px] xl:h-[800px]"
+      <div id="main-loader" className="fixed inset-0 z-[99999] bg-white">
+         <div className="absolute inset-0 overflow-hidden">
+            <video
+               src="/download.mp4"
+               autoPlay
+               muted
+               loop
+               playsInline
+               className="absolute inset-0 w-full h-full object-cover"
             />
          </div>
       </div>
@@ -38,7 +35,7 @@ export const Loader = () => {
    return (
       <div className="inline-block">
          <div className="relative">
-         <Image
+            <Image
                width={100}
                height={100}
                src="/mainLoader.gif"
