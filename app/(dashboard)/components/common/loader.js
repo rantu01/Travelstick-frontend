@@ -35,12 +35,13 @@ export const Loader = () => {
    return (
       <div className="inline-block">
          <div className="relative">
-            <Image
-               width={100}
-               height={100}
-               src="/mainLoader.gif"
-               alt="GIF"
-               className="w-full h-full"
+            <video
+               src="/Please wait.mp4"
+               autoPlay
+               muted
+               loop
+               playsInline
+               className="absolute inset-0 w-full h-full object-cover"
             />
          </div>
       </div>
