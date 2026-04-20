@@ -31,6 +31,24 @@ const BookTour = ({ data, user }) => {
     return new Set(data.available_dates.filter(Boolean).map((date) => toDateKey(date)));
   }, [data?.available_dates]);
 
+  const ensureUserCanBook = () => {
+    const hasToken = typeof window !== 'undefined' && !!localStorage.getItem('token');
+    if (!hasToken || !user) {
+      setIsModalOpen(false);
+      setAuthModalOpen(true);
+      message.error(i18n.t('Please login to continue.'));
+      return false;
+    }
+
+    if (user?.role !== 'user') {
+      setIsModalOpen(false);
+      message.error(i18n.t('Please login with a user account to book.'));
+      return false;
+    }
+
+    return true;
+  };
+
   const handlePackageServicePrice = (serviceId) => async (e) => {
     const checked = e.target.checked;
     let updatedServices;
@@ -98,6 +116,10 @@ const BookTour = ({ data, user }) => {
 
   const router = useRouter();
   const handlePayment = async () => {
+    if (!ensureUserCanBook()) {
+      return;
+    }
+
     if (availableDateKeys.size > 0 && !selectedDate) {
       message.error(i18n.t("Please select an available date."));
       return;
@@ -134,6 +156,51 @@ const BookTour = ({ data, user }) => {
     }
   };
 
+  const handleBookWithoutPayment = async () => {
+    if (!ensureUserCanBook()) {
+      return;
+    }
+
+    if (availableDateKeys.size > 0 && !selectedDate) {
+      message.error(i18n.t("Please select an available date."));
+      return;
+    }
+
+    if (
+      selectedDate &&
+      availableDateKeys.size > 0 &&
+      !availableDateKeys.has(selectedDate.format("YYYY-MM-DD"))
+    ) {
+      message.error(i18n.t("Selected date is not available."));
+      return;
+    }
+
+    const payload = {
+      package: data?._id,
+      person: count,
+      amount: initialPrice,
+      ...(selectedDate && { date: selectedDate.format('YYYY-MM-DD') }),
+      // TEMP DIRECT BOOKING FLOW: backend treats cash/without_payment as direct booking.
+      method: 'cash',
+      without_payment: true,
+      ...(selectedServices.length > 0 && { services: selectedServices })
+    };
+
+    const response = await createPackageBookingPayment({ body: payload });
+
+    if (response?.success) {
+      message.success(i18n.t('Booking successful'));
+      setIsModalOpen(false);
+      try {
+        router.push('/user/packageBooking');
+      } catch (e) {
+        // ignore navigation errors
+      }
+    } else {
+      message.error(response?.errorMessage || i18n.t('Booking failed'));
+    }
+  };
+
   return (
     <div className="w-full relative ">
       <div className="w-full ">
@@ -164,10 +231,8 @@ const BookTour = ({ data, user }) => {
             </div> */}
             <div className="xl:mt-14 lg:mt-10 md:mt-8 mt-6">
               <button onClick={() => {
-                if (user) {
+                if (ensureUserCanBook()) {
                   setIsModalOpen(true)
-                } else {
-                  setAuthModalOpen(true)
                 }
               }} className="w-full bg-primary text-white py-3 rounded-xl font-semibold disabled:opacity-70">
                 {i18n.t("Book Now")}
@@ -194,6 +259,11 @@ const BookTour = ({ data, user }) => {
         <button className="xl:mt-8 lg:mt-6 mt-5 w-full bg-[#14634E] text-white common-btn"
           onClick={handlePayment}>
           {i18n.t('Pay Now')}
+        </button>
+        <button className="xl:mt-3 lg:mt-2 mt-2 w-full border border-gray-300 text-[#05073C] bg-white common-btn"
+          onClick={handleBookWithoutPayment}>
+          {/* TEMP FLOW (HIGH VISIBILITY): this bypasses online payment and places booking directly. */}
+          {i18n.t('Book Now Without Payment')}
         </button>
       </Modal>
       <AuthModal authModalOpen={authModalOpen} slug={`/package/${data?._id}`} setAuthModalOpen={setAuthModalOpen} />
