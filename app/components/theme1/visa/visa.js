@@ -290,7 +290,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
       
 
       <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 pb-20 relative">
-        <div className="w-full md:hidden mb-4 sticky top-20 z-50 bg-white">
+        <div className="w-full md:hidden mb-4 sticky top-[72px] z-50 bg-white">
           <button
             onClick={() => setOpenSearch(true)}
             className="w-full flex items-center justify-between gap-3 text-sm px-3 py-3 bg-white border border-gray-300 rounded-md shadow-sm overflow-hidden whitespace-nowrap"
@@ -336,7 +336,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
 
           {/* Bottom drawer */}
           <div
-            className={`absolute bottom-0 left-0 w-full h-[620px] bg-white rounded-t-2xl py-10 
+            className={`absolute bottom-0 left-0 w-full h-auto bg-white rounded-t-2xl py-10 
                             transform transition-transform duration-300 ease-out
                             overflow-y-auto
                             ${openSearch ? "translate-y-0" : "translate-y-full"}`}
