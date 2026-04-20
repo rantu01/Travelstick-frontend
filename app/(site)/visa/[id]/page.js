@@ -11,29 +11,7 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { FiShare2, FiX, FiChevronLeft, FiChevronRight, FiCheck } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCurrency } from "@/app/contexts/site";
-
-const countryToCode = {
-  "usa": "us",
-  "united states": "us",
-  "japan": "jp",
-  "australia": "au",
-  "bangladesh": "bd",
-  "canada": "ca",
-  "uk": "gb",
-  "united kingdom": "gb",
-  "turkey": "tr",
-  "costa rica": "cr",
-  "india": "in",
-  "germany": "de",
-  "france": "fr",
-  "malaysia": "my",
-  "uae": "ae",
-  "united arab emirates": "ae",
-  "italy": "it",
-  "china": "cn",
-  "thailand": "th",
-  "singapore": "sg",
-};
+import { countries } from "countries-list";
 
 const VisaDetails = () => {
   const { langCode, t } = useI18n();
@@ -45,8 +23,35 @@ const VisaDetails = () => {
   const [currentIndex, setCurrentIndex] = useState(null);
   const [copied, setCopied] = useState(false);
 
-  const countryName = data?.travelling_to?.toLowerCase() || "";
-  const countryCode = countryToCode[countryName] || "un";
+  // Resolve travelling country to a display name and ISO alpha-2 code for flag
+  const rawTravelling = data?.travelling_to || "";
+  let displayCountry = "";
+  let countryCode = "un";
+  if (rawTravelling) {
+    const val = String(rawTravelling).trim();
+    // if user saved an ISO2 code like 'us' or 'US'
+    if (val.length === 2 && countries[val.toUpperCase()]) {
+      countryCode = val.toLowerCase();
+      displayCountry = countries[val.toUpperCase()].name;
+    } else {
+      // try to match by country name (case-insensitive)
+      const found = Object.entries(countries).find(([, c]) => c.name.toLowerCase() === val.toLowerCase());
+      if (found) {
+        countryCode = found[0].toLowerCase();
+        displayCountry = found[1].name;
+      } else {
+        // fallback: try some common aliases, then title-case the value
+        const aliasMap = { usa: "US", uk: "GB", uae: "AE" };
+        const lower = val.toLowerCase();
+        if (aliasMap[lower] && countries[aliasMap[lower]]) {
+          countryCode = aliasMap[lower].toLowerCase();
+          displayCountry = countries[aliasMap[lower]].name;
+        } else {
+          displayCountry = val.split(" ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
+        }
+      }
+    }
+  }
 
   const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -108,7 +113,7 @@ const VisaDetails = () => {
 
   const visaStats = [
     { label: "Visa Type", value: data?.visa_type?.name?.[langCode], img: "/Holidays Icon/Tour Type.png" },
-    { label: "Destination", value: data?.travelling_to, img: "/Holidays Icon/Destination.png" },
+    { label: "Destination", value: displayCountry || data?.travelling_to, img: "/Holidays Icon/Destination.png" },
     { label: "Validity", value: data?.validity, img: "/Holidays Icon/Duration.png" },
     ...(data?.max_stay_days
       ? [{ label: "Max Stay", value: `${data.max_stay_days} Days`, img: "/Holidays Icon/Group Size.png" }]
@@ -124,7 +129,7 @@ const VisaDetails = () => {
 
   const otherInfoDetails = [
     { label: "Citizen Of", value: data?.citizen_of },
-    { label: "Travelling To", value: data?.travelling_to },
+    { label: "Travelling To", value: displayCountry || data?.travelling_to },
     { label: "Processing Time", value: data?.processing_type },
     { label: "Visa Mode", value: data?.visa_mode },
     { label: "Validity", value: data?.validity },
@@ -188,7 +193,7 @@ const VisaDetails = () => {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-[#05073C] font-extrabold text-3xl md:text-4xl lg:text-5xl leading-tight">
-                {data?.title?.[langCode] || `${data?.travelling_to} Visa`} From {data?.citizen_of || "Bangladesh"}
+                {data?.title?.[langCode] || `${displayCountry || data?.travelling_to} Visa`} From {data?.citizen_of || "Bangladesh"}
               </h1>
               <div className="flex items-center gap-4 mt-3">
                 <div className="flex items-center gap-2 text-[#717171] text-sm">
@@ -200,7 +205,7 @@ const VisaDetails = () => {
                       height={14}
                       className="object-contain rounded-sm shadow-sm"
                     />
-                    <span className="font-semibold uppercase">{data?.travelling_to}</span>
+                    <span className="font-semibold uppercase">{displayCountry || data?.travelling_to}</span>
                   </div>
                 </div>
                 {/* <div className="flex items-center gap-2 border-l pl-4">
@@ -351,7 +356,7 @@ const VisaDetails = () => {
             <div ref={otherInfoRef} className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm mb-8">
               <h2 className="text-2xl font-bold text-[#05073C] mb-6">Other Information</h2>
               <div className="text-[#717171] text-[15px] leading-relaxed mb-6">
-                Applying for a <span className="font-bold">{data?.travelling_to} {data?.title?.[langCode]}</span> is simple and hassle-free with a trusted visa processing agency in {data?.citizen_of || "Bangladesh"}. We provide professional assistance with document preparation.
+                Applying for a <span className="font-bold">{displayCountry || data?.travelling_to} {data?.title?.[langCode]}</span> is simple and hassle-free with a trusted visa processing agency in {data?.citizen_of || "Bangladesh"}. We provide professional assistance with document preparation.
               </div>
 
               <div className="overflow-hidden border border-gray-200 rounded-xl">
