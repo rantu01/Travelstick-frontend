@@ -55,9 +55,9 @@ const HotelCard = ({ data }) => {
   const starLabel = Number(data?.star) > 0 ? `${Number(data?.star)}-star hotel` : "Hotel";
 
   return (
-    <div className="group w-full rounded-[15px] border border-[#E8EAE8] bg-white overflow-hidden flex flex-col md:flex-row transition-shadow hover:shadow-md min-h-[220px]">
+    <div className="group w-full rounded-[15px] border border-[#E8EAE8] bg-white overflow-hidden flex flex-col md:flex-row transition-shadow hover:shadow-md h-auto md:h-[220px] box-border">
 
-      <div className="relative w-full md:w-[280px] lg:w-[320px] flex-shrink-0 p-3 md:p-4">
+      <div className="relative w-full md:w-[280px] lg:w-[320px] flex-shrink-0 p-3 md:p-4 h-auto md:h-full">
         {data?.card_image && (
           <Image
             className="w-full h-[200px] md:h-full object-cover rounded-[10px]"
@@ -69,7 +69,7 @@ const HotelCard = ({ data }) => {
         )}
       </div>
 
-      <div className="flex flex-col flex-grow p-4 md:py-5 md:px-2 justify-start">
+      <div className="flex flex-col flex-grow p-4 md:py-5 md:px-2 justify-start h-auto md:h-full overflow-hidden min-w-0">
         <div className="flex items-center gap-2 mb-1">
           <h3 className="text-[20px] font-bold text-[#1A1A1A] leading-tight">
             {data?.name?.[langCode]}
@@ -109,7 +109,8 @@ const HotelCard = ({ data }) => {
         </div>
       </div>
 
-      <div className="w-full md:w-[180px] bg-[#EBF3FF] flex flex-col items-center justify-center p-5 text-center gap-2 md:m-3 md:rounded-[12px]">
+      {/* ✅ Fix: removed md:m-3 margin that caused overflow. Using p-3 internally instead */}
+      <div className="w-full md:w-[140px] flex-shrink-0 bg-[#EBF3FF] flex flex-col items-center justify-center p-5 text-center gap-2 md:rounded-r-[15px] h-auto md:h-full box-border">
         <p className="text-[12px] text-[#717171]">Starts From</p>
         <div className="flex flex-col">
           <span className="text-[22px] font-bold text-[#1A1A1A]">
@@ -123,9 +124,10 @@ const HotelCard = ({ data }) => {
 
         <Link
           href={`/hotel/${data?._id}`}
-          className="bg-[#3583FE] text-white font-medium py-2 px-6 rounded-full text-[14px] flex items-center gap-2 hover:bg-[#2866cc] transition-all w-full justify-center"
+          className="bg-[#3583FE] text-white font-medium py-2 px-4 rounded-full text-[14px] flex items-center gap-2 hover:bg-[#2866cc] transition-all w-full justify-center truncate"
         >
-          Details <span className="text-[10px]">{">"}</span>
+          <span className="truncate">Details</span>
+          <span className="text-[10px] ml-1">{">"}</span>
         </Link>
       </div>
 
