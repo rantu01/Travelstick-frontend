@@ -366,14 +366,12 @@ export default function BookingDetailsPage() {
 
                     {/* Continue Button */}
                     <div className="text-right pt-4">
-                        <p className="text-orange-600 text-[11px] font-bold italic mb-2">
-                            {roomName} Â· {roomCount} room{roomCount > 1 ? 's' : ''} Â· {nights} night{nights > 1 ? 's' : ''}
-                        </p>
+                        
                         <button
                             onClick={handleContinue}
                             className="bg-[#003580] hover:bg-blue-900 text-white font-black py-4 px-12 rounded-lg text-lg uppercase tracking-wider transition-colors shadow-lg"
                         >
-                            Continue to Payment â†’
+                            Continue to Payment 
                         </button>
                     </div>
                 </div>
@@ -428,9 +426,7 @@ export default function BookingDetailsPage() {
                             </div>
 
                             <div className="pt-3 border-t">
-                                <div className="text-xs text-gray-500 mb-2">
-                                    {formatPrice(roomPrice)} Ã— {nights} night{nights > 1 ? 's' : ''} Ã— {roomCount} room{roomCount > 1 ? 's' : ''}
-                                </div>
+                                
                                 <div className="flex justify-between items-center">
                                     <span className="font-bold text-lg">Total Price</span>
                                     <span className="font-black text-2xl text-[#1a1a1a]">{formatPrice(totalAmount)}</span>
