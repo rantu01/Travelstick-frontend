@@ -587,18 +587,15 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                     {/* Overlay */}
                     <div
                         onClick={() => setOpenSearch(false)}
-                        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"
-                            }`}
+                        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"}`}
                     ></div>
 
-                    {/* Drawer */}
-                    <div
-                        className={`absolute bottom-0 left-0 w-full h-auto bg-white rounded-t-2xl py-10 
-                            transform transition-transform duration-300 ease-out
-                            ${openSearch ? "translate-y-0" : "translate-y-full"}`}
-                    >
-                        {SearchBarContent}
-                    </div>
+                    {/* Drawer: render mobile search content only when openSearch is true to avoid duplicate Popovers */}
+                    {openSearch && (
+                        <div className={`absolute bottom-0 left-0 w-full h-auto bg-white rounded-t-2xl py-10 transform transition-transform duration-300 ease-out translate-y-0`}>
+                            {SearchBarContent}
+                        </div>
+                    )}
 
                 </div>
 
