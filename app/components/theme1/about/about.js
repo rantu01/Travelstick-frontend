@@ -11,6 +11,12 @@ import { useFetch } from "@/app/helper/hooks";
 import Banner2 from "../../site/common/component/Banner2";
 import Choose2 from "../../home2/choose2";
 import WhoWeAre2 from "../../home2/whoWe2";
+import TravelHero from "./TravelHero";
+import OurHeritage from "./OurHeritage";
+import MissionVisionCards from "./MissionVisionCards";
+import WhyBanglaco from "./WhyBanglaco";
+import MeetTheTeam from "./MeetTheTeam";
+import TestimonialsAbout from "./TestimonialsAbout";
 
 const AboutPage = () => {
    const [data] = useFetch(fetchPageContentTheme1, {
@@ -19,25 +25,37 @@ const AboutPage = () => {
    const theme = data?.theme;
    return (
       <div className=''>
-         {
+         {/* {
             theme === 'two' ?
                <Banner title='About' /> :
                <Banner2 title='About' />
-         }
+         } */}
          <div className='flex flex-col lg:gap-[100px] md:gap-20 sm:gap-14 gap-10 overflow-hidden'>
-            <div className="py-10 bg-[#F8F7F6]">
+            {/* <div className="py-10 bg-[#F8F7F6]">
                <WhoWeAre2 theme={theme} path="about" />
-            </div>
-            {
+            </div> */}
+            {/* {
                theme === 'one' ?
                   <Choose position="lg:flex-row-reverse" /> :
                   <Choose2 />
-            }
-            <Testimonials theme={theme} />
-            <Expert1 theme={theme} />
-            <Newsletter theme={theme} />
+            } */}
+            {/* <Testimonials theme={theme} /> */}
+            {/* <Expert1 theme={theme} /> */}
+            {/* <Newsletter theme={theme} /> */}
          </div>
+
+         <div>
+               <TravelHero></TravelHero>
+               <OurHeritage></OurHeritage>
+               <MissionVisionCards></MissionVisionCards>
+               <WhyBanglaco></WhyBanglaco>
+               <MeetTheTeam></MeetTheTeam>
+               <TestimonialsAbout></TestimonialsAbout>
+         </div>
+
+
       </div>
+
    );
 };
 
