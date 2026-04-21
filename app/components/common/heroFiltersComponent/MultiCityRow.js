@@ -46,9 +46,9 @@ const MultiCityRow = ({
       {/* Swap button */}
       <div
         onClick={() => handleSwapMultiCity(index)}
-        className="absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-20 bg-[#00BCE4] text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
+        className="absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-20 bg-primary text-white rounded-full p-1 border-2 border-white shadow-md cursor-pointer hover:bg-[#1A4FA0] transition-colors"
       >
-        <FaExchangeAlt size={16} className="rotate-90 md:rotate-0" />
+        <FaExchangeAlt size={20} className="rotate-90 md:rotate-0" />
       </div>
     </div>
 
