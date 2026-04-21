@@ -40,12 +40,6 @@ const BookTour = ({ data, user }) => {
       return false;
     }
 
-    if (user?.role !== 'user') {
-      setIsModalOpen(false);
-      message.error(i18n.t('Please login with a user account to book.'));
-      return false;
-    }
-
     return true;
   };
 
@@ -192,7 +186,11 @@ const BookTour = ({ data, user }) => {
       message.success(i18n.t('Booking successful'));
       setIsModalOpen(false);
       try {
-        router.push('/user/packageBooking');
+        if (user?.role === 'admin' || user?.role === 'employee') {
+          router.push('/admin/packageManagement/packageBooking');
+        } else {
+          router.push('/user/packageBooking');
+        }
       } catch (e) {
         // ignore navigation errors
       }

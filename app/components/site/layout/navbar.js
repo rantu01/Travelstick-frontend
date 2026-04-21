@@ -63,7 +63,7 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
     {
       path: "/flight",
       label: i18n.t("Flight"),
-      icon: <Image src="/Header Icon/2.png" width={40} height={40} alt="Flight" />
+      icon: <Image src="/Header Icon/IconF.png" width={40} height={40} alt="Flight" />
     },
     {
       path: "/hotel",
