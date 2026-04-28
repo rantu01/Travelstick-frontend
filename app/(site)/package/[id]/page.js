@@ -130,7 +130,7 @@ const PackageDetails = () => {
     },
     {
       label: "Group Size",
-      value: data?.group_size ? `Max ${data.group_size}` : null,
+      value: data?.group_size ? `Min ${data.group_size}` : null,
       img: "/Holidays Icon/Group Size.png",
     },
     // ...(data?.difficulty_level
