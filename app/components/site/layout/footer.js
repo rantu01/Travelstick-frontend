@@ -72,7 +72,7 @@ const Footer = () => {
           <div className="flex flex-col justify-between">
             <div>
               <h4 className="text-xl font-bold mb-6">Explore</h4>
-              <ul className="space-y-4 text-base opacity-90">
+              <ul className="space-y-1 text-base opacity-90">
                 {exploreLinks.map((item, idx) => (
                   <li key={idx} className="hover:translate-x-2 transition-transform">
                     <Link href={item.link}>{item.name}</Link>
@@ -99,7 +99,7 @@ const Footer = () => {
           {/* Column 3: Useful Links */}
           <div>
             <h4 className="text-xl font-bold mb-6">Useful Links</h4>
-            <ul className="space-y-4 text-base opacity-90">
+            <ul className="space-y-1 text-base opacity-90">
               <li className="hover:translate-x-2 transition-transform"><Link href="/about">About Us</Link></li>
               <li className="hover:translate-x-2 transition-transform"><Link href="/contact">Contact Us</Link></li>
               <li className="hover:translate-x-2 transition-transform"><Link href="/terms">Terms & Conditions</Link></li>
@@ -110,7 +110,7 @@ const Footer = () => {
           {/* Column 4: Contact & Map */}
           <div className="space-y-6">
             <h4 className="text-xl font-bold mb-6">Contact Us</h4>
-            <div className="text-base space-y-4 opacity-90">
+            <div className="text-base space-y-1 opacity-90">
               <a
                 href="https://maps.google.com"
                 target="_blank"

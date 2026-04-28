@@ -33,7 +33,7 @@ const PackageCard = ({ data, index }) => {
             <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-sm border border-white/40 text-white px-3 py-1.5 rounded-full">
               <HiOutlineCube className="text-sm" />
               <span className="text-[12px] font-medium">
-                {data?.total_packages || "0"} Packages
+                {data?.total_packages ?? data?.destination?.count ?? 0} Packages
               </span>
             </div>
           </div>
