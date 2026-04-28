@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Drawer } from 'antd';
 import { useCurrency } from '@/app/contexts/site';
 import { ChevronUp, Signal, CheckCircle2, Laptop } from 'lucide-react';
 
@@ -12,66 +13,83 @@ const ESIMListing = () => {
 
   const { formatPrice } = useCurrency();
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const FiltersPanel = (
+    <div className="space-y-4">
+      {/* Price Range */}
+      <div className="bg-white rounded-xl p-5 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-[#1A2B49]">Price Range</h3>
+          <ChevronUp size={20} className="text-gray-400" />
+        </div>
+        <p className="text-[11px] text-gray-400 mb-6">Starts from BDT 500 - BDT 8,625 against your search. Price is a subject to change.</p>
+        <div className="relative h-1.5 bg-blue-100 rounded-full mb-4">
+          <div className="absolute h-full bg-blue-500 rounded-full w-full"></div>
+          <div className="absolute -top-1.5 left-0 w-4 h-4 bg-white border-2 border-blue-500 rounded-full"></div>
+          <div className="absolute -top-1.5 right-0 w-4 h-4 bg-white border-2 border-blue-500 rounded-full"></div>
+        </div>
+        <p className="text-center text-xs font-bold text-gray-600 uppercase">BDT 500 - BDT 8,625</p>
+      </div>
+
+      {/* Operators */}
+      <div className="bg-white rounded-xl p-5 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-[#1A2B49]">Operators</h3>
+          <ChevronUp size={20} className="text-gray-400" />
+        </div>
+        <div className="space-y-3">
+          {['Change', 'Change+'].map((op) => (
+            <label key={op} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+              <input type="radio" name="operator" className="w-4 h-4 border-gray-300 text-blue-600 focus:ring-blue-500" />
+              {op}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Plan Option */}
+      <div className="bg-white rounded-xl p-5 shadow-sm">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-[#1A2B49]">Plan Option</h3>
+          <ChevronUp size={20} className="text-gray-400" />
+        </div>
+        <div className="space-y-3">
+          {['Package', 'Unlimited'].map((opt) => (
+            <label key={opt} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+              <input type="radio" name="plan" className="w-4 h-4 border-gray-300 text-blue-600 focus:ring-blue-500" />
+              {opt}
+            </label>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="bg-[#E9F0F7] min-h-screen p-6 font-sans">
-      <div className="max-w-6xl mx-auto flex gap-6">
-        
-        {/* Left Sidebar Filters */}
-        <div className="w-1/4 space-y-4">
-          {/* Price Range */}
-          <div className="bg-white rounded-xl p-5 shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-[#1A2B49]">Price Range</h3>
-              <ChevronUp size={20} className="text-gray-400" />
-            </div>
-            <p className="text-[11px] text-gray-400 mb-6">Starts from BDT 500 - BDT 8,625 against your search. Price is a subject to change.</p>
-            <div className="relative h-1.5 bg-blue-100 rounded-full mb-4">
-              <div className="absolute h-full bg-blue-500 rounded-full w-full"></div>
-              <div className="absolute -top-1.5 left-0 w-4 h-4 bg-white border-2 border-blue-500 rounded-full"></div>
-              <div className="absolute -top-1.5 right-0 w-4 h-4 bg-white border-2 border-blue-500 rounded-full"></div>
-            </div>
-            <p className="text-center text-xs font-bold text-gray-600 uppercase">BDT 500 - BDT 8,625</p>
-          </div>
+    <div className="bg-[#E9F0F7] min-h-screen p-4 md:p-6 font-sans">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-6">
 
-          {/* Operators */}
-          <div className="bg-white rounded-xl p-5 shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-[#1A2B49]">Operators</h3>
-              <ChevronUp size={20} className="text-gray-400" />
-            </div>
-            <div className="space-y-3">
-              {['Change', 'Change+'].map((op) => (
-                <label key={op} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
-                  <input type="radio" name="operator" className="w-4 h-4 border-gray-300 text-blue-600 focus:ring-blue-500" />
-                  {op}
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Plan Option */}
-          <div className="bg-white rounded-xl p-5 shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-[#1A2B49]">Plan Option</h3>
-              <ChevronUp size={20} className="text-gray-400" />
-            </div>
-            <div className="space-y-3">
-              {['Package', 'Unlimited'].map((opt) => (
-                <label key={opt} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
-                  <input type="radio" name="plan" className="w-4 h-4 border-gray-300 text-blue-600 focus:ring-blue-500" />
-                  {opt}
-                </label>
-              ))}
-            </div>
-          </div>
+        {/* Left Sidebar Filters (hidden on mobile) */}
+        <div className="hidden md:block md:w-1/4">
+          {FiltersPanel}
         </div>
 
         {/* Right Content Area */}
-        <div className="w-3/4">
-          <h2 className="text-xl font-bold text-[#1A2B49] mb-4">21 eSIM Found</h2>
+        <div className="w-full md:w-3/4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-[#1A2B49]">21 eSIM Found</h2>
+            <button
+              onClick={() => setDrawerOpen(true)}
+              className="md:hidden bg-white px-3 py-2 rounded-md border border-gray-200 shadow-sm text-sm font-semibold"
+            >
+              Filters
+            </button>
+          </div>
 
           {/* Featured eSIM Card */}
-          <div className="bg-white rounded-2xl p-6 shadow-sm border border-white flex justify-between items-center mb-6 relative overflow-hidden">
+          <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-white mb-6 relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-6">
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="text-2xl">🇺🇸</span>
@@ -99,7 +117,7 @@ const ESIMListing = () => {
             </div>
 
             {/* Mock Credit Card Illustration */}
-            <div className="relative w-64 h-40 bg-gradient-to-br from-[#0A1D37] to-[#1A3A63] rounded-2xl p-4 text-white shadow-xl overflow-hidden">
+            <div className="relative w-full md:w-64 h-40 bg-gradient-to-br from-[#0A1D37] to-[#1A3A63] rounded-2xl p-4 text-white shadow-xl overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-full bg-white opacity-10 skew-x-[20deg] -mr-8"></div>
                 <div className="flex justify-between items-start">
                    <div className="flex flex-col">
@@ -121,13 +139,14 @@ const ESIMListing = () => {
                     </div>
                 </div>
             </div>
+            </div>
           </div>
 
           {/* Plan List */}
           <div className="space-y-3">
             {plans.map((plan) => (
-              <div key={plan.id} className="bg-white rounded-2xl p-4 shadow-sm border border-transparent hover:border-blue-200 transition-all flex items-center justify-between">
-                <div className="flex items-center gap-5">
+              <div key={plan.id} className="bg-white rounded-2xl p-4 shadow-sm border border-transparent hover:border-blue-200 transition-all flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex items-start md:items-center gap-5">
                   <div className="bg-orange-50 p-3 rounded-xl border border-orange-100">
                     <div className="w-8 h-8 border-2 border-orange-400 rounded-md relative flex flex-col justify-center items-center gap-0.5">
                         <div className="absolute -top-1 -left-1 w-2 h-2 bg-orange-400 rounded-full"></div>
@@ -143,11 +162,11 @@ const ESIMListing = () => {
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-6">
-                  <div className="text-right">
+                <div className="flex flex-col md:flex-row md:items-center md:gap-6 w-full md:w-auto">
+                  <div className="text-right md:text-right w-full md:w-auto">
                     <span className="text-xl font-bold text-[#1A2B49]">{formatPrice(plan.price)}</span>
                   </div>
-                  <button className="bg-[#1B84FF] text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-600 shadow-lg shadow-blue-200 transition-all">
+                  <button className="bg-[#1B84FF] text-white px-4 py-2.5 md:px-8 rounded-xl font-bold hover:bg-blue-600 shadow-lg shadow-blue-200 transition-all w-full md:w-auto">
                     Select
                   </button>
                 </div>
@@ -155,6 +174,16 @@ const ESIMListing = () => {
             ))}
           </div>
         </div>
+        {/* Mobile Drawer for Filters */}
+        <Drawer
+          title="Filters"
+          placement="left"
+          onClose={() => setDrawerOpen(false)}
+          open={drawerOpen}
+          width={320}
+        >
+          {FiltersPanel}
+        </Drawer>
       </div>
     </div>
   );

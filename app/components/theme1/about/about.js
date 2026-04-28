@@ -49,7 +49,7 @@ const AboutPage = () => {
                <OurHeritage></OurHeritage>
                <MissionVisionCards></MissionVisionCards>
                <WhyBanglaco></WhyBanglaco>
-               <MeetTheTeam></MeetTheTeam>
+               {/* <MeetTheTeam></MeetTheTeam> */}
                <TestimonialsAbout></TestimonialsAbout>
          </div>
 
