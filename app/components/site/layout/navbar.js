@@ -52,11 +52,8 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
     getCurrentUser();
   }, []);
 
-  // Build dropdown options from context's currency list
-  const currencyOptions = currencies?.map(c => ({
-    value: c.code,
-    label: <span className="text-[#1A2B6D] font-bold">{c.label}</span>,
-  })) || [];
+  // State to manage currency popup visibility
+  const [currencyPopoverOpen, setCurrencyPopoverOpen] = useState(false);
 
   // Updated Menu items with Custom Icons from /Header Icon/
   const menuItems = [
@@ -176,17 +173,41 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
         <div className="flex items-center gap-4">
 
           {/* Currency Selector — live rates, 4 currencies */}
-          <div className="hidden sm:block">
-            <Select
-              value={selectedCurrency}
-              variant="borderless"
-              onChange={(selected) => setCurrency(selected)}
-              options={currencyOptions}
-              style={{ color: "#1A2B6D", fontWeight: "bold" }}
-              className="min-w-[90px]"
-              loading={ratesLoading}
-            />
-          </div>
+          {/* Currency Popup Selector */}
+          <Popover
+            content={
+              <div className="p-2">
+                <div className="text-xs font-bold text-gray-600 mb-2 uppercase tracking-wider">Select Currency</div>
+                <div className="grid grid-cols-3 gap-2 max-h-[400px] overflow-y-auto min-w-[300px]">
+                  {currencies?.map(c => (
+                    <button
+                      key={c.code}
+                      onClick={() => {
+                        setCurrency(c.code);
+                        setCurrencyPopoverOpen(false);
+                      }}
+                      className={`px-2 py-1.5 rounded-md text-xs font-bold border transition-all whitespace-nowrap ${
+                        selectedCurrency === c.code
+                          ? "bg-[#1A2B6D] text-white border-[#1A2B6D]"
+                          : "text-[#1A2B6D] border-gray-200 hover:border-[#1A2B6D] hover:bg-gray-50"
+                      }`}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            }
+            trigger="click"
+            placement="bottomLeft"
+            open={currencyPopoverOpen}
+            onOpenChange={setCurrencyPopoverOpen}
+          >
+            <div className="hidden sm:flex items-center cursor-pointer gap-1 px-2 py-1 rounded-md hover:bg-gray-100 transition-all">
+              <span className="text-sm font-bold text-[#1A2B6D]">{selectedCurrency}</span>
+              <IoChevronDownOutline className={`text-[#1A2B6D] transition-transform ${currencyPopoverOpen ? 'rotate-180' : ''}`} />
+            </div>
+          </Popover>
 
           {/* Notification */}
           {user?._id && (
@@ -249,14 +270,14 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
           {/* Currency selector in mobile drawer too */}
           <div>
             <p className="text-xs text-gray-400 mb-2 font-bold uppercase tracking-wider">Currency</p>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-3 gap-2 max-h-[300px] overflow-y-auto">
               {currencies?.map(c => (
                 <button
                   key={c.code}
                   onClick={() => setCurrency(c.code)}
-                  className={`px-3 py-1.5 rounded-md text-sm font-bold border transition-all ${selectedCurrency === c.code
+                  className={`px-2 py-1.5 rounded-md text-xs font-bold border transition-all ${selectedCurrency === c.code
                     ? "bg-[#1A2B6D] text-white border-[#1A2B6D]"
-                    : "text-[#1A2B6D] border-gray-200 hover:border-[#1A2B6D]"
+                    : "text-[#1A2B6D] border-gray-200 hover:border-[#1A2B6D] hover:bg-gray-50"
                     }`}
                 >
                   {c.label}
