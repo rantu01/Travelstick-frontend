@@ -53,6 +53,30 @@ const VisaDetails = () => {
     }
   }
 
+  // Resolve citizen country to a full display name (handles codes or full names)
+  const rawCitizen = data?.citizen_of || "";
+  let citizenDisplay = "";
+  if (rawCitizen) {
+    const val = String(rawCitizen).trim();
+    if (val.length === 2 && countries[val.toUpperCase()]) {
+      citizenDisplay = countries[val.toUpperCase()].name;
+    } else {
+      const found = Object.entries(countries).find(([, c]) => c.name.toLowerCase() === val.toLowerCase());
+      if (found) {
+        citizenDisplay = found[1].name;
+      } else {
+        const aliasMap = { usa: "US", uk: "GB", uae: "AE" };
+        const lower = val.toLowerCase();
+        if (aliasMap[lower] && countries[aliasMap[lower]]) {
+          citizenDisplay = countries[aliasMap[lower]].name;
+        } else {
+          // Fallback: title-case the provided value
+          citizenDisplay = val.split(" ").map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(" ");
+        }
+      }
+    }
+  }
+
   const [openDrawer, setOpenDrawer] = useState(false);
 
   const overviewRef = useRef(null);
@@ -128,7 +152,7 @@ const VisaDetails = () => {
   const { formatPrice } = useCurrency();
 
   const otherInfoDetails = [
-    { label: "Citizen Of", value: data?.citizen_of },
+    { label: "Citizen Of", value: citizenDisplay || data?.citizen_of },
     { label: "Travelling To", value: displayCountry || data?.travelling_to },
     { label: "Processing Time", value: data?.processing_type },
     { label: "Visa Mode", value: data?.visa_mode },
@@ -192,8 +216,8 @@ const VisaDetails = () => {
           /> */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-[#05073C] font-extrabold text-3xl md:text-4xl lg:text-5xl leading-tight">
-                {data?.title?.[langCode] || `${displayCountry || data?.travelling_to} Visa`} From {data?.citizen_of || "Bangladesh"}
+                <h1 className="text-[#05073C] font-extrabold text-3xl md:text-4xl lg:text-5xl leading-tight">
+                {data?.title?.[langCode] || `${displayCountry || data?.travelling_to} Visa`}
               </h1>
               <div className="flex items-center gap-4 mt-3">
                 <div className="flex items-center gap-2 text-[#717171] text-sm">
