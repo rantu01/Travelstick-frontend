@@ -209,10 +209,10 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
 
   const SearchBarContent = (
     <div className="travel-container -mt-4 relative z-20 md:sticky md:top-[105px]">
-      <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-12 items-stretch gap-3">
 
         {/* Destination */}
-        <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+        <div className="md:col-span-3 p-4 hover:bg-gray-50 cursor-pointer group bg-white rounded-xl border border-gray-100 shadow-sm">
           <div className="flex justify-between items-center">
             <Popover
               open={openPopover === 'dest'}
@@ -240,7 +240,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
         </div>
 
         {/* Check In */}
-        <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+        <div className="md:col-span-2 p-4 hover:bg-gray-50 bg-white rounded-xl border border-gray-100 shadow-sm">
           <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Check In</p>
           <DatePicker
             onChange={(d) => setStartDate(d)}
@@ -253,7 +253,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
         </div>
 
         {/* Check Out */}
-        <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+        <div className="md:col-span-2 p-4 hover:bg-gray-50 bg-white rounded-xl border border-gray-100 shadow-sm">
           <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Check Out</p>
           <div className="flex items-center justify-between">
             <DatePicker
@@ -269,7 +269,7 @@ const HotelsPage = ({ destination: initialDest, hotelType, roomType, reputation,
         </div>
 
         {/* Room & Guests */}
-        <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer">
+        <div className="md:col-span-4 p-4 hover:bg-gray-50 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm">
           <Popover
             open={openPopover === 'guests'}
             onOpenChange={(v) => setOpenPopover(v ? 'guests' : null)}

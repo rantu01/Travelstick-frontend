@@ -176,10 +176,10 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
 
   const SearchBarContent = (
     <div className="travel-container -mt-4 relative z-30 md:sticky md:top-[170px]">
-      <div className="bg-white rounded-xl shadow-sm flex flex-col md:grid md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-12 items-stretch gap-3">
 
         {/* ✅ Step 1: Citizen Of */}
-        <div className="md:col-span-4 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer transition-colors">
+        <div className="md:col-span-4 p-4 hover:bg-gray-50 cursor-pointer transition-colors bg-white rounded-xl border border-gray-100 shadow-sm">
           <Popover
             open={openPopover === "visa-cit"}
             onOpenChange={(v) => setOpenPopover(v ? "visa-cit" : null)}
@@ -201,7 +201,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
         </div>
 
         {/* ✅ Step 2: Travelling To — citizenOf এর পর enable */}
-        <div className={`md:col-span-4 border-b md:border-b-0 md:border-r p-4 transition-colors ${!citizenOf ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 cursor-pointer"}`}>
+        <div className={`md:col-span-4 p-4 transition-colors bg-white rounded-xl border border-gray-100 ${!citizenOf ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 cursor-pointer"}`}>
           <div className="flex justify-between items-center w-full">
             <Popover
               open={citizenOf ? openPopover === "visa-to" : false}
@@ -235,7 +235,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
         </div>
 
         {/* ✅ Step 3: Visa Category — travellingTo এর পর enable */}
-        <div className={`md:col-span-3 border-b md:border-b-0 md:border-r p-4 transition-colors ${!travellingTo ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 cursor-pointer"}`}>
+        <div className={`md:col-span-3 p-4 transition-colors bg-white rounded-xl border border-gray-100 ${!travellingTo ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50 cursor-pointer"}`}>
           <Popover
             open={travellingTo ? openPopover === "visa-cat" : false}
             onOpenChange={(v) => travellingTo && setOpenPopover(v ? "visa-cat" : null)}

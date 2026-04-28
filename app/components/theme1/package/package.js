@@ -114,10 +114,10 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
 
   const   SearchBarContent = (
     <div className="travel-container -mt-4 relative z-20 sticky md:sticky md:top-[105px]">
-      <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-200 overflow-hidden">
+      <div className="grid grid-cols-1 md:grid-cols-12 items-stretch gap-3">
 
         {/* Destination */}
-        <div className="md:col-span-6 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+        <div className="md:col-span-6 p-4 hover:bg-gray-50 cursor-pointer group bg-white rounded-xl border border-gray-100 shadow-sm">
           <div className="flex justify-between items-center">
               <Popover
               open={openPopover === 'tour-dest'}
@@ -144,7 +144,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
         </div>
 
         {/* Preferred Date */}
-        <div className="md:col-span-5 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+        <div className="md:col-span-5 p-4 hover:bg-gray-50 bg-white rounded-xl border border-gray-100 shadow-sm">
           <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Preferred Date</p>
           <div className="flex items-center justify-between">
             <DatePicker

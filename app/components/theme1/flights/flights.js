@@ -416,10 +416,10 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
 
     const SearchBarContent = (
         <div className="travel-container -mt-4 relative z-30 md:sticky md:top-[105px] z-50">
-            <div className="bg-white rounded-xl shadow-sm grid grid-cols-1 md:grid-cols-12 items-stretch border border-gray-100 overflow-hidden">
+            <div className="grid grid-cols-1 md:grid-cols-12 items-stretch gap-3">
 
                 {/* From */}
-                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer relative group">
+                <div className="md:col-span-2 p-4 hover:bg-gray-50 cursor-pointer relative group bg-white rounded-xl border border-gray-100 shadow-sm">
                     <Popover
                         open={openPopover === 'flight-from'}
                         onOpenChange={(v) => setOpenPopover(v ? 'flight-from' : null)}
@@ -446,7 +446,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                 </div>
 
                 {/* To */}
-                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 cursor-pointer group">
+                <div className="md:col-span-2 p-4 hover:bg-gray-50 cursor-pointer group bg-white rounded-xl border border-gray-100 shadow-sm">
                     <Popover
                         open={openPopover === 'flight-to'}
                         onOpenChange={(v) => setOpenPopover(v ? 'flight-to' : null)}
@@ -465,7 +465,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                 </div>
 
                 {/* Departure Date */}
-                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                <div className="md:col-span-2 p-4 hover:bg-gray-50 bg-white rounded-xl border border-gray-100 shadow-sm">
                     <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Departure</p>
                     <div className="flex flex-col">
                         <DatePicker
@@ -483,7 +483,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                 </div>
 
                 {/* Return Date */}
-                <div className="md:col-span-2 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50 group">
+                <div className="md:col-span-2 p-4 hover:bg-gray-50 group bg-white rounded-xl border border-gray-100 shadow-sm">
                     <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wider">Return</p>
                     <div className="flex items-center justify-between">
                         <div className="flex-1">
@@ -509,7 +509,7 @@ const FlightsPage = ({ from: initialFrom, to: initialTo, date: initialDate, flig
                 </div>
 
                 {/* Travellers & Class */}
-                <div className="md:col-span-3 border-b md:border-b-0 md:border-r p-4 hover:bg-gray-50">
+                <div className="md:col-span-3 p-4 hover:bg-gray-50 bg-white rounded-xl border border-gray-100 shadow-sm">
                     <Popover
                         open={openPopover === 'flight-guests'}
                         onOpenChange={(v) => setOpenPopover(v ? 'flight-guests' : null)}
