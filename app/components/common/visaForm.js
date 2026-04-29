@@ -277,15 +277,30 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
               className="w-full p-3 border rounded-xl focus:outline-primary"
             />
             <div className="mt-1">
-              <UploadFileInput
-                className="!h-[50px] !pt-2"
-                max={1}
-                accept=".pdf"
-                name="file"
-                label={i18n.t("Visa Document")}
-                required
-                rules={[{ required: true, message: i18n.t("Please upload visa document") }]}
-              />
+              <div className="relative inline-block group">
+                <UploadFileInput
+                  className="!h-[50px] !pt-2"
+                  max={1}
+                  accept=".pdf"
+                  name="file"
+                  label={i18n.t("Visa Document")}
+                  required
+                  rules={[{ required: true, message: i18n.t("Please upload visa document") }]}
+                />
+
+                {/* Tooltip shown on hover for the Enquiry upload button */}
+                <div className="pointer-events-none opacity-0 invisible group-hover:visible group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-150 absolute left-0 bottom-full mb-2 w-56 bg-white border rounded-lg p-3 text-sm shadow-lg z-50">
+                  <div className="font-medium mb-1">Accepted Documents</div>
+                  <ul className="list-disc list-inside text-gray-700 space-y-1">
+                    <li>Passport</li>
+                    <li>Visa on Passport</li>
+                    <li>Bank Statement</li>
+                    <li>Bank Solvency</li>
+                    <li>NID</li>
+                    <li>Visiting Card/ID Card</li>
+                  </ul>
+                </div>
+              </div>
             </div>
             <div className="pt-3">
               <Button
