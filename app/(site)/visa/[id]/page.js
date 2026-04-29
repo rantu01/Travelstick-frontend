@@ -444,7 +444,12 @@ const VisaDetails = () => {
                   </div>
                 </div>
                 <div className="">
-                  <VisaForm id={data?._id} pricePerPerson={processingFee} />
+                  <VisaForm
+                    id={data?._id}
+                    pricePerPerson={processingFee}
+                    visaTitle={data?.title}
+                    visaTypeName={data?.visa_type?.name}
+                  />
                 </div>
               </div>
 
@@ -498,7 +503,12 @@ const VisaDetails = () => {
         width="100%"
         closeIcon={<RiArrowDropDownLine className="rotate-90 text-2xl" />}
       >
-        <VisaForm id={data?._id} pricePerPerson={processingFee} />
+        <VisaForm
+          id={data?._id}
+          pricePerPerson={processingFee}
+          visaTitle={data?.title}
+          visaTypeName={data?.visa_type?.name}
+        />
       </Drawer>
     </div>
   );

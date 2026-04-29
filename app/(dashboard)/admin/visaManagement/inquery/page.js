@@ -21,6 +21,25 @@ const VisaInquery = () => {
     getData({ inquiry_type: activeTab });
   }, [activeTab]);
 
+  const getLocalizedText = (value) => {
+    if (!value) return "";
+    if (typeof value === "string") return value;
+    return value?.[langCode] || value?.en || Object.values(value)?.[0] || "";
+  };
+
+  const getVisaName = (item) => {
+    return getLocalizedText(item?.visa?.title) || item?.visa_name || "N/A";
+  };
+
+  const getVisaTypeName = (item) => {
+    return (
+      getLocalizedText(item?.visa?.visa_type?.name) ||
+      getLocalizedText(item?.visa_type?.name) ||
+      item?.visa_type_name ||
+      "N/A"
+    );
+  };
+
   // ── Inquiry Columns ──
   const inquiryColumns = [
     {
@@ -31,7 +50,7 @@ const VisaInquery = () => {
     {
       text: "Visa Type",
       dataField: "visa_type",
-      formatter: (d) => (d ? <span>{d?.name?.[langCode]}</span> : "N/A"),
+      formatter: (_, d) => <span>{getVisaTypeName(d)}</span>,
     },
     {
       text: "Email",
@@ -181,7 +200,7 @@ const VisaInquery = () => {
                   {viewData?.full_name || "N/A"}
                 </h2>
                 <p className="text-sm text-[#717171]">
-                  ID: {viewData?._id?.$oid || viewData?._id || "N/A"}
+                  Inquiry ID: {viewData?._id?.$oid || viewData?._id || "N/A"}
                 </p>
               </div>
               <div className="text-sm text-right text-[#717171]">
@@ -189,6 +208,30 @@ const VisaInquery = () => {
                 <p className="mt-1">{viewData?.email || ""}</p>
               </div>
             </div>
+
+            <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+              <div>
+                <span className="font-semibold text-[#05073C]">Visa Name:</span>{" "}
+                <span className="text-[#717171]">{getVisaName(viewData)}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-[#05073C]">Visa Type:</span>{" "}
+                <span className="text-[#717171]">{getVisaTypeName(viewData)}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-[#05073C]">Visa Code:</span>{" "}
+                <span className="text-[#717171]">{viewData?.visa?.visa_code || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-[#05073C]">Entry Type:</span>{" "}
+                <span className="text-[#717171]">{viewData?.visa?.entry_type || "N/A"}</span>
+              </div>
+              <div>
+                <span className="font-semibold text-[#05073C]">Category:</span>{" "}
+                <span className="text-[#717171]">{viewData?.visa?.visa_category || "N/A"}</span>
+              </div>
+            </div>
+
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[#05073C]">
               <div>
@@ -201,16 +244,9 @@ const VisaInquery = () => {
                   <span className="text-[#717171]">{viewData?.phone || "N/A"}</span>
                 </p>
                 <p className="mt-2">
-                  <span className="font-semibold">Visa Type:</span>{" "}
+                  <span className="font-semibold">Inquiry Type:</span>{" "}
                   <span className="text-[#717171]">
-                    {(() => {
-                      const vt = viewData?.visa_type;
-                      if (!vt) return "N/A";
-                      if (typeof vt === "string") return vt;
-                      if (vt?.$oid) return vt.$oid;
-                      if (vt?.name) return vt.name?.[langCode] || JSON.stringify(vt);
-                      return JSON.stringify(vt);
-                    })()}
+                    {viewData?.inquiry_type || "N/A"}
                   </span>
                 </p>
               </div>
@@ -245,6 +281,27 @@ const VisaInquery = () => {
                 <h3 className="font-semibold text-[#05073C] mb-2">Message</h3>
                 <div className="text-[#717171] whitespace-pre-line">
                   {viewData?.message || "N/A"}
+                </div>
+              </div>
+            )}
+
+            {activeTab === "apply" && (
+              <div>
+                <h3 className="font-semibold text-[#05073C] mb-2">Application Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[#05073C]">
+                  <p><span className="font-semibold">Given Name:</span> <span className="text-[#717171]">{viewData?.given_name || "N/A"}</span></p>
+                  <p><span className="font-semibold">Last Name:</span> <span className="text-[#717171]">{viewData?.last_name || "N/A"}</span></p>
+                  <p><span className="font-semibold">Gender:</span> <span className="text-[#717171]">{viewData?.gender || "N/A"}</span></p>
+                  <p><span className="font-semibold">Date of Birth:</span> <span className="text-[#717171]">{viewData?.date_of_birth ? dayjs(viewData.date_of_birth).format("DD MMM, YYYY") : "N/A"}</span></p>
+                  <p><span className="font-semibold">Nationality:</span> <span className="text-[#717171]">{viewData?.nationality || "N/A"}</span></p>
+                  <p><span className="font-semibold">Passport Number:</span> <span className="text-[#717171]">{viewData?.passport_number || "N/A"}</span></p>
+                  <p><span className="font-semibold">Passport Expiry:</span> <span className="text-[#717171]">{viewData?.passport_expiry_date ? dayjs(viewData.passport_expiry_date).format("DD MMM, YYYY") : "N/A"}</span></p>
+                  <p><span className="font-semibold">Profession:</span> <span className="text-[#717171]">{viewData?.profession || "N/A"}</span></p>
+                </div>
+                <div className="mt-3 text-[#05073C]">
+                  <p><span className="font-semibold">Visited Countries:</span> <span className="text-[#717171]">{viewData?.visited_countries || "N/A"}</span></p>
+                  <p className="mt-2"><span className="font-semibold">Local Address:</span> <span className="text-[#717171]">{viewData?.local_address || "N/A"}</span></p>
+                  <p className="mt-2"><span className="font-semibold">Foreign Address:</span> <span className="text-[#717171]">{viewData?.foreign_address || "N/A"}</span></p>
                 </div>
               </div>
             )}

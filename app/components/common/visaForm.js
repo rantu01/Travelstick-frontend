@@ -1,15 +1,13 @@
 "use client";
 
-import { Form, DatePicker } from "antd";
+import { Form, DatePicker, Modal, Radio, message } from "antd";
 import { useEffect, useState } from "react";
 import { useI18n } from "@/app/contexts/i18n";
 import FormInput from "../form/input";
-import FormSelect from "../form/select";
-import { useAction, useFetch } from "@/app/helper/hooks";
+import { useAction } from "@/app/helper/hooks";
 import {
   createVisaQuery,
   createVisaApply,
-  getAllPublicVisaType,
   singlePDFUpload,
 } from "@/app/helper/backend";
 import Button from "@/app/(dashboard)/components/common/button";
@@ -19,7 +17,16 @@ import AuthModal from "../site/common/component/authModal";
 import { useRouter } from "next/navigation";
 import dayjs from "dayjs";
 
-const VisaForm = ({ id, pricePerPerson = 0 }) => {
+const getLocalizedText = (value, langCode) => {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "object") {
+    return value?.[langCode] || value?.en || Object.values(value)?.[0] || "";
+  }
+  return "";
+};
+
+const VisaForm = ({ id, pricePerPerson = 0, visaTitle, visaTypeName }) => {
   const router = useRouter();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const i18n = useI18n();
@@ -27,16 +34,19 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
   const { langCode } = useI18n();
   const [activeTab, setActiveTab] = useState("apply");
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [applyModalOpen, setApplyModalOpen] = useState(false);
 
   // ── Inquiry form ──
   const [inquiryForm] = Form.useForm();
-  const [visaTypes] = useFetch(getAllPublicVisaType, { limit: 100 });
 
   // ── Apply form ──
   const [applyForm] = Form.useForm();
+  const [applyDetailsForm] = Form.useForm();
   const [applicants, setApplicants] = useState(1);
   const [appointmentDate, setAppointmentDate] = useState(null);
   const subtotal = pricePerPerson * applicants;
+  const currentVisaName = getLocalizedText(visaTitle, langCode);
+  const currentVisaTypeName = getLocalizedText(visaTypeName, langCode);
 
   // Pre-fill user info
   useEffect(() => {
@@ -51,8 +61,20 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
         email: user?.email || "",
         phone: user?.phone || "",
       });
+      applyDetailsForm.setFieldsValue({
+        email: user?.email || "",
+        phone: user?.phone || "",
+      });
     }
-  }, [user, inquiryForm, applyForm]);
+  }, [user, inquiryForm, applyForm, applyDetailsForm]);
+
+  useEffect(() => {
+    if (activeTab === "inquiry" && id) {
+      inquiryForm.setFieldsValue({
+        visa: id,
+      });
+    }
+  }, [activeTab, id, inquiryForm]);
 
   // ── Inquiry Submit ──
   const onInquiryFinish = async (values) => {
@@ -74,7 +96,9 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
           full_name: values.name,
           email: values.email,
           phone: values.phone,
-          visa_type: values.visa_type,
+          visa: values.visa,
+          visa_name: currentVisaName,
+          visa_type_name: currentVisaTypeName,
           message: values.message,
           file,
         },
@@ -88,15 +112,51 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
     }
   };
 
-  // ── Apply Submit ──
-  const onApplyFinish = async (values) => {
-    if (!user) return setAuthModalOpen(true);
-    setSubmitLoading(true);
+  const handleOpenApplyModal = async () => {
+    if (!user) {
+      setAuthModalOpen(true);
+      return;
+    }
+    if (!appointmentDate) {
+      message.error("Please select appointment date first");
+      return;
+    }
     try {
+      const values = await applyForm.validateFields();
+      applyDetailsForm.setFieldsValue({
+        email: values?.email || user?.email || "",
+        phone: values?.phone || user?.phone || "",
+      });
+      setApplyModalOpen(true);
+    } catch {
+      // Form validation is handled by antd field rules.
+    }
+  };
+
+  // ── Apply Submit ──
+  const onApplyDetailsFinish = async (values) => {
+    if (!user) return setAuthModalOpen(true);
+
+    try {
+      const basicValues = await applyForm.validateFields();
+      setSubmitLoading(true);
       await useAction(createVisaApply, {
         body: {
           visa: id,
-          full_name: values.name,
+          visa_name: currentVisaName,
+          visa_type_name: currentVisaTypeName,
+          full_name: basicValues?.name || `${values.given_name} ${values.last_name}`.trim(),
+          given_name: values.given_name,
+          last_name: values.last_name,
+          gender: values.gender,
+          date_of_birth: values.date_of_birth?.toISOString?.() || null,
+          nationality: values.nationality,
+          visited_countries: values.visited_countries,
+          passport_number: values.passport_number,
+          passport_expiry_date: values.passport_expiry_date?.toISOString?.() || null,
+          profession: values.profession,
+          local_address: values.local_address,
+          foreign_address: values.foreign_address,
           email: values.email,
           phone: values.phone,
           appointment_date: appointmentDate,
@@ -106,9 +166,12 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
           inquiry_type: "apply",
         },
       });
+
       applyForm.resetFields();
+      applyDetailsForm.resetFields();
       setApplicants(1);
       setAppointmentDate(null);
+      setApplyModalOpen(false);
       router.push("/user/visaInquery");
     } catch (err) {
       console.error(err);
@@ -139,7 +202,7 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
 
       {/* ── Apply Tab ── */}
       {activeTab === "apply" && (
-        <Form form={applyForm} layout="vertical" onFinish={onApplyFinish}>
+        <Form form={applyForm} layout="vertical">
           <div className="p-4 space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
               <FormInput
@@ -219,9 +282,10 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
             </div>
 
             <Button
-              type="submit"
+              type="button"
               className="w-full h-[48px] !rounded-xl text-base font-semibold"
               loading={submitLoading}
+              onClick={handleOpenApplyModal}
             >
               {i18n.t("Apply Now")}
             </Button>
@@ -233,6 +297,9 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
       {activeTab === "inquiry" && (
         <Form form={inquiryForm} layout="vertical" onFinish={onInquiryFinish}>
           <div className="p-4 space-y-1">
+            <Form.Item name="visa" hidden>
+              <input type="hidden" />
+            </Form.Item>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
               <FormInput
                 name="name"
@@ -255,17 +322,14 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
                 required
                 className="w-full p-3 border rounded-xl focus:outline-primary"
               />
-              <FormSelect
-                name="visa_type"
-                required
-                options={visaTypes?.docs?.map((visa) => ({
-                  label: visa?.name?.[langCode],
-                  value: visa?._id,
-                }))}
-                className="w-full border rounded-xl h-[50px]"
-                placeholder="Select Visa Type"
-                label={i18n.t("Visa Type")}
-              />
+            </div>
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 space-y-2">
+              <div className="text-sm font-semibold text-[#05073C]">{i18n.t("Current Visa")}</div>
+              <div className="text-sm text-[#717171]">
+                {id
+                  ? currentVisaName || i18n.t("This inquiry will be attached to the current visa automatically.")
+                  : i18n.t("N/A")}
+              </div>
             </div>
             <FormInput
               name="message"
@@ -314,6 +378,157 @@ const VisaForm = ({ id, pricePerPerson = 0 }) => {
           </div>
         </Form>
       )}
+
+      <Modal
+        open={applyModalOpen}
+        onCancel={() => setApplyModalOpen(false)}
+        footer={null}
+        destroyOnClose
+        width={760}
+        centered
+      >
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-xl font-bold text-[#05073C]">Visa Application Submission</h3>
+            <p className="text-sm text-[#717171] mt-1">Sign In to Continue</p>
+          </div>
+
+          <Form form={applyDetailsForm} layout="vertical" onFinish={onApplyDetailsFinish}>
+            <div className="space-y-4">
+              <div className="text-base font-semibold text-[#05073C]">Traveller 1 (Primary Contact)</div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormInput
+                  name="given_name"
+                  label="Given Name"
+                  placeholder="Given name"
+                  required
+                  className="w-full p-3 border rounded-xl focus:outline-primary"
+                />
+                <FormInput
+                  name="last_name"
+                  label="Last Name"
+                  placeholder="Last name"
+                  required
+                  className="w-full p-3 border rounded-xl focus:outline-primary"
+                />
+              </div>
+
+              <Form.Item
+                name="gender"
+                label="Gender"
+                rules={[{ required: true, message: "Please select gender" }]}
+              >
+                <Radio.Group className="flex gap-6">
+                  <Radio value="male">MALE</Radio>
+                  <Radio value="female">FEMALE</Radio>
+                  <Radio value="other">OTHER</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Form.Item
+                  name="date_of_birth"
+                  label="Date of Birth"
+                  rules={[{ required: true, message: "Please select date of birth" }]}
+                >
+                  <DatePicker className="w-full h-[46px] rounded-xl border" />
+                </Form.Item>
+
+                <FormInput
+                  name="nationality"
+                  label="Nationality"
+                  placeholder="Nationality"
+                  required
+                  className="w-full p-3 border rounded-xl focus:outline-primary"
+                />
+              </div>
+
+              <FormInput
+                name="visited_countries"
+                textArea
+                rows={2}
+                label="Visited Countries"
+                placeholder="Visited countries"
+                required
+                className="w-full p-3 border rounded-xl focus:outline-primary"
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormInput
+                  name="passport_number"
+                  label="Passport Number"
+                  placeholder="Passport number"
+                  required
+                  className="w-full p-3 border rounded-xl focus:outline-primary"
+                />
+
+                <Form.Item
+                  name="passport_expiry_date"
+                  label="Passport Expiry Date"
+                  rules={[{ required: true, message: "Please select passport expiry date" }]}
+                >
+                  <DatePicker className="w-full h-[46px] rounded-xl border" />
+                </Form.Item>
+              </div>
+
+              <FormInput
+                name="profession"
+                label="Profession"
+                placeholder="Profession"
+                required
+                className="w-full p-3 border rounded-xl focus:outline-primary"
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormInput
+                  name="local_address"
+                  textArea
+                  rows={2}
+                  label="Local Address"
+                  placeholder="Local address"
+                  required
+                  className="w-full p-3 border rounded-xl focus:outline-primary"
+                />
+                <FormInput
+                  name="foreign_address"
+                  textArea
+                  rows={2}
+                  label="Foreign Address"
+                  placeholder="Foreign address"
+                  required
+                  className="w-full p-3 border rounded-xl focus:outline-primary"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormInput
+                  name="phone"
+                  label="Phone Number"
+                  placeholder="Phone number"
+                  required
+                  className="w-full p-3 border rounded-xl focus:outline-primary"
+                />
+                <FormInput
+                  name="email"
+                  label="Email Address"
+                  placeholder="Email address"
+                  required
+                  className="w-full p-3 border rounded-xl focus:outline-primary"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full h-[48px] !rounded-xl text-base font-semibold"
+                loading={submitLoading}
+              >
+                Submit Application
+              </Button>
+            </div>
+          </Form>
+        </div>
+      </Modal>
 
       <AuthModal
         authModalOpen={authModalOpen}
