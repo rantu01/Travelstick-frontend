@@ -28,6 +28,7 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
   const [searchDest, setSearchDest] = useState(initialDest || null);
   const [prefDate, setPrefDate] = useState(initialDate ? dayjs(initialDate) : null);
   const [openPopover, setOpenPopover] = useState(null);
+  const [airfareFilter, setAirfareFilter] = useState(null);
 
   const [filterData] = useFetch(getHeroFilterData);
 
@@ -88,11 +89,20 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
     check_in: prefDate ? prefDate.format("YYYY-MM-DD") : null,
     check_out: endDate,
     tour_type: tourType,
+    airfare: airfareFilter,
   });
 
   const handleSearch = () => {
     getData(buildSearchQuery());
     setOpenSearch(false);
+  };
+
+  // Wrapper function to handle filter data changes and persist airfare state
+  const handleFilterChange = (filterParams) => {
+    if (filterParams.airfare !== undefined) {
+      setAirfareFilter(filterParams.airfare);
+    }
+    getData(filterParams);
   };
 
   // --- Pagination Handler ---
@@ -104,7 +114,8 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
       discount_type: discount_type,
       destination: searchDest,
       check_in: prefDate ? prefDate.format("YYYY-MM-DD") : null,
-      tour_type: tourType
+      tour_type: tourType,
+      airfare: airfareFilter,
     });
     // Page change hole smoothly upore scroll korbe
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -254,11 +265,11 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
           className="md:hidden"
           width="100%"
         >
-          <Filters getData={getData} />
+          <Filters getData={handleFilterChange} />
         </Drawer>
         <div className="flex flex-col sm:flex-row xl:gap-6 lg:gap-5 md:gap-4 gap-3">
           <div className="w-full md:w-[30%] xl:w-[25%] hidden md:block">
-            <Filters getData={getData} />
+            <Filters getData={handleFilterChange} />
           </div>
           {/* Package Card */}
           <div className="w-full md:w-[70%] xl:w-[75%]">

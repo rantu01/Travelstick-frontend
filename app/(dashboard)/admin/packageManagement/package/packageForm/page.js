@@ -50,6 +50,7 @@ const PackageForm = ({ isEdit = false, data }) => {
           : [],
         group_size: data?.group_size,
         tour_type: data?.tour_type,
+        airfare: data?.airfare,
         section: data?.section || [],
         banner_video_url: data?.banner_video_url,
         about: data?.about || {},
@@ -369,15 +370,32 @@ const PackageForm = ({ isEdit = false, data }) => {
             className="w-full rounded bg-transparent p-3 dashinput"
             placeholder={i18n.t("Group Size")}
           />
-          <FormInput
-            label="Tour Type"
+          <FormSelect
+            label={i18n.t("Tour Type")}
             name="tour_type"
+            placeholder={i18n.t("Select Tour Type")}
             required
-            className="w-full rounded bg-transparent p-3 dashinput"
-            placeholder={i18n.t("Tour Type")}
+            className="w-full rounded bg-transparent py-6 px-2 dashinput"
+            options={[
+              { value: "adventure", label: "Adventure" },
+              { value: "leisure", label: "Leisure" },
+              { value: "cultural", label: "Cultural" },
+              { value: "business", label: "Business" },
+            ]}
           />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+          <FormSelect
+            label={i18n.t("Airfare Included")}
+            name="airfare"
+            placeholder={i18n.t("Select Airfare Option")}
+            required
+            className="w-full rounded bg-transparent py-6 px-2 dashinput"
+            options={[
+              { value: "with", label: "With Airfare" },
+              { value: "without", label: "Without Airfare" },
+            ]}
+          />
           <FormInput
             label="Start Location"
             name="start_location"
@@ -385,6 +403,8 @@ const PackageForm = ({ isEdit = false, data }) => {
             className="w-full rounded bg-transparent p-3 dashinput"
             placeholder={i18n.t("Start Location")}
           />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
           <FormInput
             label="End Location"
             name="end_location"

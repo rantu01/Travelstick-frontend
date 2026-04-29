@@ -79,6 +79,8 @@ const Filters = ({ getData }) => {
       destination: null,
       review: null,
       search: null,
+      airfare: null,
+      duration: null,
     });
     form.resetFields();
   };
@@ -160,7 +162,10 @@ const Filters = ({ getData }) => {
       {/* Airfare Section - Image UI Match */}
       <div>
         <h4 className="text-[#05073C] font-bold text-lg mb-3">{i18n.t("Airfare")}</h4>
-        <Radio.Group className="flex flex-col gap-3">
+        <Radio.Group 
+          className="flex flex-col gap-3"
+          onChange={(e) => getData({ airfare: e.target.value })}
+        >
           <Radio value="with" className="text-[#05073C] font-medium">With Airfare</Radio>
           <Radio value="without" className="text-[#05073C] font-medium">Without Airfare</Radio>
         </Radio.Group>
