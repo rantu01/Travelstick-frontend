@@ -102,7 +102,10 @@ const PackagePage = ({ discount, discount_type, destination: initialDest, startD
     if (filterParams.airfare !== undefined) {
       setAirfareFilter(filterParams.airfare);
     }
-    getData(filterParams);
+    // Merge current search query state with incoming filter params so we don't lose
+    // other active filters (destination, dates, pagination, etc.).
+    const merged = { ...buildSearchQuery(), ...filterParams };
+    getData(merged);
   };
 
   // --- Pagination Handler ---

@@ -6,7 +6,7 @@ import { useI18n } from "@/app/contexts/i18n";
 import { useFetch } from "@/app/helper/hooks";
 import { getAllSidePublicPackages } from "@/app/helper/backend";
 import { useCurrency } from "@/app/contexts/site";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { SearchOutlined } from "@ant-design/icons";
 
 const Filters = ({ getData }) => {
@@ -19,6 +19,7 @@ const Filters = ({ getData }) => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [selectedActivities, setSelectedActivities] = useState([]);
+  const [airfareSelection, setAirfareSelection] = useState("all");
   const i18n = useI18n();
   const { langCode } = useI18n();
   const [form] = Form.useForm();
@@ -68,10 +69,13 @@ const Filters = ({ getData }) => {
     getData({ maxPrice: max, minPrice: min });
   };
 
+  const searchDebounce = useRef(null);
+
   const handleReset = () => {
     setPriceRange([minPrice, maxPrice]);
     setSelectedActivities([]);
     setSelectedReview("all");
+    setAirfareSelection("all");
     getData({
       maxPrice: null,
       minPrice: null,
@@ -134,8 +138,14 @@ const Filters = ({ getData }) => {
         <FormInput
           placeholder={i18n.t("Search package...")}
           suffix={<SearchOutlined className="text-gray-400" />}
-          onChange={(e) => getData({ search: e.target.value })}
-          className="rounded-xl border-[#E8EAE8] py-2"
+          onChange={(e) => {
+            const v = e.target.value;
+            if (searchDebounce.current) clearTimeout(searchDebounce.current);
+            searchDebounce.current = setTimeout(() => {
+              getData({ search: v && String(v).trim() ? v.trim() : null });
+            }, 300);
+          }}
+          className="rounded-xl border-[#E8EAE8] p-2"
         />
       </div>
 
@@ -148,11 +158,15 @@ const Filters = ({ getData }) => {
           placeholder="Select duration"
           className="w-full rounded-xl"
           size="large"
-          onChange={(value) => getData({ duration: value })}
+          onChange={(value) => {
+            // backend expects a numeric duration (minimum days), so map ranges to min days
+            // value is a number representing minimum days or null for all
+            getData({ duration: value });
+          }}
           options={[
-            { value: "1-3", label: "1-3 Days" },
-            { value: "4-7", label: "4-7 Days" },
-            { value: "8-12", label: "8-12 Days" },
+            { value: 1, label: "1-3 Days" },
+            { value: 4, label: "4-7 Days" },
+            { value: 8, label: "8-12 Days" },
           ]}
         />
       </div>
@@ -162,10 +176,16 @@ const Filters = ({ getData }) => {
       {/* Airfare Section - Image UI Match */}
       <div>
         <h4 className="text-[#05073C] font-bold text-lg mb-3">{i18n.t("Airfare")}</h4>
-        <Radio.Group 
+        <Radio.Group
           className="flex flex-col gap-3"
-          onChange={(e) => getData({ airfare: e.target.value })}
+          value={airfareSelection}
+          onChange={(e) => {
+            const v = e.target.value;
+            setAirfareSelection(v);
+            getData({ airfare: v === 'all' ? null : v });
+          }}
         >
+          <Radio value="all" className="text-[#05073C] font-medium">All</Radio>
           <Radio value="with" className="text-[#05073C] font-medium">With Airfare</Radio>
           <Radio value="without" className="text-[#05073C] font-medium">Without Airfare</Radio>
         </Radio.Group>
