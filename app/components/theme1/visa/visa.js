@@ -19,6 +19,7 @@ import SelectionList from "../../common/heroFiltersComponent/SelectionList";
 const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, validity, theme }) => {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [data, getData] = useFetch(getAllPublicVisa, { limit: 100 }, false);
   const i18n = useI18n();
   const router = useRouter();
@@ -174,6 +175,13 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
     });
   }, [initialType, visaMode, initialCountry, validity]);
 
+  useEffect(() => {
+    const check = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   const SearchBarContent = (
     <div className="travel-container -mt-4 relative z-30 md:sticky md:top-[170px]">
       <div className="grid grid-cols-1 md:grid-cols-12 items-stretch gap-3">
@@ -290,7 +298,7 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
       
 
       <div className="travel-container xl:mt-[106px] lg:mt-[90px] md:mt-20 xm:mt-16 mt-12 pb-20 relative">
-        <div className="w-full md:hidden mb-4 sticky top-[72px] z-50 bg-white">
+        <div className={`w-full md:hidden mb-4 sticky top-[72px] z-50 bg-white ${openSearch ? "hidden" : "block"}`}>
           <button
             onClick={() => setOpenSearch(true)}
             className="w-full flex items-center justify-between gap-3 text-sm px-3 py-3 bg-white border border-gray-300 rounded-md shadow-sm overflow-hidden whitespace-nowrap"
@@ -326,25 +334,27 @@ const VisaPage = ({ visaType: initialType, visaMode, country: initialCountry, va
           <p className="heading-1 text-[#000000]">{i18n.t("Filters")}</p>
         </div>
 
-        <div className={`fixed inset-0 z-50 ${openSearch ? "visible" : "invisible"}`}>
+        {isMobile && (
+          <div className={`fixed inset-0 z-50 ${openSearch ? "visible" : "invisible"}`}>
 
-          {/* Overlay */}
-          <div
-            onClick={() => setOpenSearch(false)}
-            className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"}`}
-          ></div>
+            {/* Overlay */}
+            <div
+              onClick={() => setOpenSearch(false)}
+              className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${openSearch ? "opacity-100" : "opacity-0"}`}
+            ></div>
 
-          {/* Bottom drawer */}
-          <div
-            className={`absolute bottom-0 left-0 w-full h-auto bg-white rounded-t-2xl py-10 
+            {/* Bottom drawer */}
+            <div
+              className={`absolute bottom-0 left-0 w-full h-auto bg-white rounded-t-2xl py-10 
                             transform transition-transform duration-300 ease-out
                             overflow-y-auto
                             ${openSearch ? "translate-y-0" : "translate-y-full"}`}
-          >
-            {SearchBarContent}
-          </div>
+            >
+              {SearchBarContent}
+            </div>
 
-        </div>
+          </div>
+        )}
 
         {/* Drawer for filters */}
         <Drawer
