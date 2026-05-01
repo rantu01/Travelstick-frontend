@@ -70,15 +70,34 @@ const VisaForm = ({ id, pricePerPerson = 0, visaTitle, visaTypeName }) => {
 
   useEffect(() => {
     if (activeTab === "inquiry" && id) {
+      // Explicitly set the visa ID on form load
       inquiryForm.setFieldsValue({
         visa: id,
       });
     }
   }, [activeTab, id, inquiryForm]);
 
+  // Additional effect to ensure visa field is always set when component mounts
+  useEffect(() => {
+    if (id) {
+      inquiryForm.setFieldsValue({
+        visa: id,
+      });
+    }
+  }, [id, inquiryForm]);
+
   // ── Inquiry Submit ──
   const onInquiryFinish = async (values) => {
     if (!user) return setAuthModalOpen(true);
+    
+    // Ensure visa ID is present - this is critical for backend validation
+    const visaId = values?.visa || id;
+    if (!visaId) {
+      message.error("Unable to identify visa. Please reload the page and try again.");
+      setSubmitLoading(false);
+      return;
+    }
+    
     setSubmitLoading(true);
     try {
       let file = "";
@@ -96,7 +115,7 @@ const VisaForm = ({ id, pricePerPerson = 0, visaTitle, visaTypeName }) => {
           full_name: values.name,
           email: values.email,
           phone: values.phone,
-          visa: values.visa,
+          visa: visaId,  // Explicitly use visa ID (fallback to id prop if form field missing)
           visa_name: currentVisaName,
           visa_type_name: currentVisaTypeName,
           message: values.message,
@@ -106,7 +125,8 @@ const VisaForm = ({ id, pricePerPerson = 0, visaTitle, visaTypeName }) => {
       inquiryForm.resetFields();
       router.push("/user/visaInquery");
     } catch (err) {
-      console.error(err);
+      console.error("Visa inquiry submission error:", err);
+      message.error(err?.response?.data?.errorMessage || "Failed to submit enquiry. Please try again.");
     } finally {
       setSubmitLoading(false);
     }

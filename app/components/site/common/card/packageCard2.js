@@ -11,13 +11,29 @@ const PackageCard = ({ data, index }) => {
   const { formatPrice } = useCurrency();
   const { langCode } = useI18n();
 
-  const packageCount = Number(
-    data?.total_packages ??
-      data?.destination?.count ??
-      data?.packages?.length ??
-      data?.destination?.packages?.length ??
-      0
-  );
+  // Safely extract package count with multiple fallbacks
+  const getPackageCount = () => {
+    // Primary: Check for total_packages field
+    if (data?.total_packages && Number(data.total_packages) > 0) {
+      return Number(data.total_packages);
+    }
+    // Secondary: Check destination.count
+    if (data?.destination?.count && Number(data.destination.count) > 0) {
+      return Number(data.destination.count);
+    }
+    // Tertiary: Check packages array length
+    if (Array.isArray(data?.packages) && data.packages.length > 0) {
+      return data.packages.length;
+    }
+    // Quaternary: Check destination.packages array length
+    if (Array.isArray(data?.destination?.packages) && data.destination.packages.length > 0) {
+      return data.destination.packages.length;
+    }
+    // Default: Return 1 if any of the above exist (assume at least current package)
+    return 1;
+  };
+  
+  const packageCount = getPackageCount();
 
   return (
     <AnimatedContent direction="horizontal" reverse={false}>

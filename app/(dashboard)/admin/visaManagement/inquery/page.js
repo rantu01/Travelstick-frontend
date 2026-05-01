@@ -317,7 +317,7 @@ const VisaInquery = () => {
                     <span className="font-semibold text-[#05073C]">Visa Type:</span>{" "}
                     <span className="text-[#717171]">{resolvedVisaTypeName}</span>
                   </div>
-                  <div>
+                  {/* <div>
                     <span className="font-semibold text-[#05073C]">Visa Code:</span>{" "}
                     <span className="text-[#717171]">{resolvedVisaCode}</span>
                   </div>
@@ -328,7 +328,7 @@ const VisaInquery = () => {
                   <div>
                     <span className="font-semibold text-[#05073C]">Category:</span>{" "}
                     <span className="text-[#717171]">{resolvedCategory}</span>
-                  </div>
+                  </div> */}
                 </>
               )}
             </div>
