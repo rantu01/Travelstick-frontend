@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { useFetch } from "@/app/helper/hooks";
 import { useI18n } from "@/app/contexts/i18n";
-import { deleteVisaQuery, getAllVisaQuery } from "@/app/helper/backend";
+import { deleteVisaQuery, getAllVisaQuery, getVisaById } from "@/app/helper/backend";
 import { Modal } from "antd";
 import Table from "@/app/(dashboard)/components/common/table";
 
@@ -15,10 +15,16 @@ const VisaInquery = () => {
   const [data, getData, { loading }] = useFetch(getAllVisaQuery, {}, false);
   const [viewOpen, setViewOpen] = useState(false);
   const [viewData, setViewData] = useState(null);
+  const [visaDetails, setVisaDetails] = useState(null);
+  const [visaLoading, setVisaLoading] = useState(false);
   const [showRaw, setShowRaw] = useState(false);
 
   useEffect(() => {
-    getData({ inquiry_type: activeTab });
+    const loadInquiries = async () => {
+      await getData({ inquiry_type: activeTab });
+    };
+
+    loadInquiries();
   }, [activeTab]);
 
   // ── MongoDB $date object handle করে date parse করে
@@ -40,7 +46,12 @@ const VisaInquery = () => {
   };
 
   const getVisaName = (item) => {
-    return getLocalizedText(item?.visa?.title) || item?.visa_name || "N/A";
+    return (
+      getLocalizedText(item?.visa?.title) ||
+      getLocalizedText(item?.title) ||
+      item?.visa_name ||
+      "N/A"
+    );
   };
 
   const getVisaTypeName = (item) => {
@@ -52,9 +63,24 @@ const VisaInquery = () => {
     );
   };
 
-  // visa object populated কিনা চেক করে
-  const isVisaPopulated = (item) =>
-    item?.visa && typeof item.visa === "object" && !item.visa?.$oid;
+  const getVisaObject = (item) => {
+    if (item?.visa && typeof item.visa === "object" && !Array.isArray(item.visa)) {
+      return item.visa;
+    }
+
+    return null;
+  };
+
+  const getVisaId = (item) => {
+    return (
+      item?.visa?._id ||
+      item?.visa?.$oid ||
+      item?.visa_id ||
+      item?.visaId ||
+      (typeof item?.visa === "string" ? item.visa : null) ||
+      null
+    );
+  };
 
   // ── Inquiry Columns ──
   const inquiryColumns = [
@@ -148,8 +174,62 @@ const VisaInquery = () => {
 
   const handleView = (item) => {
     setViewData(item);
+    setVisaDetails(getVisaObject(item));
+    setVisaLoading(false);
     setViewOpen(true);
   };
+
+  useEffect(() => {
+    const visaObject = getVisaObject(viewData);
+
+    if (visaObject) {
+      setVisaDetails(visaObject);
+      setVisaLoading(false);
+      return;
+    }
+
+    const visaId = getVisaId(viewData);
+
+    if (!viewOpen || !visaId) {
+      setVisaDetails(null);
+      setVisaLoading(false);
+      return;
+    }
+
+    let ignore = false;
+
+    const loadVisaDetails = async () => {
+      setVisaLoading(true);
+      try {
+        const response = await getVisaById({ _id: visaId });
+        if (!ignore && response?.success) {
+          setVisaDetails(response?.data || null);
+        }
+      } finally {
+        if (!ignore) {
+          setVisaLoading(false);
+        }
+      }
+    };
+
+    loadVisaDetails();
+
+    return () => {
+      ignore = true;
+    };
+  }, [viewData, viewOpen]);
+
+  const resolvedVisa = visaDetails || getVisaObject(viewData);
+  const resolvedVisaName = getVisaName(resolvedVisa || viewData);
+  const resolvedVisaTypeName =
+    getLocalizedText(resolvedVisa?.visa_type?.name) ||
+    getLocalizedText(viewData?.visa?.visa_type?.name) ||
+    getLocalizedText(viewData?.visa_type?.name) ||
+    viewData?.visa_type_name ||
+    "N/A";
+  const resolvedVisaCode = resolvedVisa?.visa_code || viewData?.visa_code || "N/A";
+  const resolvedEntryType = resolvedVisa?.entry_type || viewData?.entry_type || "N/A";
+  const resolvedCategory = resolvedVisa?.visa_category || viewData?.visa_category || "N/A";
 
   return (
     <div className="w-full overflow-x-auto mt-7 dashboardModal">
@@ -223,47 +303,35 @@ const VisaInquery = () => {
               </div>
             </div>
 
-            {/* ── Visa Info — শুধু populated হলে দেখাবে ── */}
-            {isVisaPopulated(viewData) && (
-              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                <div>
-                  <span className="font-semibold text-[#05073C]">Visa Name:</span>{" "}
-                  <span className="text-[#717171]">{getVisaName(viewData)}</span>
-                </div>
-                <div>
-                  <span className="font-semibold text-[#05073C]">Visa Type:</span>{" "}
-                  <span className="text-[#717171]">{getVisaTypeName(viewData)}</span>
-                </div>
-                <div>
-                  <span className="font-semibold text-[#05073C]">Visa Code:</span>{" "}
-                  <span className="text-[#717171]">
-                    {viewData?.visa?.visa_code || "N/A"}
-                  </span>
-                </div>
-                <div>
-                  <span className="font-semibold text-[#05073C]">Entry Type:</span>{" "}
-                  <span className="text-[#717171]">
-                    {viewData?.visa?.entry_type || "N/A"}
-                  </span>
-                </div>
-                <div>
-                  <span className="font-semibold text-[#05073C]">Category:</span>{" "}
-                  <span className="text-[#717171]">
-                    {viewData?.visa?.visa_category || "N/A"}
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* visa populate না হলে শুধু visa type দেখাবে */}
-            {!isVisaPopulated(viewData) && (
-              <div className="bg-gray-50 rounded-xl p-4">
-                <div>
-                  <span className="font-semibold text-[#05073C]">Visa Type:</span>{" "}
-                  <span className="text-[#717171]">{getVisaTypeName(viewData)}</span>
-                </div>
-              </div>
-            )}
+            {/* ── Visa Info ── */}
+            <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+              {visaLoading ? (
+                <div className="text-sm text-[#717171]">Loading visa details...</div>
+              ) : (
+                <>
+                  <div>
+                    <span className="font-semibold text-[#05073C]">Visa Name:</span>{" "}
+                    <span className="text-[#717171]">{resolvedVisaName}</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-[#05073C]">Visa Type:</span>{" "}
+                    <span className="text-[#717171]">{resolvedVisaTypeName}</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-[#05073C]">Visa Code:</span>{" "}
+                    <span className="text-[#717171]">{resolvedVisaCode}</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-[#05073C]">Entry Type:</span>{" "}
+                    <span className="text-[#717171]">{resolvedEntryType}</span>
+                  </div>
+                  <div>
+                    <span className="font-semibold text-[#05073C]">Category:</span>{" "}
+                    <span className="text-[#717171]">{resolvedCategory}</span>
+                  </div>
+                </>
+              )}
+            </div>
 
             {/* ── Contact & Meta Info ── */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[#05073C]">

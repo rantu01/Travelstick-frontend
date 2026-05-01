@@ -11,6 +11,14 @@ const PackageCard = ({ data, index }) => {
   const { formatPrice } = useCurrency();
   const { langCode } = useI18n();
 
+  const packageCount = Number(
+    data?.total_packages ??
+      data?.destination?.count ??
+      data?.packages?.length ??
+      data?.destination?.packages?.length ??
+      0
+  );
+
   return (
     <AnimatedContent direction="horizontal" reverse={false}>
       <Link href={`/package/${data?._id}`}>
@@ -33,7 +41,7 @@ const PackageCard = ({ data, index }) => {
             <div className="flex items-center gap-1.5 bg-black/30 backdrop-blur-sm border border-white/40 text-white px-3 py-1.5 rounded-full">
               <HiOutlineCube className="text-sm" />
               <span className="text-[12px] font-medium">
-                {data?.total_packages ?? data?.destination?.count ?? 0} Packages
+                {packageCount} {packageCount === 1 ? "Package" : "Packages"}
               </span>
             </div>
           </div>
