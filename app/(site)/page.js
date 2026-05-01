@@ -86,6 +86,7 @@ export default function Home() {
           <OffersSection theme={theme} />
           <Partner />
           <Package theme={"two"} />
+          
           <BanglacoRoutes />
         </div>
       </div>
