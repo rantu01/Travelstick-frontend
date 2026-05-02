@@ -71,14 +71,12 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
 
   useEffect(() => {
     if (activeTab === "inquiry" && id) {
-      // Explicitly set the visa ID on form load
       inquiryForm.setFieldsValue({
         visa: id,
       });
     }
   }, [activeTab, id, inquiryForm]);
 
-  // Additional effect to ensure visa field is always set when component mounts
   useEffect(() => {
     if (id) {
       inquiryForm.setFieldsValue({
@@ -91,7 +89,6 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
   const onInquiryFinish = async (values) => {
     if (!user) return setAuthModalOpen(true);
 
-    // Ensure visa ID is present - this is critical for backend validation
     const visaId = values?.visa || id;
     if (!visaId) {
       message.error("Unable to identify visa. Please reload the page and try again.");
@@ -158,9 +155,14 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
     }
   };
 
-  // ── Apply Submit ──
-  const onApplyDetailsFinish = async (values) => {
+  // ── Apply Submit ──  ← এটাই মূল fix
+  const onApplyDetailsFinish = async () => {
     if (!user) return setAuthModalOpen(true);
+
+    // onFinish এর values parameter এর উপর নির্ভর না করে
+    // সরাসরি form থেকে getFieldsValue() দিয়ে data নিচ্ছি
+    // এটাই production এ কাজ করে reliably
+    const values = applyDetailsForm.getFieldsValue(true);
 
     try {
       const basicValues = await applyForm.validateFields();
@@ -171,7 +173,7 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
         visa_type: resolvedVisaTypeId,
         visa_name: currentVisaName,
         visa_type_name: currentVisaTypeName,
-        full_name: basicValues?.name || `${values.given_name} ${values.last_name}`.trim(),
+        full_name: basicValues?.name || `${values.given_name || ""} ${values.last_name || ""}`.trim(),
         given_name: values.given_name,
         last_name: values.last_name,
         gender: values.gender,
@@ -381,8 +383,6 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
                   required
                   rules={[{ required: true, message: i18n.t("Please upload visa document") }]}
                 />
-
-                {/* Tooltip shown on hover for the Enquiry upload button */}
                 <div className="pointer-events-none opacity-0 invisible group-hover:visible group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-150 absolute left-0 bottom-full mb-2 w-56 bg-white border rounded-lg p-3 text-sm shadow-lg z-50">
                   <div className="font-medium mb-1">Accepted Documents</div>
                   <ul className="list-disc list-inside text-gray-700 space-y-1">
@@ -409,11 +409,12 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
         </Form>
       )}
 
+      {/* ── Apply Details Modal ── */}
       <Modal
         open={applyModalOpen}
         onCancel={() => setApplyModalOpen(false)}
         footer={null}
-        destroyOnClose
+        // destroyOnClose সরিয়ে দিয়েছি — এটাই production এ form data নষ্ট করছিল
         width={760}
         centered
       >
