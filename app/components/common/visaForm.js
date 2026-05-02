@@ -26,7 +26,7 @@ const getLocalizedText = (value, langCode) => {
   return "";
 };
 
-const VisaForm = ({ id, pricePerPerson = 0, visaTitle, visaTypeName }) => {
+const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName }) => {
   const router = useRouter();
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const i18n = useI18n();
@@ -110,17 +110,22 @@ const VisaForm = ({ id, pricePerPerson = 0, visaTitle, visaTypeName }) => {
       } else {
         file = values?.file?.[0]?.url || "";
       }
+      
+      // Build inquiry payload - ensure both visa and visa_type are sent for backend validation
+      const inquiryPayload = {
+        full_name: values.name,
+        email: values.email,
+        phone: values.phone,
+        visa: visaId,  // Visa ID (required)
+        visa_type: visaTypeId,  // Visa Type ID (required - send both for redundancy)
+        visa_name: currentVisaName,
+        visa_type_name: currentVisaTypeName,
+        message: values.message,
+        file,
+      };
+      
       await useAction(createVisaQuery, {
-        body: {
-          full_name: values.name,
-          email: values.email,
-          phone: values.phone,
-          visa: visaId,  // Explicitly use visa ID (fallback to id prop if form field missing)
-          visa_name: currentVisaName,
-          visa_type_name: currentVisaTypeName,
-          message: values.message,
-          file,
-        },
+        body: inquiryPayload,
       });
       inquiryForm.resetFields();
       router.push("/user/visaInquery");
@@ -163,6 +168,7 @@ const VisaForm = ({ id, pricePerPerson = 0, visaTitle, visaTypeName }) => {
       await useAction(createVisaApply, {
         body: {
           visa: id,
+          visa_type: visaTypeId,  // Include visa_type for backend validation consistency
           visa_name: currentVisaName,
           visa_type_name: currentVisaTypeName,
           full_name: basicValues?.name || `${values.given_name} ${values.last_name}`.trim(),
@@ -194,7 +200,8 @@ const VisaForm = ({ id, pricePerPerson = 0, visaTitle, visaTypeName }) => {
       setApplyModalOpen(false);
       router.push("/user/visaInquery");
     } catch (err) {
-      console.error(err);
+      console.error("Visa application submission error:", err);
+      message.error(err?.response?.data?.errorMessage || "Failed to submit application. Please try again.");
     } finally {
       setSubmitLoading(false);
     }
