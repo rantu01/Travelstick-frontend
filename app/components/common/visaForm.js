@@ -47,6 +47,7 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
   const subtotal = pricePerPerson * applicants;
   const currentVisaName = getLocalizedText(visaTitle, langCode);
   const currentVisaTypeName = getLocalizedText(visaTypeName, langCode);
+  const resolvedVisaTypeId = visaTypeId || null;
 
   // Pre-fill user info
   useEffect(() => {
@@ -89,7 +90,7 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
   // ── Inquiry Submit ──
   const onInquiryFinish = async (values) => {
     if (!user) return setAuthModalOpen(true);
-    
+
     // Ensure visa ID is present - this is critical for backend validation
     const visaId = values?.visa || id;
     if (!visaId) {
@@ -97,7 +98,7 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
       setSubmitLoading(false);
       return;
     }
-    
+
     setSubmitLoading(true);
     try {
       let file = "";
@@ -110,20 +111,19 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
       } else {
         file = values?.file?.[0]?.url || "";
       }
-      
-      // Build inquiry payload - ensure both visa and visa_type are sent for backend validation
+
       const inquiryPayload = {
         full_name: values.name,
         email: values.email,
         phone: values.phone,
-        visa: visaId,  // Visa ID (required)
-        visa_type: visaTypeId,  // Visa Type ID (required - send both for redundancy)
+        visa: visaId,
+        visa_type: resolvedVisaTypeId,
         visa_name: currentVisaName,
         visa_type_name: currentVisaTypeName,
         message: values.message,
         file,
       };
-      
+
       await useAction(createVisaQuery, {
         body: inquiryPayload,
       });
@@ -165,32 +165,35 @@ const VisaForm = ({ id, visaTypeId, pricePerPerson = 0, visaTitle, visaTypeName 
     try {
       const basicValues = await applyForm.validateFields();
       setSubmitLoading(true);
+
+      const applyPayload = {
+        visa: id,
+        visa_type: resolvedVisaTypeId,
+        visa_name: currentVisaName,
+        visa_type_name: currentVisaTypeName,
+        full_name: basicValues?.name || `${values.given_name} ${values.last_name}`.trim(),
+        given_name: values.given_name,
+        last_name: values.last_name,
+        gender: values.gender,
+        date_of_birth: values.date_of_birth?.toISOString?.() || null,
+        nationality: values.nationality,
+        visited_countries: values.visited_countries,
+        passport_number: values.passport_number,
+        passport_expiry_date: values.passport_expiry_date?.toISOString?.() || null,
+        profession: values.profession,
+        local_address: values.local_address,
+        foreign_address: values.foreign_address,
+        email: values.email,
+        phone: values.phone,
+        appointment_date: appointmentDate,
+        number_of_applicants: applicants,
+        price_per_person: pricePerPerson,
+        total_price: subtotal,
+        inquiry_type: "apply",
+      };
+
       await useAction(createVisaApply, {
-        body: {
-          visa: id,
-          visa_type: visaTypeId,  // Include visa_type for backend validation consistency
-          visa_name: currentVisaName,
-          visa_type_name: currentVisaTypeName,
-          full_name: basicValues?.name || `${values.given_name} ${values.last_name}`.trim(),
-          given_name: values.given_name,
-          last_name: values.last_name,
-          gender: values.gender,
-          date_of_birth: values.date_of_birth?.toISOString?.() || null,
-          nationality: values.nationality,
-          visited_countries: values.visited_countries,
-          passport_number: values.passport_number,
-          passport_expiry_date: values.passport_expiry_date?.toISOString?.() || null,
-          profession: values.profession,
-          local_address: values.local_address,
-          foreign_address: values.foreign_address,
-          email: values.email,
-          phone: values.phone,
-          appointment_date: appointmentDate,
-          number_of_applicants: applicants,
-          price_per_person: pricePerPerson,
-          total_price: subtotal,
-          inquiry_type: "apply",
-        },
+        body: applyPayload,
       });
 
       applyForm.resetFields();

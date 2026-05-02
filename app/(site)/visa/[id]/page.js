@@ -446,6 +446,7 @@ const VisaDetails = () => {
                 <div className="">
                   <VisaForm
                     id={data?._id}
+                    visaTypeId={data?.visa_type?._id}
                     pricePerPerson={processingFee}
                     visaTitle={data?.title}
                     visaTypeName={data?.visa_type?.name}
