@@ -191,8 +191,11 @@ export const deleteVisa = (data) => del(`/visas/${data.id || data._id}`, data)
 export const getAllSidePublicVisa = (data) => get('/visas/sidebar', data)
 export const getAllVisaQuery = (data) => get('/visas/inquiries', data)
 export const deleteVisaQuery = (data) => del(`/visas/inquiries/${data._id}`, data)
-export const createVisaQuery = (data) => post('/visas/inquiries', data)
-export const createVisaApply = (data) => post('/visas/inquiries/apply', data)
+// Ensure payload is always wrapped in a `body` object so backend validation
+// consistently finds fields whether callers pass a flattened object or
+// already pass `{ body: {...} }`.
+export const createVisaQuery = (data) => post('/visas/inquiries', { body: data?.body ?? data })
+export const createVisaApply = (data) => post('/visas/inquiries/apply', { body: data?.body ?? data })
 //HRM
 export const CreateEmployee = (data) => post('/users/employees', data)
 export const UpdateEmployee = (data) => put('/users/employees', data)
