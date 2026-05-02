@@ -34,7 +34,21 @@ const FormInput = ({
 
   let input;
   if (textArea) {
-    input = <textarea placeholder={(placeholder)} minLength={minLength} className={`form-input ${className || ''}`} rows={rows} />;
+    input = (
+      <textarea 
+        placeholder={(placeholder)} 
+        minLength={minLength} 
+        className={`form-input ${className || ''}`} 
+        rows={rows}
+        value={inputValue}
+        onChange={(e) => {
+          setInputValue(e.target.value);
+          if (onChange) onChange(e);
+        }}
+        onBlur={onBlur}
+        readOnly={readOnly}
+      />
+    );
   } else if (type === 'date') {
     input = <DatePicker />;
   } else if (type === 'password') {

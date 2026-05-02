@@ -31,6 +31,11 @@ const Button = ({
   const effectiveLoadingText = type === 'submit' && isUploadLoading ? 'Uploading...' : loadingText;
 
   const handleClick = async (event) => {
+    // Allow form submission to proceed naturally for type="submit" without onClick
+    if (type === 'submit' && !onClick) {
+      return;
+    }
+    
     if (!onClick || loading) {
       return;
     }
