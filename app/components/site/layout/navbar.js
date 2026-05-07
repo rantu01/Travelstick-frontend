@@ -60,42 +60,42 @@ const Navbar = ({ textColor = "text-[#1A2B6D]" }) => {
     {
       path: "/flight",
       label: i18n.t("Flight"),
-      icon: <Image src="/Header Icon/IconF.png" width={40} height={40} alt="Flight" />
+      icon: <Image src="/banglaco icons/1.png" width={40} height={40} alt="Flight" />
     },
     {
       path: "/hotel",
       label: i18n.t("Hotel"),
-      icon: <Image src="/Header Icon/1.png" width={40} height={40} alt="Hotel" />
+      icon: <Image src="/banglaco icons/2.png" width={40} height={40} alt="Hotel" />
     },
     {
       path: "/visa",
       label: i18n.t("Visa"),
-      icon: <Image src="/Header Icon/4.png" width={40} height={40} alt="Visa" />
+      icon: <Image src="/banglaco icons/3.png" width={40} height={40} alt="Visa" />
     },
     {
       path: "/package",
       label: i18n.t("Holiday"),
-      icon: <Image src="/Header Icon/3.png" width={40} height={40} alt="Holiday" />
+      icon: <Image src="/banglaco icons/4.png" width={40} height={40} alt="Holiday" />
     },
     {
       path: "/umrah",
       label: i18n.t("Umrah"),
-      icon: <Image src="/Header Icon/5.png" width={40} height={40} alt="Umrah" />
+      icon: <Image src="/banglaco icons/5.png" width={40} height={40} alt="Umrah" />
     },
     {
       path: "/product",
       label: i18n.t("Shop"),
-      icon: <Image src="/Header Icon/6.png" width={40} height={40} alt="Shop" />
+      icon: <Image src="/banglaco icons/6.png" width={40} height={40} alt="Shop" />
     },
     {
       path: "/e-sim",
       label: i18n.t("E-Sim"),
-      icon: <Image src="/Header Icon/7.png" width={40} height={40} alt="E-Sim" />
+      icon: <Image src="/banglaco icons/8.png" width={40} height={40} alt="E-Sim" />
     },
     {
       path: "/gift-card",
       label: i18n.t("Gift Card"),
-      icon: <Image src="/Header Icon/8.png" width={40} height={40} alt="Gift Card" />
+      icon: <Image src="/banglaco icons/7.png" width={40} height={40} alt="Gift Card" />
     },
   ];
 
