@@ -377,10 +377,10 @@ const HeroFilters = (props, ref) => {
   );
 
   const tabs = [
-    { id: "flight", label: "Flight", icon: <Image src="/Header Icon/2.png" width={40} height={40} alt="Flight" /> },
-    { id: "hotel", label: "Hotel", icon: <Image src="/Header Icon/1.png" width={40} height={40} alt="Hotel" /> },
-    { id: "tour", label: "Holiday", icon: <Image src="/Header Icon/3.png" width={40} height={40} alt="Holiday" /> },
-    { id: "visa", label: "Visa", icon: <Image src="/Header Icon/4.png" width={40} height={40} alt="Visa" /> },
+    { id: "flight", label: "Flight", icon: <Image src="/banglaco icons/1.png" width={40} height={40} alt="Flight" /> },
+    { id: "hotel", label: "Hotel", icon: <Image src="/banglaco icons/2.png" width={40} height={40} alt="Hotel" /> },
+    { id: "tour", label: "Holiday", icon: <Image src="/banglaco icons/4.png" width={40} height={40} alt="Holiday" /> },
+    { id: "visa", label: "Visa", icon: <Image src="/banglaco icons/3.png" width={40} height={40} alt="Visa" /> },
   ];
 
   // ── [FIX 2] Multi City: Traveller/Class একবার উপরে, প্রতিটি row-এ আর নেই ──
