@@ -382,6 +382,7 @@ const HeroFilters = (props, ref) => {
     { id: "tour", label: "Holiday", icon: <Image src="/banglaco icons/4.png" width={40} height={40} alt="Holiday" /> },
     { id: "visa", label: "Visa", icon: <Image src="/banglaco icons/3.png" width={40} height={40} alt="Visa" /> },
   ];
+  
 
   // ── [FIX 2] Multi City: Traveller/Class একবার উপরে, প্রতিটি row-এ আর নেই ──
   const renderMultiCity = () => (
