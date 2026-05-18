@@ -10,9 +10,19 @@ const Providers = ({ children }) => {
   const [user, setUser] = useState();
   useEffect(() => {
     getCurrentUser();
-  }, [])
+  }, []);
 
   const getCurrentUser = async () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(null);
+      return;
+    }
+
     const { data, success } = await getUser();
     if (success === true) {
       setUser(data);
